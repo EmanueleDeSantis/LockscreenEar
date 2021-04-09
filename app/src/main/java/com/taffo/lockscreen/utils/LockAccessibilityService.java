@@ -41,6 +41,7 @@ public class LockAccessibilityService extends AccessibilityService {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
                  && Settings.canDrawOverlays(this)) {
             sp = new SharedPref(this);
+        	//Auto-start
             sp.setSharedmPrefService(true);
             startForegroundService(new Intent(this, LockScreenService.class));
         }
