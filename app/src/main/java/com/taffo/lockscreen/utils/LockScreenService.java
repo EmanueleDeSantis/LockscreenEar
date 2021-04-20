@@ -62,15 +62,19 @@ public class LockScreenService extends Service {
 	SharedPref sp;
 	boolean isLockScreenRunning;
 
+	//Informations about the number of notes to play (used in LockScreenActivity)
 	private static String val;
 	public int getNotes() {
 		return Integer.parseInt(val);
 	}
 
+	//Informations about the actual total number of stored notes (used in LockScreenActivity)
 	private static int totalVal;
 	public int getTotalNotes() {
 		return totalVal;
 	}
+
+	//The xml document is parsed here for optimizing time (used in LockScreenActivity)
 	private static Document docum;
 	public Document getDocum() {
 		return docum;
@@ -160,8 +164,7 @@ public class LockScreenService extends Service {
 					.addAction(increaseNotes)
 					.build();
 			startForeground(NOTIFICATION_ID, notification);
-		}
-		else {
+		} else {
 			Notification notification = notificationBuilder
 					.setOngoing(true)
 					.setOnlyAlertOnce(true)
