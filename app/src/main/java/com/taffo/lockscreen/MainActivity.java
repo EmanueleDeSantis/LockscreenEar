@@ -123,9 +123,8 @@ public class MainActivity extends AppCompatActivity {
                 if (!numberInput.getText().toString().isEmpty()) {
                     if (Integer.parseInt(s.toString()) < 1 || Integer.parseInt(s.toString()) > 6)
                         Toast.makeText(getApplicationContext(), "Inserisci un intero da 1 a 6", Toast.LENGTH_SHORT).show();
-                    else {
+                    else
                         sp.setSharedmPrefNotes(s.toString());
-                    }
                 }
             }
         });
@@ -168,8 +167,7 @@ public class MainActivity extends AppCompatActivity {
             switchGrant.setChecked(false);
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, 44);
-        }
-        else if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             switchGrant.setChecked(false);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 11);
         } else if (!las.isAccessibilitySettingsOn(this)) {

@@ -84,8 +84,7 @@ public class LockTileService extends TileService {
                     tile.setLabel(getString(R.string.app_name) + " on");
                     tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
                     tile.setState(Tile.STATE_ACTIVE);
-                }
-                else {
+                } else {
                     tile.setLabel(getString(R.string.app_name) + " off");
                     tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
                     tile.setState(Tile.STATE_INACTIVE);
