@@ -149,12 +149,13 @@ public class LockScreenService extends Service {
 		} catch (Exception e) {
 			isLockScreenRunning = false;
 		}
+
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.app_name));
 		if (!isLockScreenRunning && !((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked()) {
 			Notification notification = notificationBuilder
 					.setOngoing(true)
 					.setOnlyAlertOnce(true)
-					.setSmallIcon(R.drawable.unlocked_icon)
+					.setSmallIcon(R.drawable.locked_icon)
 					.setColor(Color.GREEN)
 					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNotes())
 					.setContentText(getString(R.string.service_running))
