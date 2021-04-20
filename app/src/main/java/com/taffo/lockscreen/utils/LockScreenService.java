@@ -164,7 +164,8 @@ public class LockScreenService extends Service {
 					.addAction(increaseNotes)
 					.build();
 			startForeground(NOTIFICATION_ID, notification);
-		} else {
+		}
+		else {
 			Notification notification = notificationBuilder
 					.setOngoing(true)
 					.setOnlyAlertOnce(true)

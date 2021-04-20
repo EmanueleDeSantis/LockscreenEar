@@ -78,9 +78,7 @@ public class LockScreenActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                        | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
                 PixelFormat.TRANSLUCENT);
         mWindowManager = ((WindowManager) getSystemService(WINDOW_SERVICE));
 
@@ -247,7 +245,8 @@ public class LockScreenActivity extends AppCompatActivity {
             Intent changeNotif = new Intent("changeNotification");
             sendBroadcast(changeNotif);
             finish();
-        } else if (selectedNotesList.size() >= NOTES) {
+        }
+        else if (selectedNotesList.size() >= NOTES) {
             tv.setText(getString(R.string.incorrect_entry));
             tv.setTextColor(Color.parseColor("#FFEA2A2A")); //Red
         }
