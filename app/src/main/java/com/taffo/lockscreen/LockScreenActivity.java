@@ -247,7 +247,7 @@ public class LockScreenActivity extends AppCompatActivity {
             Intent changeNotif = new Intent("changeNotification");
             sendBroadcast(changeNotif);
             finish();
-        } else if (selectedNotesList.size() >= outputtedNotesList.size()) {
+        } else if (selectedNotesList.size() >= NOTES) {
             tv.setText(getString(R.string.incorrect_entry));
             tv.setTextColor(Color.parseColor("#FFEA2A2A")); //Red
         }
