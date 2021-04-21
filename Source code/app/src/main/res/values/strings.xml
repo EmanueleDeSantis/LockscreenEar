@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">LockScreen</string>
+    <string name="insert_notes">Enter notes</string>
+    <string name="incorrect_entry">Wrong entry!</string>
+    <string name="click_to_grant_permissions_and_start_the_service">Click to grant permissions and start the service</string>
+    <string name="service_running">Service running</string>
+    <string name="notes_incr">NOTES++</string>
+    <string name="grant_and_start">Grant and start</string>
+    <string name="number_of_notes_to_play_1_6">Number of notes to play (1–6)</string>
+    <string name="number_of_notes_to_play">Number of notes to play</string>
+    <string name="numb_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>
+    <string name="numb_of_notes_to_play_shared_pref_default_value" translatable="false">3</string>
+    <string name="start_service_shared_pref" translatable="false">Start service</string>
+    <bool name="start_service_shared_pref_default_value">false</bool>
+    <string name="risk_warning">"Please don't use this app if you don't have perfect pitch, you may not be able to unlock your phone in emergency situations!"</string>
+    <string name="accessibility_service_description">The following accessibility service undertakes only to ensure that this LockScreen can activate even if the service is in the background.\n\nIn no case your personal data will be collected.</string>
+    <string name="Do">C</string>
+    <string name="Dodie">C#</string>
+    <string name="Re">D</string>
+    <string name="Redie">D#</string>
+    <string name="Mi">E</string>
+    <string name="Fa">F</string>
+    <string name="Fadie">F#</string>
+    <string name="Sol">G</string>
+    <string name="Soldie">G#</string>
+    <string name="La">A</string>
+    <string name="Ladie">A#</string>
+    <string name="Si">B</string>
+</resources>
+
