@@ -153,13 +153,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    //Unregister listeners
+    /*//Unregister listeners
     @Override
     protected void onDestroy() {
         sp.getmPrefService().unregisterOnSharedPreferenceChangeListener(listenerService);
         sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
         super.onDestroy();
-    }
+    }*/
 
     //Invoked by listeners
     private void checkPermissions() {

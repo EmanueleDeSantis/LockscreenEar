@@ -73,11 +73,11 @@ public class LockTileService extends TileService {
 
         tile = getQsTile();
         if (!isLockScreenRunning && !((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked()) {
-            tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
             if (!las.isAccessibilitySettingsOn(this)
                     || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
                     || !Settings.canDrawOverlays(this)) {
                 tile.setLabel(getString(R.string.app_name) + " off");
+                tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
                 tile.setState(Tile.STATE_UNAVAILABLE);
             } else {
                 if (sp.getSharedmPrefService()) {
