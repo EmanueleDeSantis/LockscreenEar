@@ -37,6 +37,7 @@ import android.service.quicksettings.TileService;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.taffo.lockscreen.EarTrainingActivity;
 import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.R;
@@ -88,6 +89,11 @@ public class LockScreenService extends Service {
 					parseXmlNotes(context);
 					startLockScreenActivity();
 				}
+				if (intent.getAction().equals("training")) {
+					val = sp.getSharedmPrefNotes();
+					parseXmlNotes(context);
+					startEarTrainingActivity();
+				}
 			}
 		}
 	};
@@ -118,7 +124,8 @@ public class LockScreenService extends Service {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_USER_PRESENT);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		filter.addAction("changeNotification"); //Change color of the notification, green when screen is unlocked, red when locked
+		filter.addAction("changeNotification"); //Changes color of the notification, green when screen is unlocked, red when locked
+		filter.addAction("training"); //Starts EarTrainingActivity when the "training" button in the MainActivity is clicked
 		registerReceiver(mReceiver, filter);
 		return START_NOT_STICKY;
 	}
@@ -209,5 +216,41 @@ public class LockScreenService extends Service {
         		.setAction(Intent.ACTION_VIEW)
         		.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
+
+	private void startEarTrainingActivity() {
+		startActivity(new Intent(this, EarTrainingActivity.class)
+				.setAction(Intent.ACTION_VIEW)
+				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+	}
+
+	public static class IncrementNumberOfNotes extends BroadcastReceiver {
+		int numIncremented;
+		int actualNumNotes;
+		boolean isLockScreenRunning;
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			try {
+				LockScreenActivity lsa = new LockScreenActivity();
+				isLockScreenRunning = lsa.isLockScreenRunning();
+
+			} catch (Exception e) {
+				isLockScreenRunning = false;
+			}
+
+			/*Increments the number of notes to play when the user clicks on "NOTE++" in the notification panel
+			and when the number reaches 8, the limit number, after another click the count restarts*/
+			if (!(isLockScreenRunning || ((KeyguardManager) Objects.requireNonNull(context.getSystemService(KEYGUARD_SERVICE))).isKeyguardLocked())) {
+				SharedPref sp = new SharedPref(context);
+				actualNumNotes = Integer.parseInt(sp.getSharedmPrefNotes());
+				if (actualNumNotes < 8)
+					numIncremented = actualNumNotes + 1;
+				else
+					numIncremented = 1;
+				sp.setSharedmPrefNotes(String.valueOf(numIncremented));
+			}
+		}
+
+	}
 
 }

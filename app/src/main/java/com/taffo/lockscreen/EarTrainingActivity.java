@@ -22,26 +22,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
 
-import android.Manifest;
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.service.quicksettings.TileService;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.taffo.lockscreen.utils.LockScreenService;
-import com.taffo.lockscreen.utils.LockTileService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,23 +35,13 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
-public class LockScreenActivity extends AppCompatActivity {
+public class EarTrainingActivity extends AppCompatActivity {
     LockScreenService lss = new LockScreenService();
     final int NOTES = lss.getNotes();
     final int TOTAL_NOTES = lss.getTotalNotes();
     final Document doc = lss.getDocum();
-    static boolean isLockScreenRunning = false;
-
-    int systemScreenOffTimeoutDefaultValue;
-    final int customScreenOffTimeoutValue = 10000; //10 seconds
-    WindowManager.LayoutParams mParams;
-    WindowManager mWindowManager;
-    View view;
-    StateListener stateListener;
-    TelephonyManager telephony;
 
     TextView tv;
     Button buttonDo;
@@ -83,64 +59,26 @@ public class LockScreenActivity extends AppCompatActivity {
 
     List<String> selectedNotesList = new ArrayList<>(NOTES);
 
-    public boolean isLockScreenRunning() {
-        return isLockScreenRunning;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        isLockScreenRunning = true;
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+        setContentView(R.layout.activity_lockscreen);
 
         play();
 
-        //Saves the default screen off timeout to restore it when the screen is unlocked
-        try {
-            systemScreenOffTimeoutDefaultValue = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-        //Sets the screen off timeout to 10 seconds
-        if (Settings.System.canWrite(this))
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, customScreenOffTimeoutValue);
-
-        //The following overlay view can't be removed by the user in any way, except with the unlocking function
-        if (Settings.canDrawOverlays(this)) {
-            mParams = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                            | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
-                    PixelFormat.TRANSLUCENT);
-
-            mWindowManager = ((WindowManager) getSystemService(WINDOW_SERVICE));
-            view = View.inflate(this, R.layout.activity_lockscreen, null);
-            mWindowManager.addView(view, mParams);
-        } else
-            unlockAndRemoveView();
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            stateListener = new StateListener();
-            telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
-            telephony.listen(stateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-
         //Initializes the view's elements
-        tv = view.findViewById(R.id.title);
-        buttonDo = view.findViewById(R.id.buttonDo);
-        buttonDodie = view.findViewById(R.id.buttonDodie);
-        buttonRe = view.findViewById(R.id.buttonRe);
-        buttonRedie = view.findViewById(R.id.buttonRedie);
-        buttonMi = view.findViewById(R.id.buttonMi);
-        buttonFa = view.findViewById(R.id.buttonFa);
-        buttonFadie = view.findViewById(R.id.buttonFadie);
-        buttonSol = view.findViewById(R.id.buttonSol);
-        buttonSoldie = view.findViewById(R.id.buttonSoldie);
-        buttonLa = view.findViewById(R.id.buttonLa);
-        buttonLadie = view.findViewById(R.id.buttonLadie);
-        buttonSi = view.findViewById(R.id.buttonSi);
+        tv = findViewById(R.id.title);
+        buttonDo = findViewById(R.id.buttonDo);
+        buttonDodie = findViewById(R.id.buttonDodie);
+        buttonRe = findViewById(R.id.buttonRe);
+        buttonRedie = findViewById(R.id.buttonRedie);
+        buttonMi = findViewById(R.id.buttonMi);
+        buttonFa = findViewById(R.id.buttonFa);
+        buttonFadie = findViewById(R.id.buttonFadie);
+        buttonSol = findViewById(R.id.buttonSol);
+        buttonSoldie = findViewById(R.id.buttonSoldie);
+        buttonLa = findViewById(R.id.buttonLa);
+        buttonLadie = findViewById(R.id.buttonLadie);
+        buttonSi = findViewById(R.id.buttonSi);
 
         buttonDo.setOnClickListener(v -> {
             if (selectedNotesList.size() < NOTES) {
@@ -286,38 +224,9 @@ public class LockScreenActivity extends AppCompatActivity {
                 unlock();
             }
         });
-        
+
         super.onCreate(savedInstanceState);
     }
-
-    //Finishes if a call arrived and is ringing or waiting
-    private class StateListener extends PhoneStateListener {
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-            if (state == TelephonyManager.CALL_STATE_RINGING)
-                unlockAndRemoveView();
-        }
-    }
-
-    //Finishes the activity before starting a new one when the screen gets locked
-    @Override
-    protected void onRestart() {
-        removeView();
-        super.onRestart();
-    }
-
-    /*When using a screen overlay, the system shows a notification allowing the user to remove it.
-    This condition, on some devices, bypasses this occurrence by keeping the activity in foreground
-    If it does not work on your device, consider to manually disable notifications of LockScreen*/
-    @Override
-    protected void onPause() {
-        ((ActivityManager) Objects.requireNonNull(getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE))).moveTaskToFront(getTaskId(), 0);
-        super.onPause();
-    }
-
-    //Does nothing on back press
-    @Override
-    public void onBackPressed() {}
 
     Random rand = new Random();
     int randIdNote;
@@ -355,7 +264,7 @@ public class LockScreenActivity extends AppCompatActivity {
     StringBuilder coloredStringTv = new StringBuilder();
     private void unlock() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
-            unlockAndRemoveView();
+            finish();
         else if (selectedNotesList.size() >= NOTES) {
             //Colors in red the buttons of the wrong notes
             for (String snl : selectedNotesList) {
@@ -549,25 +458,6 @@ public class LockScreenActivity extends AppCompatActivity {
             }
             tv.setText(HtmlCompat.fromHtml(coloredStringTv.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
-    }
-
-    private void removeView() {
-        mWindowManager.removeView(view);
-        view = null;
-        mWindowManager = null;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
-            telephony.listen(stateListener, PhoneStateListener.LISTEN_NONE);
-        //Sets the screen off timeout to the default value
-        if (Settings.System.canWrite(this))
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
-        finish();
-    }
-
-    private void unlockAndRemoveView() {
-        isLockScreenRunning = false;
-        sendBroadcast(new Intent("changeNotification"));
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-        removeView();
     }
 
 }

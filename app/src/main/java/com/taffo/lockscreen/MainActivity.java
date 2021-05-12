@@ -18,6 +18,7 @@
 
 package com.taffo.lockscreen;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -29,6 +30,7 @@ import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -38,19 +40,29 @@ import com.taffo.lockscreen.utils.LockScreenService;
 import com.taffo.lockscreen.utils.LockTileService;
 import com.taffo.lockscreen.utils.SharedPref;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
     CheckPermissions cp = new CheckPermissions();
     SharedPref sp;
-    @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchGrant;
+    @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchStart;
     EditText numberInput;
+    Button training;
     static SharedPreferences.OnSharedPreferenceChangeListener listenerService;
     static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
-        switchGrant = findViewById(R.id.switchGrant);
+
+        switchStart = findViewById(R.id.switchStart);
         numberInput = findViewById(R.id.notesToOutput);
+        training = findViewById(R.id.training);
+
+        //Sets the launcher icon into the action bar
+        ActionBar actionBar = getSupportActionBar();
+        Objects.requireNonNull(actionBar).setDisplayShowHomeEnabled(true);
+        actionBar.setIcon(R.mipmap.launcher);
 
         sp = new SharedPref(this);
 
@@ -64,28 +76,31 @@ public class MainActivity extends AppCompatActivity {
 
         listenerService = (prefs, key) -> {
             if (cp.checkPermissions(this) && prefs.equals(sp.getmPrefService()))
-                switchGrant.setChecked(sp.getSharedmPrefService());
+                switchStart.setChecked(sp.getSharedmPrefService());
         };
         sp.getmPrefService().registerOnSharedPreferenceChangeListener(listenerService);
 
         //Checks the permissions
-        switchGrant.setOnClickListener(v -> cp.askPermissions(this));
+        switchStart.setOnClickListener(v -> cp.askPermissions(this));
 
         //Starts/finishes the service
-        switchGrant.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        switchStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (cp.checkPermissions(this)) {
                 sp.setSharedmPrefService(isChecked);
+                training.setEnabled(isChecked);
                 if (sp.getSharedmPrefService())
                     startForegroundService(new Intent(this, LockScreenService.class));
                 else
                     stopService(new Intent(this, LockScreenService.class));
-            } else
-                switchGrant.setChecked(false);
+            } else {
+                switchStart.setChecked(false);
+                training.setEnabled(false);
+            }
             TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         });
 
         //Redirect to the accessibility settings's page
-        switchGrant.setOnLongClickListener(v -> {
+        switchStart.setOnLongClickListener(v -> {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
             return true;
         });
@@ -112,24 +127,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        training.setOnClickListener(v -> {
+            sendBroadcast(new Intent("training"));
+        });
+
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart() {
-        if (cp.checkPermissions(this))
-            switchGrant.setChecked(sp.getSharedmPrefService());
-        else
-            switchGrant.setChecked(false);
+        if (cp.checkPermissions(this)) {
+            switchStart.setChecked(sp.getSharedmPrefService());
+            training.setEnabled(sp.getSharedmPrefService());
+        } else {
+            switchStart.setChecked(false);
+            training.setEnabled(false);
+        }
         super.onStart();
     }
 
     @Override
     protected void onResume() {
-        if (cp.checkPermissions(this))
-            switchGrant.setChecked(sp.getSharedmPrefService());
-        else
-            switchGrant.setChecked(false);
+        if (cp.checkPermissions(this)) {
+            switchStart.setChecked(sp.getSharedmPrefService());
+            training.setEnabled(sp.getSharedmPrefService());
+        } else {
+            switchStart.setChecked(false);
+            training.setEnabled(false);
+        }
         super.onResume();
     }
 
