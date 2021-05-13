@@ -67,6 +67,8 @@
 
         <service
             android:name=".utils.LockTileService"
+            android:enabled="true"
+            android:exported="true"
             android:icon="@drawable/unlocked_icon"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -80,6 +82,8 @@
 
         <service
             android:name=".utils.LockAccessibilityService"
+            android:enabled="true"
+            android:exported="true"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
