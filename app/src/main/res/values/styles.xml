@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.MainActivity" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimaryDark">@color/green</item>
+        <item name="colorPrimaryDark">@color/color_primary_green</item>
         <item name="colorPrimary">@color/custom_green</item>
         <item name="titleTextColor">@color/white</item>
     </style>
