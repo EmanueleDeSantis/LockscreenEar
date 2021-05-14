@@ -40,8 +40,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.taffo.lockscreen.utils.LockScreenService;
-import com.taffo.lockscreen.utils.LockTileService;
+import com.taffo.lockscreen.services.LockScreenService;
+import com.taffo.lockscreen.services.LockTileService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

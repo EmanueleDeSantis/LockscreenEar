@@ -16,7 +16,7 @@
    along with LockScreen.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.taffo.lockscreen.utils;
+package com.taffo.lockscreen.services;
 
 import android.accessibilityservice.AccessibilityService;
 
@@ -27,6 +27,9 @@ import android.provider.Settings;
 
 import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
+
+import com.taffo.lockscreen.utils.CheckPermissions;
+import com.taffo.lockscreen.utils.SharedPref;
 
 public class LockAccessibilityService extends AccessibilityService {
     SharedPref sp;

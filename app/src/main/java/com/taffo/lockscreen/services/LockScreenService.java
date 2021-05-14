@@ -16,7 +16,7 @@
    along with LockScreen.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.taffo.lockscreen.utils;
+package com.taffo.lockscreen.services;
 
 import android.app.KeyguardManager;
 import android.app.Notification;
@@ -41,6 +41,8 @@ import com.taffo.lockscreen.EarTrainingActivity;
 import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.R;
+import com.taffo.lockscreen.utils.CheckPermissions;
+import com.taffo.lockscreen.utils.SharedPref;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

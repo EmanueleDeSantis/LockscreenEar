@@ -63,12 +63,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".utils.LockScreenService" />
+        <service android:name=".services.LockScreenService" />
 
-        <service android:name=".utils.TrainingService" />
+        <service android:name=".services.EarTrainingService" />
 
         <service
-            android:name=".utils.LockTileService"
+            android:name=".services.LockTileService"
             android:enabled="true"
             android:exported="true"
             android:icon="@drawable/unlocked_icon"
@@ -83,7 +83,7 @@
         </service>
 
         <service
-            android:name=".utils.LockAccessibilityService"
+            android:name=".services.LockAccessibilityService"
             android:enabled="true"
             android:exported="true"
             android:label="@string/app_name"
@@ -96,7 +96,7 @@
                 android:resource="@xml/accessibility_service" />
         </service>
 
-        <receiver android:name=".utils.LockScreenService$IncrementNumberOfNotes" />
+        <receiver android:name=".services.LockScreenService$IncrementNumberOfNotes" />
 
     </application>
 

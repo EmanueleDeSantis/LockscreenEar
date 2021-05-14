@@ -16,7 +16,7 @@
    along with LockScreen.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.taffo.lockscreen.utils;
+package com.taffo.lockscreen.services;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -28,6 +28,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.taffo.lockscreen.EarTrainingActivity;
+import com.taffo.lockscreen.utils.SharedPref;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -39,7 +40,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class TrainingService extends Service {
+public class EarTrainingService extends Service {
 	SharedPref sp;
 
 	//The actual number of notes to play (used in LockScreenActivity)
@@ -64,7 +65,7 @@ public class TrainingService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (context != null && intent.getAction() != null) {
-				if (intent.getAction().equals("training")) {
+				if (intent.getAction().equals("earTraining")) {
 					val = sp.getSharedmPrefNotes();
 					parseXmlNotes(context);
 					startEarTrainingActivity();

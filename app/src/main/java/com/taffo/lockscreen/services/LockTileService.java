@@ -16,7 +16,7 @@
    along with LockScreen.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.taffo.lockscreen.utils;
+package com.taffo.lockscreen.services;
 
 import android.app.KeyguardManager;
 import android.content.ComponentName;
@@ -29,6 +29,8 @@ import android.service.quicksettings.TileService;
 
 import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.R;
+import com.taffo.lockscreen.utils.CheckPermissions;
+import com.taffo.lockscreen.utils.SharedPref;
 
 import java.util.Objects;
 

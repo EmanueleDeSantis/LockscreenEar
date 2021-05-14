@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.taffo.lockscreen.MainActivity;
+import com.taffo.lockscreen.services.LockAccessibilityService;
 
 public class CheckPermissions extends AppCompatActivity {
     LockAccessibilityService las = new LockAccessibilityService();

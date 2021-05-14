@@ -36,10 +36,10 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.taffo.lockscreen.utils.CheckPermissions;
-import com.taffo.lockscreen.utils.LockScreenService;
-import com.taffo.lockscreen.utils.LockTileService;
+import com.taffo.lockscreen.services.LockScreenService;
+import com.taffo.lockscreen.services.LockTileService;
 import com.taffo.lockscreen.utils.SharedPref;
-import com.taffo.lockscreen.utils.TrainingService;
+import com.taffo.lockscreen.services.EarTrainingService;
 
 import java.util.Objects;
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        startService(new Intent(this, TrainingService.class));
+        startService(new Intent(this, EarTrainingService.class));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        startService(new Intent(this, TrainingService.class));
+        startService(new Intent(this, EarTrainingService.class));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else
