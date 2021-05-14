@@ -43,7 +43,7 @@ public class EarTrainingActivity extends AppCompatActivity {
     final int TOTAL_NOTES = ts.getTotalNotes();
     final Document doc = ts.getDocum();
 
-    TextView tv;
+    TextView textViewNotes;
     Button buttonDo;
     Button buttonDodie;
     Button buttonRe;
@@ -66,7 +66,7 @@ public class EarTrainingActivity extends AppCompatActivity {
         play();
 
         //Initializes the view's elements
-        tv = findViewById(R.id.title);
+        textViewNotes = findViewById(R.id.textViewNotes);
         buttonDo = findViewById(R.id.buttonDo);
         buttonDodie = findViewById(R.id.buttonDodie);
         buttonRe = findViewById(R.id.buttonRe);
@@ -261,7 +261,7 @@ public class EarTrainingActivity extends AppCompatActivity {
     //Unlocks if user guessed all and only the outputted notes
     List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
     List<Integer> notesColor = new ArrayList<>(NOTES);
-    StringBuilder coloredStringTv = new StringBuilder();
+    StringBuilder coloredStringTextViewNotes = new StringBuilder();
     private void unlock() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
             finish();
@@ -452,11 +452,11 @@ public class EarTrainingActivity extends AppCompatActivity {
             //Prints all the outputted notes on the textview, since the user inserted an incorrect entry (see also the functions above)
             for (int i = 0; i < NOTES; i++) {
                 if (i != NOTES-1)
-                    coloredStringTv.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ").append("</font>");
+                    coloredStringTextViewNotes.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ").append("</font>");
                 else
-                    coloredStringTv.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append("</font>");
+                    coloredStringTextViewNotes.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append("</font>");
             }
-            tv.setText(HtmlCompat.fromHtml(coloredStringTv.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            textViewNotes.setText(HtmlCompat.fromHtml(coloredStringTextViewNotes.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
     }
 
