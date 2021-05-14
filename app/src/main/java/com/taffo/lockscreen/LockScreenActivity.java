@@ -67,7 +67,7 @@ public class LockScreenActivity extends AppCompatActivity {
     StateListener stateListener;
     TelephonyManager telephony;
 
-    TextView tv;
+    TextView textViewNotes;
     Button buttonDo;
     Button buttonDodie;
     Button buttonRe;
@@ -128,7 +128,7 @@ public class LockScreenActivity extends AppCompatActivity {
         }
 
         //Initializes the view's elements
-        tv = view.findViewById(R.id.title);
+        textViewNotes = view.findViewById(R.id.textViewNotes);
         buttonDo = view.findViewById(R.id.buttonDo);
         buttonDodie = view.findViewById(R.id.buttonDodie);
         buttonRe = view.findViewById(R.id.buttonRe);
@@ -547,7 +547,7 @@ public class LockScreenActivity extends AppCompatActivity {
                 else
                     coloredStringTv.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append("</font>");
             }
-            tv.setText(HtmlCompat.fromHtml(coloredStringTv.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            textViewNotes.setText(HtmlCompat.fromHtml(coloredStringTv.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
     }
 

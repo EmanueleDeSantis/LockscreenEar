@@ -65,6 +65,8 @@
 
         <service android:name=".utils.LockScreenService" />
 
+        <service android:name=".utils.TrainingService" />
+
         <service
             android:name=".utils.LockTileService"
             android:enabled="true"

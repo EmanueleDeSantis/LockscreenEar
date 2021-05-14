@@ -39,6 +39,7 @@ import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.LockScreenService;
 import com.taffo.lockscreen.utils.LockTileService;
 import com.taffo.lockscreen.utils.SharedPref;
+import com.taffo.lockscreen.utils.TrainingService;
 
 import java.util.Objects;
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPref sp;
     @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchStart;
     EditText numberInput;
-    Button training;
+    Button buttonTraining;
     static SharedPreferences.OnSharedPreferenceChangeListener listenerService;
     static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
 
@@ -56,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         switchStart = findViewById(R.id.switchStart);
-        numberInput = findViewById(R.id.notesToOutput);
-        training = findViewById(R.id.training);
+        numberInput = findViewById(R.id.numberInput);
+        buttonTraining = findViewById(R.id.buttonTraining);
 
         //Sets the launcher icon into the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -87,15 +88,12 @@ public class MainActivity extends AppCompatActivity {
         switchStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (cp.checkPermissions(this)) {
                 sp.setSharedmPrefService(isChecked);
-                training.setEnabled(isChecked);
                 if (sp.getSharedmPrefService())
                     startForegroundService(new Intent(this, LockScreenService.class));
                 else
                     stopService(new Intent(this, LockScreenService.class));
-            } else {
+            } else
                 switchStart.setChecked(false);
-                training.setEnabled(false);
-            }
             TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         });
 
@@ -128,34 +126,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        training.setOnClickListener(v -> {
-            sendBroadcast(new Intent("training"));
-        });
+        buttonTraining.setOnClickListener(v -> sendBroadcast(new Intent("earTraining")));
 
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart() {
-        if (cp.checkPermissions(this)) {
+        startService(new Intent(this, TrainingService.class));
+        if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
-            training.setEnabled(sp.getSharedmPrefService());
-        } else {
+        else
             switchStart.setChecked(false);
-            training.setEnabled(false);
-        }
+        super.onResume();
         super.onStart();
     }
 
     @Override
     protected void onResume() {
-        if (cp.checkPermissions(this)) {
+        startService(new Intent(this, TrainingService.class));
+        if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
-            training.setEnabled(sp.getSharedmPrefService());
-        } else {
+        else
             switchStart.setChecked(false);
-            training.setEnabled(false);
-        }
         super.onResume();
     }
 

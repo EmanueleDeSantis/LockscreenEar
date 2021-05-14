@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.taffo.lockscreen.utils.LockScreenService;
+import com.taffo.lockscreen.utils.TrainingService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,10 +39,10 @@ import java.util.List;
 import java.util.Random;
 
 public class EarTrainingActivity extends AppCompatActivity {
-    LockScreenService lss = new LockScreenService();
-    final int NOTES = lss.getNotes();
-    final int TOTAL_NOTES = lss.getTotalNotes();
-    final Document doc = lss.getDocum();
+    TrainingService ts = new TrainingService();
+    final int NOTES = ts.getNotes();
+    final int TOTAL_NOTES = ts.getTotalNotes();
+    final Document doc = ts.getDocum();
 
     TextView tv;
     Button buttonDo;

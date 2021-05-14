@@ -89,11 +89,6 @@ public class LockScreenService extends Service {
 					parseXmlNotes(context);
 					startLockScreenActivity();
 				}
-				if (intent.getAction().equals("training")) {
-					val = sp.getSharedmPrefNotes();
-					parseXmlNotes(context);
-					startEarTrainingActivity();
-				}
 			}
 		}
 	};
@@ -125,9 +120,8 @@ public class LockScreenService extends Service {
 		filter.addAction(Intent.ACTION_USER_PRESENT);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		filter.addAction("changeNotification"); //Changes color of the notification, green when screen is unlocked, red when locked
-		filter.addAction("training"); //Starts EarTrainingActivity when the "training" button in the MainActivity is clicked
 		registerReceiver(mReceiver, filter);
-		return START_NOT_STICKY;
+		return START_STICKY;
 	}
 
 	//"Foreground" service: By android 10 (maybe before?) after 20 seconds this service goes in background. Solved using the accessibility service
