@@ -10,6 +10,6 @@
     <color name="custom_red">#EA2A2A</color>
     <color name="custom_green">#91EA2A</color>
     <color name="custom_yellow">#EAC82A</color>
-    <color name="color_primary_darkk">#75BD2A</color>
+    <color name="color_primary_dark">#75BD2A</color>
     <color name="custom_background">#323232</color>
 </resources>
