@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.taffo.lockscreen">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -26,7 +25,7 @@
             android:noHistory="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.LockScreenActivity">
             <intent-filter android:priority="999999999">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -54,7 +53,7 @@
             android:noHistory="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.LockScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
