@@ -11,5 +11,10 @@
     <color name="custom_green">#91EA2A</color>
     <color name="custom_yellow">#EAC82A</color>
     <color name="color_primary_dark">#75BD2A</color>
+<<<<<<< HEAD
     <color name="custom_background">#323637</color>
 </resources>
+=======
+    <color name="custom_background">#323232</color>
+</resources>
+>>>>>>> 3651a6d526688c3ee8169532f97feaacb81cec1f
