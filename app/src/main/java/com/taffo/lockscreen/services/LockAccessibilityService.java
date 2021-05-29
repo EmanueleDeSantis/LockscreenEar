@@ -50,9 +50,9 @@ public class LockAccessibilityService extends AccessibilityService {
 
     @Override
     protected void onServiceConnected() {
+        if (instance == null)
+            instance = this;
         if (new CheckPermissions().checkPermissions(this)) {
-            if (instance == null)
-                instance = this;
             sp = new SharedPref(this);
             //Auto-starts the service on boot if the accessibility service is running
             sp.setSharedmPrefService(true);
