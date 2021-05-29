@@ -25,17 +25,37 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.provider.Settings;
 
 import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
 public class LockAccessibilityService extends AccessibilityService {
     SharedPref sp;
+    public static LockAccessibilityService instance;
+
+    //Locks the screen when this accessibility service is connected, also on boot time
+    @Override
+    protected void onServiceConnected() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            instance = this;
+            performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+        }
+        super.onServiceConnected();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        instance = null;
+        return super.onUnbind(intent);
+    }
 
     @Override
     public void onCreate() {

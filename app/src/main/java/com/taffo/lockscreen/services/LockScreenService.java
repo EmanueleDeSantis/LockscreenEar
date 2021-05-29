@@ -18,6 +18,7 @@
 
 package com.taffo.lockscreen.services;
 
+import android.accessibilityservice.AccessibilityService;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -31,6 +32,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 import android.service.quicksettings.TileService;
 
@@ -86,9 +88,8 @@ public class LockScreenService extends Service {
 			if (context != null && intent.getAction() != null) {
 				if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) || intent.getAction().equals("changeNotification"))
 					startLockForeground();
-				if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+				if (intent.getAction().equals(Intent.ACTION_USER_PRESENT))
 					startLockScreenActivity();
-				}
 			}
 		}
 	};
@@ -110,7 +111,9 @@ public class LockScreenService extends Service {
 					startLockForeground();
 			};
 			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
-			startLockScreenActivity(); //Starts LockScreenActivity when the service gets started
+			//Locks the screen if the service gets started
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && LockAccessibilityService.instance != null)
+				LockAccessibilityService.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
 		}
 	}
 
