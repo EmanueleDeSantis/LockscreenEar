@@ -27,11 +27,13 @@ public class SharedPref {
     private final Context mContext;
     private final SharedPreferences mPrefNotes;
     private final SharedPreferences mPrefService;
+    private final SharedPreferences mPrefRun;
 
     public SharedPref(Context context) {
         mContext = context;
         mPrefNotes = context.getSharedPreferences(mContext.getString(R.string.numb_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
         mPrefService = context.getSharedPreferences(mContext.getString(R.string.start_service_shared_pref), Context.MODE_PRIVATE);
+        mPrefRun = context.getSharedPreferences(mContext.getString(R.string.first_run_shared_pref), Context.MODE_PRIVATE);
     }
 
     public SharedPreferences getmPrefNotes() {
@@ -40,12 +42,18 @@ public class SharedPref {
     public SharedPreferences getmPrefService() {
         return mPrefService;
     }
+    public SharedPreferences getmPrefRun() {
+        return mPrefRun;
+    }
 
     public String getSharedmPrefNotes() {
         return mPrefNotes.getString(mContext.getString(R.string.numb_of_notes_to_play_shared_pref), "3");
     }
     public boolean getSharedmPrefService() {
         return mPrefService.getBoolean(mContext.getString(R.string.start_service_shared_pref), false);
+    }
+    public boolean getSharedmPrefRun() {
+        return mPrefService.getBoolean(mContext.getString(R.string.first_run_shared_pref), false);
     }
 
     public void setSharedmPrefNotes(String string) {
@@ -56,6 +64,11 @@ public class SharedPref {
     public void setSharedmPrefService(Boolean b) {
         SharedPreferences.Editor editor = mPrefService.edit();
         editor.putBoolean(mContext.getString(R.string.start_service_shared_pref), b);
+        editor.apply();
+    }
+    public void setSharedmPrefRun(Boolean b) {
+        SharedPreferences.Editor editor = mPrefService.edit();
+        editor.putBoolean(mContext.getString(R.string.first_run_shared_pref), b);
         editor.apply();
     }
 

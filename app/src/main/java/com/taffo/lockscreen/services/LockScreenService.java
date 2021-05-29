@@ -60,7 +60,6 @@ import javax.xml.parsers.ParserConfigurationException;
 public class LockScreenService extends Service {
 	private static final int NOTIFICATION_ID = 5;
 	static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
-	CheckPermissions cp;
 	SharedPref sp;
 	static boolean isLockScreenRunning;
 
@@ -70,7 +69,7 @@ public class LockScreenService extends Service {
 		return Integer.parseInt(val);
 	}
 
-	//The actual number total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in LockScreenActivity)
+	//The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in LockScreenActivity)
 	private static int totalVal;
 	public int getTotalNotes() {
 		return totalVal;
@@ -102,18 +101,16 @@ public class LockScreenService extends Service {
 
 	@Override
 	public void onCreate() {
-		cp = new CheckPermissions();
 		sp = new SharedPref(this);
-		if (cp.checkPermissions(this)) {
+		if (new CheckPermissions().checkPermissions(this)) {
 			startLockForeground();
 			listenerNotes = (prefs, key) -> {
 				if (prefs.equals(sp.getmPrefNotes()))
 					startLockForeground();
 			};
 			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
-			//Locks the screen if the service gets started
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && LockAccessibilityService.instance != null)
-				LockAccessibilityService.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+			//Locks the screen when the service gets started (requires android 9+)
+			new LockAccessibilityService().lockTheScreen();
 		}
 	}
 
@@ -125,7 +122,7 @@ public class LockScreenService extends Service {
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		filter.addAction("changeNotification"); //Changes color of the notification, green when screen is unlocked, red when locked
 		registerReceiver(mReceiver, filter);
-		return START_STICKY;
+		return START_NOT_STICKY;
 	}
 
 	//"Foreground" service: By android 10 (maybe before?) after 20 seconds this service goes in background. Solved using the accessibility service

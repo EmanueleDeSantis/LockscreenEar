@@ -49,7 +49,7 @@ public class EarTrainingService extends Service {
 		return Integer.parseInt(val);
 	}
 
-	//The actual number total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in LockScreenActivity)
+	//The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in LockScreenActivity)
 	private static int totalVal;
 	public int getTotalNotes() {
 		return totalVal;
@@ -65,11 +65,8 @@ public class EarTrainingService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (context != null && intent.getAction() != null) {
-				if (intent.getAction().equals("earTraining")) {
-					val = sp.getSharedmPrefNotes();
-					parseXmlNotes(context);
+				if (intent.getAction().equals("earTraining"))
 					startEarTrainingActivity();
-				}
 			}
 		}
 	};
@@ -112,6 +109,8 @@ public class EarTrainingService extends Service {
 	}
 
 	private void startEarTrainingActivity() {
+		val = sp.getSharedmPrefNotes();
+		parseXmlNotes(this);
 		startActivity(new Intent(this, EarTrainingActivity.class)
 				.setAction(Intent.ACTION_VIEW)
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));

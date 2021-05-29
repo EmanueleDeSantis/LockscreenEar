@@ -19,18 +19,22 @@
 package com.taffo.lockscreen.utils;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
+import android.service.quicksettings.TileService;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.services.LockAccessibilityService;
+import com.taffo.lockscreen.services.LockTileService;
 
 public class CheckPermissions extends AppCompatActivity {
     LockAccessibilityService las = new LockAccessibilityService();
@@ -47,9 +51,9 @@ public class CheckPermissions extends AppCompatActivity {
             context.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName())));
         else if (!Settings.System.canWrite(context))
             context.startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + context.getPackageName())));
-        else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions((MainActivity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, 11);
-        } else if (!las.isAccessibilitySettingsOn(context))
+        else if (!las.isAccessibilitySettingsOn(context))
             context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
     }
 
