@@ -12,7 +12,8 @@
     <string name="numb_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>
     <string name="start_service_shared_pref" translatable="false">Start service</string>
     <string name="first_run_shared_pref" translatable="false">First run</string>
-    <string name="risk_warning">The service offered by this app can be managed by quick setting.\n\n Please do not start the service if you do not have perfect pitch, you may not be able to unlock your phone in emergency situations!</string>
+    <string name="warnings_title">Warnings</string>
+    <string name="warnings">The service offered by this app can be managed by quick setting.\n\n Please do not start the service if you do not have perfect pitch, you may not be able to unlock your phone in emergency situations!</string>
     <string name="accessibility_service_description">The following accessibility service undertakes only to lock the screen when the service gets started and to ensure that LockScreen can work even if the service is in the background.\n\nIn no case your personal data will be collected.</string>
     <string name="ok" translatable="false">OK</string>
     <string name="Do">C</string>

@@ -19,22 +19,18 @@
 package com.taffo.lockscreen.utils;
 
 import android.Manifest;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
-import android.service.quicksettings.TileService;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.services.LockAccessibilityService;
-import com.taffo.lockscreen.services.LockTileService;
 
 public class CheckPermissions extends AppCompatActivity {
     LockAccessibilityService las = new LockAccessibilityService();

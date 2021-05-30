@@ -20,21 +20,15 @@ package com.taffo.lockscreen.services;
 
 import android.accessibilityservice.AccessibilityService;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.provider.Settings;
 
 import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-
-import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
@@ -42,7 +36,7 @@ public class LockAccessibilityService extends AccessibilityService {
     SharedPref sp;
     public static LockAccessibilityService instance;
 
-    //Locks the screen
+    //Locks the screen (also used in LockScreenService)
     public void lockTheScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && instance != null)
             instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
@@ -63,13 +57,14 @@ public class LockAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
     }
 
+
     @Override
-    public boolean onUnbind(Intent intent) {
+    public void onDestroy() {
         instance = null;
         sp.setSharedmPrefService(false);
         stopService(new Intent(this, LockScreenService.class));
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-        return super.onUnbind(intent);
+        super.onDestroy();
     }
 
     @Override

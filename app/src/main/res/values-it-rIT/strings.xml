@@ -9,7 +9,6 @@
     <string name="number_of_notes_to_play_1_8">Numero di note da riprodurre (1–8)</string>
     <string name="accessibility_service_description">Il seguente servizio di accessibilità si impegna esclusivamente a bloccare lo schermo quando il servizio viene avviato e a garantire che LockScreen possa funzionare anche se il servizio è in background.\n\nIn nessun caso saranno raccolti i tuoi dati personali.</string>
     <string name="number_of_notes_to_play">Numero di note da riprodurre</string>
-    <string name="risk_warning">Il servizio offerto da questa applicaizone può essere gestito tramite quick setting.\n\nPer favore non attivare il servizio se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il telefono in situazioni di emergenza!</string>
     <string name="Do">Do</string>
     <string name="Dodie">Do#</string>
     <string name="Re">Re</string>
@@ -23,4 +22,6 @@
     <string name="Ladie">La#</string>
     <string name="Si">Si</string>
     <string name="training">Allenamento</string>
+    <string name="warnings_title">Avvertenze</string>
+    <string name="warnings">Il servizio offerto da questa applicaizone può essere gestito tramite quick setting.  Per favore non attivare il servizio se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il telefono in situazioni di emergenza!</string>
 </resources>

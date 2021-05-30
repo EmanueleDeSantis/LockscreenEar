@@ -48,12 +48,6 @@ public class LockTileService extends TileService {
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-        return super.onUnbind(intent);
-    }
-
-    @Override
     public void onTileAdded() {
         updateTileService();
         super.onTileAdded();

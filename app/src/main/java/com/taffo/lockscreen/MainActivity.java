@@ -18,18 +18,14 @@
 
 package com.taffo.lockscreen;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
@@ -74,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (!sp.getSharedmPrefRun()) {
             new AlertDialog.Builder(this)
-                    .setMessage(R.string.risk_warning)
+                    .setTitle(getString(R.string.warnings_title))
+                    .setMessage(getString(R.string.warnings))
                     .setNeutralButton(getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefRun(true))
                     .create()
                     .show();
