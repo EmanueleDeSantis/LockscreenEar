@@ -23,5 +23,5 @@
     <string name="Si">Si</string>
     <string name="training">Allenamento</string>
     <string name="warnings_title">Avvertenze</string>
-    <string name="warnings">Il servizio offerto da questa applicaizone può essere gestito tramite quick setting.\n\nPer favore non attivare il servizio se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il telefono in situazioni di emergenza!</string>
+    <string name="warnings">Il servizio offerto da questa applicaizone può anche essere gestito tramite quick setting.\n\nPer favore non attivare il servizio se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il telefono in situazioni di emergenza!</string>
 </resources>
