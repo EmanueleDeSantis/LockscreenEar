@@ -27,7 +27,6 @@ import android.os.IBinder;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
-import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.R;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
@@ -38,7 +37,6 @@ public class LockTileService extends TileService {
     CheckPermissions cp = new CheckPermissions();
     SharedPref sp;
     Tile tile;
-    static boolean isLockScreenRunning;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,6 +60,7 @@ public class LockTileService extends TileService {
     //Starts/finishes the service
     @Override
     public void onClick() {
+        tile = getQsTile();
         if (tile.getState() == Tile.STATE_ACTIVE) {
             tile.setState(Tile.STATE_INACTIVE);
             sp.setSharedmPrefService(false);
@@ -79,16 +78,12 @@ public class LockTileService extends TileService {
     //Sets the correct state of the tile
     private void updateTileService() {
         sp = new SharedPref(this);
-        try {
-            LockScreenActivity lsa = new LockScreenActivity();
-            isLockScreenRunning = lsa.isLockScreenRunning();
-
-        } catch (Exception e) {
-            isLockScreenRunning = false;
-        }
-
         tile = getQsTile();
-        if (!(isLockScreenRunning || ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked())) {
+        if (cp.getIsLockScreenRunning() || ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked()) {
+            tile.setLabel(getString(R.string.app_name) + " on");
+            tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
+            tile.setState(Tile.STATE_UNAVAILABLE);
+        } else {
             if (!cp.checkPermissions(this)) {
                 tile.setLabel(getString(R.string.app_name) + " off");
                 tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
@@ -104,9 +99,6 @@ public class LockTileService extends TileService {
                     tile.setState(Tile.STATE_INACTIVE);
                 }
             }
-        } else {
-            tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
-            tile.setState(Tile.STATE_UNAVAILABLE);
         }
         tile.updateTile();
     }

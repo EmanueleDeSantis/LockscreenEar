@@ -18,7 +18,6 @@
 
 package com.taffo.lockscreen.services;
 
-import android.accessibilityservice.AccessibilityService;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -32,14 +31,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.IBinder;
 import android.service.quicksettings.TileService;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.taffo.lockscreen.EarTrainingActivity;
 import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.R;
@@ -61,7 +58,6 @@ public class LockScreenService extends Service {
 	private static final int NOTIFICATION_ID = 5;
 	static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
 	SharedPref sp;
-	static boolean isLockScreenRunning;
 
 	//The actual number of notes to play (used in LockScreenActivity)
 	private static String val;
@@ -137,16 +133,8 @@ public class LockScreenService extends Service {
 				0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		NotificationCompat.Action increaseNotes = new NotificationCompat.Action.Builder(0, getString(R.string.notes_incr), actionIncrementNotes).build();
 
-		try {
-			LockScreenActivity lsa = new LockScreenActivity();
-			isLockScreenRunning = lsa.isLockScreenRunning();
-
-		} catch (Exception e) {
-			isLockScreenRunning = false;
-		}
-
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.app_name));
-		if (!(isLockScreenRunning || ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked())) {
+		if (!(new CheckPermissions().getIsLockScreenRunning() || ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked())) {
 			//Notification panel when the screen is unlocked
 			//Green
 			Notification notification = notificationBuilder
@@ -217,21 +205,12 @@ public class LockScreenService extends Service {
 	public static class IncrementNumberOfNotes extends BroadcastReceiver {
 		int numIncremented;
 		int actualNumNotes;
-		boolean isLockScreenRunning;
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			try {
-				LockScreenActivity lsa = new LockScreenActivity();
-				isLockScreenRunning = lsa.isLockScreenRunning();
-
-			} catch (Exception e) {
-				isLockScreenRunning = false;
-			}
-
 			/*Increments the number of notes to play when the user clicks on "NOTE++" in the notification panel
 			and when the number reaches 8, the limit number, after another click the count restarts*/
-			if (!(isLockScreenRunning || ((KeyguardManager) Objects.requireNonNull(context.getSystemService(KEYGUARD_SERVICE))).isKeyguardLocked())) {
+			if (!(new CheckPermissions().getIsLockScreenRunning() || ((KeyguardManager) Objects.requireNonNull(context.getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked())) {
 				SharedPref sp = new SharedPref(context);
 				actualNumNotes = Integer.parseInt(sp.getSharedmPrefNotes());
 				if (actualNumNotes < 8)

@@ -34,6 +34,7 @@ import com.taffo.lockscreen.services.LockAccessibilityService;
 
 public class CheckPermissions extends AppCompatActivity {
     LockAccessibilityService las = new LockAccessibilityService();
+    static boolean isLockScreenRunningValue = false;
 
     public boolean checkPermissions(Context context) {
         return (las.isAccessibilitySettingsOn(context)
@@ -51,6 +52,14 @@ public class CheckPermissions extends AppCompatActivity {
             ActivityCompat.requestPermissions((MainActivity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, 11);
         else if (!las.isAccessibilitySettingsOn(context))
             context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+    }
+
+    public void setIsLockScreenRunning(boolean b) {
+        isLockScreenRunningValue = b;
+    }
+
+    public boolean getIsLockScreenRunning() {
+        return isLockScreenRunningValue;
     }
 
 }

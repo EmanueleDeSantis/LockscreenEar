@@ -42,6 +42,7 @@ import android.widget.TextView;
 
 import com.taffo.lockscreen.services.LockScreenService;
 import com.taffo.lockscreen.services.LockTileService;
+import com.taffo.lockscreen.utils.CheckPermissions;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,7 +58,6 @@ public class LockScreenActivity extends AppCompatActivity {
     final int NOTES = lss.getNotes();
     final int TOTAL_NOTES = lss.getTotalNotes();
     final Document doc = lss.getDocum();
-    static boolean isLockScreenRunning = false;
 
     int systemScreenOffTimeoutDefaultValue;
     final int customScreenOffTimeoutValue = 10000; //10 seconds
@@ -83,13 +83,9 @@ public class LockScreenActivity extends AppCompatActivity {
 
     List<String> selectedNotesList = new ArrayList<>(NOTES);
 
-    public boolean isLockScreenRunning() {
-        return isLockScreenRunning;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        isLockScreenRunning = true;
+        new CheckPermissions().setIsLockScreenRunning(true);
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
 
         play();
@@ -564,7 +560,7 @@ public class LockScreenActivity extends AppCompatActivity {
     }
 
     private void unlockAndRemoveView() {
-        isLockScreenRunning = false;
+        new CheckPermissions().setIsLockScreenRunning(false);
         sendBroadcast(new Intent("changeNotification"));
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         removeView();

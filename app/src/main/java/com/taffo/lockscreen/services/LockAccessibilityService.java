@@ -24,8 +24,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
 
+import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
 
