@@ -108,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Redirect to the accessibility settings's page
         switchStart.setOnLongClickListener(v -> {
-            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             return true;
         });
 

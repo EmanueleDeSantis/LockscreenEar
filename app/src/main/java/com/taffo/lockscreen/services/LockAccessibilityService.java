@@ -57,7 +57,6 @@ public class LockAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
     }
 
-
     @Override
     public void onDestroy() {
         instance = null;

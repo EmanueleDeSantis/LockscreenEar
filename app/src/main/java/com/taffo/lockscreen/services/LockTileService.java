@@ -69,6 +69,8 @@ public class LockTileService extends TileService {
             tile.setState(Tile.STATE_ACTIVE);
             sp.setSharedmPrefService(true);
             startForegroundService(new Intent(this, LockScreenService.class));
+            //Locks the screen when the service gets started by the quick setting tile (requires android 9+)
+            new LockAccessibilityService().lockTheScreen();
         }
         tile.updateTile();
         updateTileService();

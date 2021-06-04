@@ -105,8 +105,6 @@ public class LockScreenService extends Service {
 					startLockForeground();
 			};
 			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
-			//Locks the screen when the service gets started (requires android 9+)
-			new LockAccessibilityService().lockTheScreen();
 		}
 	}
 
