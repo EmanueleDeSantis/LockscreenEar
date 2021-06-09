@@ -29,6 +29,7 @@ import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
@@ -46,20 +47,32 @@ public class LockAccessibilityService extends AccessibilityService {
     protected void onServiceConnected() {
         if (instance == null)
             instance = this;
-        if (new CheckPermissions().checkPermissions(this)) {
-            sp = new SharedPref(this);
-            //Auto-starts the service on boot if the accessibility service is running
+        sp = new SharedPref(this);
+        //Executed only at first boot
+        if (sp.getSharedmPrefFirstRunAccessibilitySettings()) {
             sp.setSharedmPrefService(true);
             startForegroundService(new Intent(this, LockScreenService.class));
             TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-            lockTheScreen();
+            startActivity(new Intent(this, MainActivity.class)
+                    .setAction(Intent.ACTION_VIEW)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        } else {
+            if (new CheckPermissions().checkPermissions(this)) {
+                //Auto-starts the service on boot if the accessibility service is running
+                sp.setSharedmPrefService(true);
+                startForegroundService(new Intent(this, LockScreenService.class));
+                TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+                lockTheScreen();
+            }
+            super.onServiceConnected();
         }
-        super.onServiceConnected();
     }
 
     @Override
     public void onDestroy() {
         instance = null;
+        if (sp.getSharedmPrefFirstRunAccessibilitySettings())
+            sp.setSharedmPrefFirstRunAccessibilitySettings(false);
         sp.setSharedmPrefService(false);
         stopService(new Intent(this, LockScreenService.class));
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));

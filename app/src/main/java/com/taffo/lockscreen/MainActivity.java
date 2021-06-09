@@ -68,11 +68,12 @@ public class MainActivity extends AppCompatActivity {
 
         sp = new SharedPref(this);
 
-        if (!sp.getSharedmPrefRun()) {
+        //Dialog showed only at first boot
+        if (sp.getSharedmPrefFirstRunMain()) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.warnings_title))
                     .setMessage(getString(R.string.warnings))
-                    .setNeutralButton(getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefRun(true))
+                    .setNeutralButton(getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefFirstRunMain(false))
                     .create()
                     .show();
         }
@@ -108,8 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Redirect to the accessibility settings's page
         switchStart.setOnLongClickListener(v -> {
-            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
             return true;
         });
 
@@ -136,14 +136,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonTraining.setOnClickListener(v -> sendBroadcast(new Intent("earTraining")));
+        buttonTraining.setOnClickListener(v -> startService(new Intent(this, EarTrainingService.class)));
 
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart() {
-        startService(new Intent(this, EarTrainingService.class));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else
@@ -153,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        startService(new Intent(this, EarTrainingService.class));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else

@@ -19,10 +19,8 @@
 package com.taffo.lockscreen.services;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
@@ -43,33 +41,23 @@ import javax.xml.parsers.ParserConfigurationException;
 public class EarTrainingService extends Service {
 	SharedPref sp;
 
-	//The actual number of notes to play (used in LockScreenActivity)
+	//The actual number of notes to play (used in EarTrainingActivity)
 	private static String val;
 	public int getNotes() {
 		return Integer.parseInt(val);
 	}
 
-	//The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in LockScreenActivity)
+	//The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in EarTrainingActivity)
 	private static int totalVal;
 	public int getTotalNotes() {
 		return totalVal;
 	}
 
-	//The xml document is parsed here for optimizing time (used in LockScreenActivity)
+	//The xml document is parsed here for optimizing time (used in EarTrainingActivity)
 	private static Document docum;
 	public Document getDocum() {
 		return docum;
 	}
-
-	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (context != null && intent.getAction() != null) {
-				if (intent.getAction().equals("earTraining"))
-					startEarTrainingActivity();
-			}
-		}
-	};
 
 	@Nullable
 	@Override
@@ -78,23 +66,10 @@ public class EarTrainingService extends Service {
 	}
 
 	@Override
-	public void onCreate() {
-		sp = new SharedPref(this);
-	}
-
-	//Registers the receiver for lock screen events
-	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		IntentFilter filter = new IntentFilter(("earTraining")); //Starts EarTrainingActivity when the "earTraining" button in MainActivity is clicked
-		registerReceiver(mReceiver, filter);
-		return START_STICKY;
-	}
-
-	//Unregisters the receiver
-	@Override
-	public void onDestroy() {
-		unregisterReceiver(mReceiver);
-		super.onDestroy();
+		sp = new SharedPref(this);
+		startEarTrainingActivity();
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	private void parseXmlNotes(Context cntx) {

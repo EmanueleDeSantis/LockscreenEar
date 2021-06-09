@@ -113,6 +113,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
             mWindowManager = ((WindowManager) getSystemService(WINDOW_SERVICE));
             view = View.inflate(this, R.layout.activity_lockscreen, null);
+            view.setBackgroundColor(getColor(R.color.custom_background)); //The background color does not disappear after the user presses the home button
             mWindowManager.addView(view, mParams);
         } else
             unlockAndRemoveView();

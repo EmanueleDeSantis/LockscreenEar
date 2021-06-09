@@ -27,13 +27,15 @@ public class SharedPref {
     private final Context mContext;
     private final SharedPreferences mPrefNotes;
     private final SharedPreferences mPrefService;
-    private final SharedPreferences mPrefRun;
+    private final SharedPreferences mPrefFirstRunMain;
+    private final SharedPreferences mPrefFirstRunAccessibilitySettings;
 
     public SharedPref(Context context) {
         mContext = context;
         mPrefNotes = context.getSharedPreferences(mContext.getString(R.string.numb_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
         mPrefService = context.getSharedPreferences(mContext.getString(R.string.start_service_shared_pref), Context.MODE_PRIVATE);
-        mPrefRun = context.getSharedPreferences(mContext.getString(R.string.first_run_shared_pref), Context.MODE_PRIVATE);
+        mPrefFirstRunMain = context.getSharedPreferences(mContext.getString(R.string.first_run_main_shared_pref), Context.MODE_PRIVATE);
+        mPrefFirstRunAccessibilitySettings = context.getSharedPreferences(mContext.getString(R.string.first_run_accessibility_settings_shared_pref), Context.MODE_PRIVATE);
     }
 
     public SharedPreferences getmPrefNotes() {
@@ -42,9 +44,6 @@ public class SharedPref {
     public SharedPreferences getmPrefService() {
         return mPrefService;
     }
-    public SharedPreferences getmPrefRun() {
-        return mPrefRun;
-    }
 
     public String getSharedmPrefNotes() {
         return mPrefNotes.getString(mContext.getString(R.string.numb_of_notes_to_play_shared_pref), "3");
@@ -52,8 +51,11 @@ public class SharedPref {
     public boolean getSharedmPrefService() {
         return mPrefService.getBoolean(mContext.getString(R.string.start_service_shared_pref), false);
     }
-    public boolean getSharedmPrefRun() {
-        return mPrefService.getBoolean(mContext.getString(R.string.first_run_shared_pref), false);
+    public boolean getSharedmPrefFirstRunMain() {
+        return mPrefFirstRunMain.getBoolean(mContext.getString(R.string.first_run_main_shared_pref), true);
+    }
+    public boolean getSharedmPrefFirstRunAccessibilitySettings() {
+        return mPrefFirstRunAccessibilitySettings.getBoolean(mContext.getString(R.string.first_run_accessibility_settings_shared_pref), true);
     }
 
     public void setSharedmPrefNotes(String string) {
@@ -66,9 +68,14 @@ public class SharedPref {
         editor.putBoolean(mContext.getString(R.string.start_service_shared_pref), b);
         editor.apply();
     }
-    public void setSharedmPrefRun(Boolean b) {
-        SharedPreferences.Editor editor = mPrefService.edit();
-        editor.putBoolean(mContext.getString(R.string.first_run_shared_pref), b);
+    public void setSharedmPrefFirstRunMain(Boolean b) {
+        SharedPreferences.Editor editor = mPrefFirstRunMain.edit();
+        editor.putBoolean(mContext.getString(R.string.first_run_main_shared_pref), b);
+        editor.apply();
+    }
+    public void setSharedmPrefFirstRunAccessibilitySettings(Boolean b) {
+        SharedPreferences.Editor editor = mPrefFirstRunAccessibilitySettings.edit();
+        editor.putBoolean(mContext.getString(R.string.first_run_accessibility_settings_shared_pref), b);
         editor.apply();
     }
 
