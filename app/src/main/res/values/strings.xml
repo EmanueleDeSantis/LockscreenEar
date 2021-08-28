@@ -28,7 +28,7 @@
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
     <string name="warnings_title">Warnings</string>
-    <string name="warnings_message">If enabled, the main service used for lockscreen ensures that, after device wakes up (e.g after the keyguard is gone), the lockscreen offered by this app gets started.\n\nIF DURING THIS ACTIVITY ANY ACTION IS TAKEN TO BYPASS IT, DEVICE WILL BE LOCKED AGAIN.\n\nThis service can also be managed via quick setting.\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your device in emergency situations!</string>
+    <string name="warnings_message">If enabled, the main service used for lockscreen undertakes, after device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.\n\nIF DURING THIS ACTIVITY ANY ACTION IS TAKEN TO BYPASS IT, DEVICE WILL BE LOCKED AGAIN.\n\nThis service can also be managed via quick setting.\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your device in emergency situations!</string>
     <string name="accessibility_service_description">The following accessibility service undertakes only to LOCK THE DEVICE when:\n1) any action is taken to bypass the lockscreen, if active, offered by LockScreen;\n2) this service gets started (a situation that also occurs when the device is booted), if explicitly requested via settings.\n\nIn no case your personal data will be collected.</string>
 
     <string name="number_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>

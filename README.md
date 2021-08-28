@@ -1,3 +1,8 @@
 # LockScreen
-Android lockscreen for people with perfect pitch. Available from Android 9 (API 28).<br />
-If enabled, the main service used for lockscreen ensures that, after device wakes up (e.g after the keyguard is gone), the lockscreen offered by this app gets started.<br />IF DURING THIS ACTIVITY ANY ACTION IS TAKEN TO BYPASS IT, DEVICE WILL BE LOCKED AGAIN.<br />This service can also be managed via quick setting.<br />Please do not start it if you do not have perfect pitch, you may not be able to unlock your device in emergency situations!
+Android lockscreen for people with perfect pitch. Available from Android 9 (API 28).
+
+If enabled, the main service used for lockscreen undertakes, after device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.
+
+IF DURING THIS ACTIVITY ANY ACTION IS TAKEN TO BYPASS IT, DEVICE WILL BE LOCKED AGAIN.
+
+This service can also be managed via quick setting.\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your device in emergency situations!
