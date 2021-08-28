@@ -4,11 +4,10 @@
     <string name="insert_notes">Inserisci le note</string>
     <string name="click_to_grant_permissions_and_start_the_service">Blocco schermo per orecchio assoluto</string>
     <string name="service_running">Servizio in esecuzione</string>
-    <string name="notes_incr">NOTE++</string>
+    <string name="notes_increase">NUMERO DI NOTE +1</string>
     <string name="grant_and_start">Avvia/Interrompi il servizio</string>
-    <string name="number_of_notes_to_play_1_8">Numero di note da riprodurre (1–8)</string>
-    <string name="accessibility_service_description">Il seguente servizio di accessibilità si impegna esclusivamente a bloccare lo schermo quando il servizio viene avviato e a garantire che LockScreen possa funzionare anche se il servizio è in background.\n\nIn nessun caso saranno raccolti i tuoi dati personali.</string>
-    <string name="number_of_notes_to_play">Numero di note da riprodurre</string>
+    <string name="accessibility_service_description">Il seguente servizio di accessibilità si impegna esclusivamente a BLOCCARE IL DISPOSITIVO quando:\n1) viene compiuta qualsivoglia azione volta all\'elusione del blocco schermo, se attivo, fornito da LockScreen;\n2) questo servizio viene avviato (situazione che si verifica anche all\'avvio del dispositivo), se esplicitamente richiesto tramite impostazioni.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
+    <string name="number_of_notes_to_play">"Numero di note da riprodurre: "</string>
     <string name="Do">Do</string>
     <string name="Dodie">Do#</string>
     <string name="Re">Re</string>
@@ -23,5 +22,19 @@
     <string name="Si">Si</string>
     <string name="training">Allenamento</string>
     <string name="warnings_title">Avvertenze</string>
-    <string name="warnings">Il servizio offerto da questa applicazione può anche essere gestito tramite quick setting.\n\nPer favore non attivare il servizio se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il telefono in situazioni di emergenza!</string>
+    <string name="warnings_message">Se attivo, il servizio principale adibito al blocco schermo garantisce che, dopo il risveglio del dispositivo (ad esempio dopo che il blocco schermo di sistema è stato superato), si attivi il blocco schermo offerto da LockScreen.\n\nSE DURANTE QUESTA ATTIVTÀ VERRÀ COMPIUTA QUALSIVOGLIA AZIONE VOLTA ALLA SUA ELUSIONE, IL DISPOSITIVO VERRÀ NUOVAMENTE BLOCCATO.\n\nQuesto servizio può anche essere gestito tramite impostazione rapida.\n\nPer favore non attivarlo se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il dispositivo in situazioni di emergenza!</string>
+    <string name="on_restart_setting_title">Avvio automatico</string>
+    <string name="on_restart_setting_message">Se questa impostazione è attivata, ogni volta che il servizio di accessibilità verrà avviato (situazione che si verifica anche al riavvio del dispositivo), il numero di note da riprodurre verrà impostato al valore presente nella casella qui in basso; INOLTRE IL DISPOSITIVO VERRÀ BLOCCATO IN AUTOMATICO.\n\nSe questa impostazione è disattivata, ogni volta che il servizio di accessibilità verrà avviato, verrà solamente avviato il servizio principale adibito al blocco schermo.</string>
+    <string name="start_on_boot">Avvia automaticamente il servizio</string>
+    <string name="volume_adapter_setting_title">Volume automatico</string>
+    <string name="volume_adapter_setting_message">Se questa impostazione è attivata, se il servizio principale adibito al blocco schermo è attivo e il dispositivo è bloccato, verrà stabilito il valore ottimale da assegnare al volume multimediale in base al rumore medio percepito dal microfono.\n\nAumenta il consumo della batteria.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
+    <string name="automatic_volume_level">Regola automaticamente il volume</string>
+    <string name="number_of_notes_warning">Il numero deve essere compreso tra 1 e 8</string>
+    <string name="settings">Impostazioni</string>
+    <string name="about">Info</string>
+    <string name="build_version">Versione</string>
+    <string name="basics">Impostazioni di base</string>
+    <string name="source_code">Codice sorgente</string>
+    <string name="enabled">Attivata</string>
+    <string name="disabled">Disattivata</string>
 </resources>

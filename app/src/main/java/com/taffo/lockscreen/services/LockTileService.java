@@ -18,28 +18,26 @@
 
 package com.taffo.lockscreen.services;
 
-import android.app.KeyguardManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
+import androidx.annotation.Nullable;
+
 import com.taffo.lockscreen.R;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
-import java.util.Objects;
-
-public class LockTileService extends TileService {
-    CheckPermissions cp = new CheckPermissions();
-    SharedPref sp;
+public final class LockTileService extends TileService {
     Tile tile;
+    SharedPref sp;
+    CheckPermissions cp;
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(@Nullable Intent intent) {
         //Updates the tile
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         return super.onBind(intent);
@@ -47,19 +45,20 @@ public class LockTileService extends TileService {
 
     @Override
     public void onTileAdded() {
-        updateTileService();
         super.onTileAdded();
+        updateTileService();
     }
 
     @Override
     public void onStartListening() {
-        updateTileService();
         super.onStartListening();
+        updateTileService();
     }
 
     //Starts/finishes the service
     @Override
     public void onClick() {
+        super.onClick();
         tile = getQsTile();
         if (tile.getState() == Tile.STATE_ACTIVE) {
             tile.setState(Tile.STATE_INACTIVE);
@@ -74,15 +73,15 @@ public class LockTileService extends TileService {
         }
         tile.updateTile();
         updateTileService();
-        super.onClick();
     }
 
     //Sets the correct state of the tile
     private void updateTileService() {
         sp = new SharedPref(this);
+        cp = new CheckPermissions();
         tile = getQsTile();
-        if (cp.getIsLockScreenRunning() || ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked()) {
-            tile.setLabel(getString(R.string.app_name) + " on");
+        if (cp.getIsScreenLocked(this)) {
+            tile.setLabel(getString(R.string.app_name) + " on: " + sp.getSharedmPrefNumberOfNotesToPlay());
             tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
             tile.setState(Tile.STATE_UNAVAILABLE);
         } else {
@@ -92,11 +91,11 @@ public class LockTileService extends TileService {
                 tile.setState(Tile.STATE_UNAVAILABLE);
             } else {
                 if (sp.getSharedmPrefService()) {
-                    tile.setLabel(getString(R.string.app_name) + " on");
+                    tile.setLabel(getString(R.string.app_name) + " on: " + sp.getSharedmPrefNumberOfNotesToPlay());
                     tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
                     tile.setState(Tile.STATE_ACTIVE);
                 } else {
-                    tile.setLabel(getString(R.string.app_name) + " off");
+                    tile.setLabel(getString(R.string.app_name) + " off: " + sp.getSharedmPrefNumberOfNotesToPlay());
                     tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
                     tile.setState(Tile.STATE_INACTIVE);
                 }

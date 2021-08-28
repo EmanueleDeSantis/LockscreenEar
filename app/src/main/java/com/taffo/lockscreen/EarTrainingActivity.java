@@ -18,6 +18,7 @@
 
 package com.taffo.lockscreen;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
@@ -27,40 +28,40 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.taffo.lockscreen.services.EarTrainingService;
+import com.taffo.lockscreen.utils.XMLParser;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class EarTrainingActivity extends AppCompatActivity {
-    EarTrainingService ts = new EarTrainingService();
-    final int NOTES = ts.getNotes();
-    final int TOTAL_NOTES = ts.getTotalNotes();
-    final Document doc = ts.getDocum();
+public final class EarTrainingActivity extends AppCompatActivity {
+    private final XMLParser parser = new XMLParser();
+    private final int NOTES = parser.getNotes();
+    private final int TOTAL_NOTES = parser.getTotalNotes();
+    private final Document doc = parser.getDocum();
 
-    TextView textViewNotes;
-    Button buttonDo;
-    Button buttonDodie;
-    Button buttonRe;
-    Button buttonRedie;
-    Button buttonMi;
-    Button buttonFa;
-    Button buttonFadie;
-    Button buttonSol;
-    Button buttonSoldie;
-    Button buttonLa;
-    Button buttonLadie;
-    Button buttonSi;
+    private TextView textViewNotes;
+    private Button buttonDo;
+    private Button buttonDodie;
+    private Button buttonRe;
+    private Button buttonRedie;
+    private Button buttonMi;
+    private Button buttonFa;
+    private Button buttonFadie;
+    private Button buttonSol;
+    private Button buttonSoldie;
+    private Button buttonLa;
+    private Button buttonLadie;
+    private Button buttonSi;
 
-    List<String> selectedNotesList = new ArrayList<>(NOTES);
+    private final List<String> selectedNotesList = new ArrayList<>(NOTES);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lockscreen);
 
         play();
@@ -224,44 +225,29 @@ public class EarTrainingActivity extends AppCompatActivity {
                 unlock();
             }
         });
-
-        super.onCreate(savedInstanceState);
     }
 
-    Random rand = new Random();
-    int randIdNote;
-    int lastRandIdNote;
-    Element note;
-    String noteName;
-    String noteSoundName;
-    String[] outputtedNotes = new String[NOTES];
+    private final Random rand = new Random();
+    private final int[] randomNotes = new int[NOTES];
+    private final String[] outputtedNotes = new String[NOTES];
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
-        for (int i = 0; i < NOTES; i++) {
-            randIdNote = rand.nextInt(TOTAL_NOTES) + 1;
-            note = doc.getElementById(String.valueOf(randIdNote));
-            noteName = note.getElementsByTagName("name").item(0).getTextContent();
-            noteSoundName = note.getElementsByTagName("sound_name").item(0).getTextContent();
-            MediaPlayer.create(this, getResources().getIdentifier(noteSoundName, "raw", getPackageName())).start();
-            if (i == 0) {
-                lastRandIdNote = randIdNote;
-                outputtedNotes[i] = noteName;
-            } else {
-                if (randIdNote < lastRandIdNote) {
-                    outputtedNotes[i] = outputtedNotes[i-1];
-                    outputtedNotes[i-1] = noteName;
-                    lastRandIdNote = randIdNote;
-                } else
-                    outputtedNotes[i] = noteName;
-            }
-        }
+        for (int i = 0; i < NOTES; i++)
+            randomNotes[i] = rand.nextInt(TOTAL_NOTES) + 1;
+        for (int i = 0; i < NOTES; i++)
+            MediaPlayer.create(this, getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
+                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName())).start();
+        Arrays.sort(randomNotes);
+        for (int i = 0; i < NOTES; i++)
+            outputtedNotes[i] = doc.getElementById(String.valueOf(randomNotes[i]))
+                    .getElementsByTagName("name").item(0).getTextContent();
     }
 
     //Unlocks if user guessed all and only the outputted notes
-    List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
-    List<Integer> notesColor = new ArrayList<>(NOTES);
-    StringBuilder coloredStringTextViewNotes = new StringBuilder();
+    private final List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
+    private final List<Integer> notesColor = new ArrayList<>(NOTES);
+    private final StringBuilder coloredStringTextViewNotes = new StringBuilder();
     private void unlock() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
             finish();
@@ -320,10 +306,10 @@ public class EarTrainingActivity extends AppCompatActivity {
                 }
             }
 
-            /*Converts the name of the outputted notes based on the chosen language instead of the name present in the xml file and
-            Colors the outputted notes in the textview and the buttons of this notes:
-            green if the entry is correct,
-            yellow if the entry is missing in the outputted notes*/
+            //Converts the name of the outputted notes based on the chosen language instead of the name present in the xml file and
+            //Colors the outputted notes in the text view and the buttons of this notes:
+            //green if the entry is correct,
+            //yellow if the entry is missing in the outputted notes
             for (String onl : outputtedNotesList) {
                 switch (onl) {
                     case "do":
@@ -449,7 +435,7 @@ public class EarTrainingActivity extends AppCompatActivity {
                 }
             }
 
-            //Prints all the outputted notes on the textview, since the user inserted an incorrect entry (see also the functions above)
+            //Prints all the outputted notes on the text view, since the user inserted an incorrect entry (see also the functions above)
             for (int i = 0; i < NOTES; i++) {
                 if (i != NOTES-1)
                     coloredStringTextViewNotes.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ").append("</font>");

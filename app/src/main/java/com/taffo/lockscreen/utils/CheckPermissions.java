@@ -19,47 +19,48 @@
 package com.taffo.lockscreen.utils;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.services.LockAccessibilityService;
 
-public class CheckPermissions extends AppCompatActivity {
+import java.util.Objects;
+
+public final class CheckPermissions {
     LockAccessibilityService las = new LockAccessibilityService();
-    static boolean isLockScreenRunningValue = false;
+    private static boolean isLockScreenRunning = false;
 
     public boolean checkPermissions(Context context) {
         return (las.isAccessibilitySettingsOn(context)
                 && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-                && Settings.System.canWrite(context)
-                && Settings.canDrawOverlays(context));
+                && Settings.System.canWrite(context));
     }
 
-    public void askPermissions(Context context) {
-        if (!Settings.canDrawOverlays(context))
-            context.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName())));
-        else if (!Settings.System.canWrite(context))
+    public void askPermissions(Activity activity, Context context) {
+        if (!Settings.System.canWrite(context))
             context.startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + context.getPackageName())));
         else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions((MainActivity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, 11);
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, 11);
         else if (!las.isAccessibilitySettingsOn(context))
             context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
     }
 
     public void setIsLockScreenRunning(boolean b) {
-        isLockScreenRunningValue = b;
+        isLockScreenRunning = b;
     }
-
     public boolean getIsLockScreenRunning() {
-        return isLockScreenRunningValue;
+        return isLockScreenRunning;
+    }
+    public boolean getIsScreenLocked(Context context) {
+        return isLockScreenRunning || ((KeyguardManager) Objects.requireNonNull(context.getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked();
     }
 
 }

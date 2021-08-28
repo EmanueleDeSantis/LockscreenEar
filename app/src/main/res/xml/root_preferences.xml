@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/basics" app:iconSpaceReserved="false">
+        <Preference
+            app:key="@string/on_restart_setting"
+            app:title="@string/on_restart_setting_title"
+            app:icon="@drawable/restart_icon"
+            app:fragment="com.taffo.lockscreen.SettingsActivity$OnRestartSettingFragment" />
+
+        <Preference
+            app:key="@string/volume_adapter_setting"
+            app:title="@string/volume_adapter_setting_title"
+            app:icon="@drawable/volume_icon"
+            app:fragment="com.taffo.lockscreen.SettingsActivity$VolumeAdapterSettingFragment" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/about" app:iconSpaceReserved="false">
+        <Preference
+            app:title="@string/warnings_title"
+            app:iconSpaceReserved="false"
+            app:fragment="com.taffo.lockscreen.SettingsActivity$Warnings" />
+        <Preference
+            app:title="@string/source_code"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.github.com/EmanueleDeSantis/LockScreen" />
+        </Preference>
+        <Preference
+            app:key="@string/about"
+            app:title="@string/build_version"
+            app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+</PreferenceScreen>

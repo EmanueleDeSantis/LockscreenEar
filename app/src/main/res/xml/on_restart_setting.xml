@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
+            <Preference
+                app:layout="@layout/on_restart_setting" />
+        </PreferenceCategory>
+
+    <PreferenceCategory>
+        <SwitchPreference
+            app:key="@string/on_restart_switch_setting_shared_pref"
+            app:title="@string/start_on_boot"
+            app:summaryOn="@string/enabled"
+            app:summaryOff="@string/disabled"
+            app:defaultValue="@string/disabled"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="@string/on_restart_list_setting_number_of_notes_to_play_shared_pref"
+            app:title="@string/number_of_notes_to_play"
+            app:entries="@array/number_of_notes"
+            app:entryValues="@array/number_of_notes"
+            app:defaultValue="@string/_3"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="@string/on_restart_switch_setting_shared_pref" />
+    </PreferenceCategory>
+</PreferenceScreen>

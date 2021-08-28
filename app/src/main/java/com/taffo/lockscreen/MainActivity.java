@@ -18,23 +18,25 @@
 
 package com.taffo.lockscreen;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.services.LockScreenService;
@@ -44,22 +46,23 @@ import com.taffo.lockscreen.services.EarTrainingService;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
-    CheckPermissions cp = new CheckPermissions();
-    SharedPref sp;
-    @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchStart;
-    EditText numberInput;
-    Button buttonTraining;
-    static SharedPreferences.OnSharedPreferenceChangeListener listenerService;
-    static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
+public final class MainActivity extends AppCompatActivity {
+    private final CheckPermissions cp = new CheckPermissions();
+    private SharedPref sp;
+    private SwitchCompat switchStart;
+    private AutoCompleteTextView numberInput;
+    //Apparently listeners must be declared here in order to work, so please ignore warnings
+    private SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
+    private SharedPreferences.OnSharedPreferenceChangeListener listenerService;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         switchStart = findViewById(R.id.switchStart);
         numberInput = findViewById(R.id.numberInput);
-        buttonTraining = findViewById(R.id.buttonTraining);
+        Button buttonTraining = findViewById(R.id.buttonTraining);
 
         //Sets the launcher icon into the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -72,16 +75,21 @@ public class MainActivity extends AppCompatActivity {
         if (sp.getSharedmPrefFirstRunMain()) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.warnings_title))
-                    .setMessage(getString(R.string.warnings))
-                    .setNeutralButton(getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefFirstRunMain(false))
+                    .setMessage(getString(R.string.warnings_message))
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefFirstRunMain(false))
                     .create()
                     .show();
         }
 
-        //Registers the listeners
+        //Registers listeners
         listenerNotes = (prefs, key) -> {
-            if (prefs.equals(sp.getmPrefNotes()))
-                numberInput.setText(sp.getSharedmPrefNotes());
+            if (prefs.equals(sp.getmPrefNotes())) {
+                numberInput.setText(sp.getSharedmPrefNumberOfNotesToPlay());
+                //The array of notes must also be set here, otherwise it would collapse to 1 item
+                numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout,
+                        getResources().getStringArray(R.array.number_of_notes)));
+                TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+            }
         };
         sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
 
@@ -91,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         };
         sp.getmPrefService().registerOnSharedPreferenceChangeListener(listenerService);
 
-        //Checks the permissions
-        switchStart.setOnClickListener(v -> cp.askPermissions(this));
+        //Checks permissions
+        switchStart.setOnClickListener(v -> cp.askPermissions(this, this));
 
         //Starts/finishes the service
         switchStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -107,56 +115,51 @@ public class MainActivity extends AppCompatActivity {
             TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         });
 
-        //Redirect to the accessibility settings's page
+        //Redirect to accessibility setting's page
         switchStart.setOnLongClickListener(v -> {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
             return true;
         });
 
-        numberInput.setText(sp.getSharedmPrefNotes());
-
-        numberInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-            //Updates the number of notes in shared preferences
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!numberInput.getText().toString().isEmpty()) {
-                    if (Integer.parseInt(s.toString()) < 1 || Integer.parseInt(s.toString()) > 8)
-                        Toast.makeText(getApplicationContext(), "Inserisci un intero da 1 a 8", Toast.LENGTH_SHORT).show();
-                    else
-                        sp.setSharedmPrefNotes(s.toString());
-                }
-            }
-        });
+        //Set initial value (see also onResume)
+        numberInput.setText(sp.getSharedmPrefNumberOfNotesToPlay());
+        numberInput.setInputType(InputType.TYPE_NULL);
+        numberInput.setOnItemClickListener((parent, view, position, id) -> sp.setSharedmPrefNumberOfNotesToPlay(String.valueOf(id + 1))); //First id is 0
 
         buttonTraining.setOnClickListener(v -> startService(new Intent(this, EarTrainingService.class)));
-
-        super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart() {
+        super.onStart();
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else
             switchStart.setChecked(false);
-        super.onStart();
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
+        //The array of notes must also (see above) be set here, otherwise it would not show
+        numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout, getResources().getStringArray(R.array.number_of_notes)));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else
             switchStart.setChecked(false);
-        super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.settings)
+            startActivity(new Intent(this, SettingsActivity.class));
+        return super.onOptionsItemSelected(item);
     }
 
 }

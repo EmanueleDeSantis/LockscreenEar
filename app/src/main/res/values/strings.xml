@@ -1,22 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LockScreen</string>
     <string name="insert_notes">Enter notes</string>
     <string name="click_to_grant_permissions_and_start_the_service">Perfect pitch lockscreen</string>
     <string name="service_running">Service running</string>
-    <string name="notes_incr">NOTES++</string>
+    <string name="notes_increase">NUMBER OF NOTES +1</string>
     <string name="grant_and_start">Start/Stop the service</string>
-    <string name="number_of_notes_to_play_1_8">Number of notes to play (1–8)</string>
     <string name="_3" translatable="false">3</string>
+    <string name="number_of_notes_warning">The number must be between 1 and 8</string>
     <string name="training">Training</string>
-    <string name="number_of_notes_to_play">Number of notes to play</string>
-    <string name="numb_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="number_of_notes_to_play">"Number of notes to play: "</string>
+
+    <string name="settings">Settings</string>
+    <string name="basics">Basics</string>
+    <string name="about">About</string>
+    <string name="source_code">Source code</string>
+    <string name="build_version">Build version</string>
+    <string name="on_restart_setting" translatable="false">On restart setting</string>
+    <string name="on_restart_setting_title">Automatic start</string>
+    <string name="start_on_boot">Auto start service</string>
+    <string name="on_restart_setting_message">If this setting is enabled, every time the accessibility service is started (a situation that also occurs when the device is rebooted), the number of notes to be played will be set to the value in the box below; ALSO DEVICE WILL BE LOCKED AUTOMATICALLY.\n\nIf this setting is disabled, every time the accessibility service is started, it will only start the main service used for lockscreen.</string>
+    <string name="volume_adapter_setting" translatable="false">Volume Adapter setting</string>
+    <string name="volume_adapter_setting_title">Automatic volume</string>
+    <string name="automatic_volume_level">Auto adjust volume level</string>
+    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service used for lockscreen is active and device is locked, it will be settled the optimal value to be assigned to the multimedia volume based on perceived noise from the microphone.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="warnings_title">Warnings</string>
+    <string name="warnings_message">If enabled, the main service used for lockscreen ensures that, after device wakes up (e.g after the keyguard is gone), the lockscreen offered by this app gets started.\n\nIF DURING THIS ACTIVITY ANY ACTION IS TAKEN TO BYPASS IT, DEVICE WILL BE LOCKED AGAIN.\n\nThis service can also be managed via quick setting.\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your device in emergency situations!</string>
+    <string name="accessibility_service_description">The following accessibility service undertakes only to LOCK THE DEVICE when:\n1) any action is taken to bypass the lockscreen, if active, offered by LockScreen;\n2) this service gets started (a situation that also occurs when the device is booted), if explicitly requested via settings.\n\nIn no case your personal data will be collected.</string>
+
+    <string name="number_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>
+    <string name="on_restart_switch_setting_shared_pref" translatable="false">On Restart switch number of notes to play</string>
+    <string name="on_restart_list_setting_number_of_notes_to_play_shared_pref" translatable="false">On Restart list number of notes to play</string>
     <string name="start_service_shared_pref" translatable="false">Start service</string>
     <string name="first_run_main_shared_pref" translatable="false">First run main</string>
-    <string name="first_run_accessibility_settings_shared_pref" translatable="false">First run accessibility settings</string>
-    <string name="warnings_title">Warnings</string>
-    <string name="warnings">The service offered by this app can also be managed by quick setting.\n\nPlease do not start the service if you do not have perfect pitch, you may not be able to unlock your phone in emergency situations!</string>
-    <string name="accessibility_service_description">The following accessibility service undertakes only to lock the screen when the service gets started and to ensure that LockScreen can work even if the service is in the background.\n\nIn no case your personal data will be collected.</string>
-    <string name="ok" translatable="false">OK</string>
+    <string name="first_run_accessibility_setting_shared_pref" translatable="false">First run accessibility settings</string>
+    <string name="volume_adapter_switch_setting_shared_pref" translatable="false">Volume Adapter switch setting</string>
+
     <string name="Do">C</string>
     <string name="Dodie">C#</string>
     <string name="Re">D</string>

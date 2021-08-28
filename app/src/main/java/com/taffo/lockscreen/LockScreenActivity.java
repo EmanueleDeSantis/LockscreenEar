@@ -18,6 +18,7 @@
 
 package com.taffo.lockscreen;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
@@ -28,24 +29,21 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.taffo.lockscreen.services.LockScreenService;
+import com.taffo.lockscreen.services.LockAccessibilityService;
 import com.taffo.lockscreen.services.LockTileService;
 import com.taffo.lockscreen.utils.CheckPermissions;
+import com.taffo.lockscreen.utils.XMLParser;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,39 +51,40 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class LockScreenActivity extends AppCompatActivity {
-    LockScreenService lss = new LockScreenService();
-    final int NOTES = lss.getNotes();
-    final int TOTAL_NOTES = lss.getTotalNotes();
-    final Document doc = lss.getDocum();
+public final class LockScreenActivity extends AppCompatActivity {
+    private final XMLParser parser = new XMLParser();
+    private final int NOTES = parser.getNotes();
+    private final int TOTAL_NOTES = parser.getTotalNotes();
+    private final Document doc = parser.getDocum();
 
-    int systemScreenOffTimeoutDefaultValue;
-    final int customScreenOffTimeoutValue = 10000; //10 seconds
-    WindowManager.LayoutParams mParams;
-    WindowManager mWindowManager;
-    View view;
-    StateListener stateListener;
-    TelephonyManager telephony;
+    private int systemScreenOffTimeoutDefaultValue;
+    private CheckCalls callsListener;
+    private TelephonyManager telephony;
+    private CheckPermissions cp;
 
-    TextView textViewNotes;
-    Button buttonDo;
-    Button buttonDodie;
-    Button buttonRe;
-    Button buttonRedie;
-    Button buttonMi;
-    Button buttonFa;
-    Button buttonFadie;
-    Button buttonSol;
-    Button buttonSoldie;
-    Button buttonLa;
-    Button buttonLadie;
-    Button buttonSi;
+    private TextView textViewNotes;
+    private Button buttonDo;
+    private Button buttonDodie;
+    private Button buttonRe;
+    private Button buttonRedie;
+    private Button buttonMi;
+    private Button buttonFa;
+    private Button buttonFadie;
+    private Button buttonSol;
+    private Button buttonSoldie;
+    private Button buttonLa;
+    private Button buttonLadie;
+    private Button buttonSi;
 
-    List<String> selectedNotesList = new ArrayList<>(NOTES);
+    private final List<String> selectedNotesList = new ArrayList<>(NOTES);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        new CheckPermissions().setIsLockScreenRunning(true);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_lockscreen);
+
+        cp = new CheckPermissions();
+        cp.setIsLockScreenRunning(true);
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
 
         play();
@@ -98,46 +97,27 @@ public class LockScreenActivity extends AppCompatActivity {
         }
         //Sets the screen off timeout to 10 seconds
         if (Settings.System.canWrite(this))
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, customScreenOffTimeoutValue);
-
-        //The following overlay view can't be removed by the user in any way, except with the unlocking function
-        if (Settings.canDrawOverlays(this)) {
-            mParams = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                            | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
-                    PixelFormat.TRANSLUCENT);
-
-            mWindowManager = ((WindowManager) getSystemService(WINDOW_SERVICE));
-            view = View.inflate(this, R.layout.activity_lockscreen, null);
-            view.setBackgroundColor(getColor(R.color.custom_background)); //The background color does not disappear after the user presses the home button
-            mWindowManager.addView(view, mParams);
-        } else
-            unlockAndRemoveView();
+            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 10000);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            stateListener = new StateListener();
+            callsListener = new CheckCalls();
             telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
-            telephony.listen(stateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            telephony.listen(callsListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
-        //Initializes the view's elements
-        textViewNotes = view.findViewById(R.id.textViewNotes);
-        buttonDo = view.findViewById(R.id.buttonDo);
-        buttonDodie = view.findViewById(R.id.buttonDodie);
-        buttonRe = view.findViewById(R.id.buttonRe);
-        buttonRedie = view.findViewById(R.id.buttonRedie);
-        buttonMi = view.findViewById(R.id.buttonMi);
-        buttonFa = view.findViewById(R.id.buttonFa);
-        buttonFadie = view.findViewById(R.id.buttonFadie);
-        buttonSol = view.findViewById(R.id.buttonSol);
-        buttonSoldie = view.findViewById(R.id.buttonSoldie);
-        buttonLa = view.findViewById(R.id.buttonLa);
-        buttonLadie = view.findViewById(R.id.buttonLadie);
-        buttonSi = view.findViewById(R.id.buttonSi);
+        textViewNotes = findViewById(R.id.textViewNotes);
+        buttonDo = findViewById(R.id.buttonDo);
+        buttonDodie = findViewById(R.id.buttonDodie);
+        buttonRe = findViewById(R.id.buttonRe);
+        buttonRedie = findViewById(R.id.buttonRedie);
+        buttonMi = findViewById(R.id.buttonMi);
+        buttonFa = findViewById(R.id.buttonFa);
+        buttonFadie = findViewById(R.id.buttonFadie);
+        buttonSol = findViewById(R.id.buttonSol);
+        buttonSoldie = findViewById(R.id.buttonSoldie);
+        buttonLa = findViewById(R.id.buttonLa);
+        buttonLadie = findViewById(R.id.buttonLadie);
+        buttonSi = findViewById(R.id.buttonSi);
 
         buttonDo.setOnClickListener(v -> {
             if (selectedNotesList.size() < NOTES) {
@@ -283,76 +263,63 @@ public class LockScreenActivity extends AppCompatActivity {
                 unlock();
             }
         });
-        
-        super.onCreate(savedInstanceState);
     }
 
-    //Finishes if a call arrived and is ringing or waiting
-    private class StateListener extends PhoneStateListener {
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-            if (state == TelephonyManager.CALL_STATE_RINGING)
-                unlockAndRemoveView();
-        }
-    }
-
-    //Finishes the activity before starting a new one when the screen gets locked
-    @Override
-    protected void onRestart() {
-        removeView();
-        super.onRestart();
-    }
-
-    /*When using a screen overlay, the system shows a notification allowing the user to remove it.
-    This condition, on some devices, bypasses this occurrence by keeping the activity in foreground
-    If it does not work on your device, consider to manually disable notifications of LockScreen*/
+    //To prevent user from exiting (without properly unlocking) this activity,
+    //when it loses focus screen gets locked again
     @Override
     protected void onPause() {
-        ((ActivityManager) Objects.requireNonNull(getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE))).moveTaskToFront(getTaskId(), 0);
         super.onPause();
+        ((ActivityManager) Objects.requireNonNull(getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE))).moveTaskToFront(getTaskId(), 0);
     }
 
     //Does nothing on back press
     @Override
     public void onBackPressed() {}
 
-    Random rand = new Random();
-    int randIdNote;
-    int lastRandIdNote;
-    Element note;
-    String noteName;
-    String noteSoundName;
-    String[] outputtedNotes = new String[NOTES];
+    //Finishes this activity if it gets properly unlocked
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+        if (new CheckPermissions().getIsLockScreenRunning())
+            new LockAccessibilityService().lockTheScreen();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null)
+            telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);
+        //Sets the screen off timeout to the default value
+        if (Settings.System.canWrite(this))
+            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
+    }
+
+    private final Random rand = new Random();
+    private final int[] randomNotes = new int[NOTES];
+    private final String[] outputtedNotes = new String[NOTES];
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
-        for (int i = 0; i < NOTES; i++) {
-            randIdNote = rand.nextInt(TOTAL_NOTES) + 1;
-            note = doc.getElementById(String.valueOf(randIdNote));
-            noteName = note.getElementsByTagName("name").item(0).getTextContent();
-            noteSoundName = note.getElementsByTagName("sound_name").item(0).getTextContent();
-            MediaPlayer.create(this, getResources().getIdentifier(noteSoundName, "raw", getPackageName())).start();
-            if (i == 0) {
-                lastRandIdNote = randIdNote;
-                outputtedNotes[i] = noteName;
-            } else {
-                if (randIdNote < lastRandIdNote) {
-                    outputtedNotes[i] = outputtedNotes[i-1];
-                    outputtedNotes[i-1] = noteName;
-                    lastRandIdNote = randIdNote;
-                } else
-                    outputtedNotes[i] = noteName;
-            }
-        }
+        for (int i = 0; i < NOTES; i++)
+            randomNotes[i] = rand.nextInt(TOTAL_NOTES) + 1;
+        for (int i = 0; i < NOTES; i++)
+            MediaPlayer.create(this, getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
+                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName())).start();
+        Arrays.sort(randomNotes);
+        for (int i = 0; i < NOTES; i++)
+            outputtedNotes[i] = doc.getElementById(String.valueOf(randomNotes[i]))
+                    .getElementsByTagName("name").item(0).getTextContent();
     }
 
+    private final List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
+    private final List<Integer> notesColor = new ArrayList<>(NOTES);
+    private final StringBuilder coloredStringTextViewNotes = new StringBuilder();
     //Unlocks if user guessed all and only the outputted notes
-    List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
-    List<Integer> notesColor = new ArrayList<>(NOTES);
-    StringBuilder coloredStringTextViewNotes = new StringBuilder();
     private void unlock() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
-            unlockAndRemoveView();
+            unlockAndFinish();
         else if (selectedNotesList.size() >= NOTES) {
             //Colors in red the buttons of the wrong notes
             for (String snl : selectedNotesList) {
@@ -408,10 +375,10 @@ public class LockScreenActivity extends AppCompatActivity {
                 }
             }
 
-            /*Converts the name of the outputted notes based on the chosen language instead of the name present in the xml file and
-            Colors the outputted notes in the textview and the buttons of this notes:
-            green if the entry is correct,
-            yellow if the entry is missing in the outputted notes*/
+            //Converts the name of the outputted notes based on the chosen language instead of the name present in the xml file and
+            //Colors the outputted notes in the text view and the buttons of this notes:
+            //green if the entry is correct,
+            //yellow if the entry is missing in the outputted notes
             for (String onl : outputtedNotesList) {
                 switch (onl) {
                     case "do":
@@ -537,7 +504,7 @@ public class LockScreenActivity extends AppCompatActivity {
                 }
             }
 
-            //Prints all the outputted notes on the textview, since the user inserted an incorrect entry (see also the functions above)
+            //Prints all the outputted notes on the text view, since the user inserted an incorrect entry (see also the functions above)
             for (int i = 0; i < NOTES; i++) {
                 if (i != NOTES-1)
                     coloredStringTextViewNotes.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ").append("</font>");
@@ -548,23 +515,20 @@ public class LockScreenActivity extends AppCompatActivity {
         }
     }
 
-    private void removeView() {
-        mWindowManager.removeView(view);
-        view = null;
-        mWindowManager = null;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
-            telephony.listen(stateListener, PhoneStateListener.LISTEN_NONE);
-        //Sets the screen off timeout to the default value
-        if (Settings.System.canWrite(this))
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
+    private void unlockAndFinish() {
+        cp.setIsLockScreenRunning(false);
+        sendBroadcast(new Intent("changeNotificationColor"));
+        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         finish();
     }
 
-    private void unlockAndRemoveView() {
-        new CheckPermissions().setIsLockScreenRunning(false);
-        sendBroadcast(new Intent("changeNotification"));
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-        removeView();
+    //Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
+    private class CheckCalls extends PhoneStateListener {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK)
+                unlockAndFinish();
+        }
     }
 
 }

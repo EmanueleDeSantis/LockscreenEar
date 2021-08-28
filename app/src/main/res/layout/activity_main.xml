@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -28,40 +29,46 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal">
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchStart"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:text="@string/grant_and_start"
-                android:textSize="20sp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
+                android:textSize="20sp"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="75dp"
-            android:gravity="center">
+            android:gravity="center_horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/number_of_notes_to_play_1_8"
+                android:text="@string/number_of_notes_to_play"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <EditText
-                android:id="@+id/numberInput"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:autofillHints=""
-                android:ems="10"
-                android:gravity="center"
-                android:hint="@string/_3"
-                android:inputType="number" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/id"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxBackgroundMode="filled">
 
+                <AutoCompleteTextView
+                    android:id="@+id/numberInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/_3"
+                    android:textSize="18sp"
+                    android:gravity="center_horizontal"
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -76,7 +83,6 @@
                 android:layout_height="50dp"
                 android:gravity="center"
                 android:text="@string/training" />
-
         </LinearLayout>
 
     </LinearLayout>

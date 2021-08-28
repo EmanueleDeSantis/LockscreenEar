@@ -19,7 +19,6 @@
 package com.taffo.lockscreen.services;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
@@ -27,41 +26,13 @@ import androidx.annotation.Nullable;
 
 import com.taffo.lockscreen.EarTrainingActivity;
 import com.taffo.lockscreen.utils.SharedPref;
+import com.taffo.lockscreen.utils.XMLParser;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-public class EarTrainingService extends Service {
+public final class EarTrainingService extends Service {
 	SharedPref sp;
 
-	//The actual number of notes to play (used in EarTrainingActivity)
-	private static String val;
-	public int getNotes() {
-		return Integer.parseInt(val);
-	}
-
-	//The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in EarTrainingActivity)
-	private static int totalVal;
-	public int getTotalNotes() {
-		return totalVal;
-	}
-
-	//The xml document is parsed here for optimizing time (used in EarTrainingActivity)
-	private static Document docum;
-	public Document getDocum() {
-		return docum;
-	}
-
-	@Nullable
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(@Nullable Intent intent) {
 		return null;
 	}
 
@@ -72,22 +43,11 @@ public class EarTrainingService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
-	private void parseXmlNotes(Context cntx) {
-		try {
-			InputStream is = cntx.getAssets().open("notes.xml");
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = factory.newDocumentBuilder();
-			docum = dBuilder.parse(is);
-			docum.getDocumentElement().normalize();
-			totalVal = docum.getElementsByTagName("note").getLength();
-		} catch (ParserConfigurationException | SAXException | IOException ignored) {}
-	}
-
 	private void startEarTrainingActivity() {
-		val = sp.getSharedmPrefNotes();
-		parseXmlNotes(this);
+		XMLParser parser = new XMLParser();
+		parser.setNotes(sp.getSharedmPrefNumberOfNotesToPlay());
+		parser.parseXmlNotes(this);
 		startActivity(new Intent(this, EarTrainingActivity.class)
-				.setAction(Intent.ACTION_VIEW)
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 

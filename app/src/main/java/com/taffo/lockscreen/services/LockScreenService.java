@@ -18,7 +18,7 @@
 
 package com.taffo.lockscreen.services;
 
-import android.app.KeyguardManager;
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -30,81 +30,71 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.service.quicksettings.TileService;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.taffo.lockscreen.LockScreenActivity;
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.R;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
+import com.taffo.lockscreen.utils.XMLParser;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-public class LockScreenService extends Service {
-	private static final int NOTIFICATION_ID = 5;
-	static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
-	SharedPref sp;
-
-	//The actual number of notes to play (used in LockScreenActivity)
-	private static String val;
-	public int getNotes() {
-		return Integer.parseInt(val);
-	}
-
-	//The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in LockScreenActivity)
-	private static int totalVal;
-	public int getTotalNotes() {
-		return totalVal;
-	}
-
-	//The xml document is parsed here for optimizing time (used in LockScreenActivity)
-	private static Document docum;
-	public Document getDocum() {
-		return docum;
-	}
+public final class LockScreenService extends Service {
+	private static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
+	private SharedPref sp;
+	private Timer timer;
+	private CheckCalls callsListener;
+	private TelephonyManager telephony;
+	private static boolean dontStartLockScreenActivity = false;
+	private static boolean stopVolumeAdapterService = false;
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (context != null && intent.getAction() != null) {
-				if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) || intent.getAction().equals("changeNotification"))
+				if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && sp.getSharedmVolumeAdapterServiceSetting())
+					startVolumeAdapterService();
+				if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) || intent.getAction().equals("changeNotificationColor"))
 					startLockForeground();
-				if (intent.getAction().equals(Intent.ACTION_USER_PRESENT))
-					startLockScreenActivity();
+				if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+					//If no phone calls arrived that are ringing or waiting, or at least no call exist that are dialing, active, or on hold
+					if (!dontStartLockScreenActivity)
+						startLockScreenActivity();
+					else
+						//else unlocks the screen without starting LockScreenActivity, so notification color changes to green
+						startLockForeground();
+					stopVolumeAdapterService = true;
+					TileService.requestListeningState(context, new ComponentName(context, LockTileService.class));
+				}
 			}
 		}
 	};
 
-	@Nullable
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(@Nullable Intent intent) {
 		return null;
 	}
 
 	@Override
 	public void onCreate() {
 		sp = new SharedPref(this);
-		if (new CheckPermissions().checkPermissions(this)) {
-			startLockForeground();
-			listenerNotes = (prefs, key) -> {
-				if (prefs.equals(sp.getmPrefNotes()))
-					startLockForeground();
-			};
-			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+			callsListener = new CheckCalls();
+			telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
+			telephony.listen(callsListener, PhoneStateListener.LISTEN_CALL_STATE);
 		}
 	}
 
@@ -112,113 +102,158 @@ public class LockScreenService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(Intent.ACTION_USER_PRESENT);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		filter.addAction("changeNotification"); //Changes color of the notification, green when screen is unlocked, red when locked
+		filter.addAction(Intent.ACTION_USER_PRESENT);
+		filter.addAction("changeNotificationColor"); //Changes color of the notification, green when screen is unlocked, red when is locked
 		registerReceiver(mReceiver, filter);
+
+		if (new CheckPermissions().checkPermissions(this) && sp.getSharedmPrefService()) {
+			startLockForeground();
+			listenerNotes = (prefs, key) -> {
+				if (prefs.equals(sp.getmPrefNotes())) {
+					startLockForeground();
+					TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+				}
+			};
+			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
+		} else
+			stopSelf();
 		return START_NOT_STICKY;
 	}
 
-	//"Foreground" service: By android 10 (maybe before?) after 20 seconds this service goes in background. Solved using the accessibility service
-	public void startLockForeground() {
-		Intent notificationIntent =  new Intent(this, MainActivity.class);
-		notificationIntent.setAction(Intent.ACTION_VIEW);
-		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+	//"Foreground" service (with pending notification): Since android 10 (maybe before?) after 20 seconds services go in background. Solved using priorities in the manifest
+	private void startLockForeground() {
+		NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+		chan.setLightColor(Color.GREEN);
+		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+		((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).createNotificationChannel(chan);
+
+		Intent notificationIntent =  new Intent(this, MainActivity.class)
+				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent broadcastIntent = new Intent(this, IncrementNumberOfNotes.class);
-		PendingIntent actionIncrementNotes = PendingIntent.getBroadcast(this,
-				0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		NotificationCompat.Action increaseNotes = new NotificationCompat.Action.Builder(0, getString(R.string.notes_incr), actionIncrementNotes).build();
+		PendingIntent actionIncrementNotes = PendingIntent.getService(this,0, broadcastIntent, PendingIntent.FLAG_IMMUTABLE);
+		NotificationCompat.Action increaseNotes = new NotificationCompat.Action.Builder(0, getString(R.string.notes_increase), actionIncrementNotes).build();
 
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.app_name));
-		if (!(new CheckPermissions().getIsLockScreenRunning() || ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked())) {
+		if (!new CheckPermissions().getIsScreenLocked(this)) {
 			//Notification panel when the screen is unlocked
 			//Green
 			Notification notification = notificationBuilder
 					.setOngoing(true)
 					.setOnlyAlertOnce(true)
+					.setChannelId(getString(R.string.app_name))
 					.setSmallIcon(R.drawable.locked_icon)
 					.setColor(Color.GREEN)
-					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNotes())
+					.setContentTitle(getString(R.string.number_of_notes_to_play) + " " + sp.getSharedmPrefNumberOfNotesToPlay())
 					.setContentText(getString(R.string.service_running))
 					.setPriority(NotificationManager.IMPORTANCE_HIGH)
 					.setCategory(Notification.CATEGORY_SERVICE)
 					.setContentIntent(pendingIntent)
 					.addAction(increaseNotes)
 					.build();
-			startForeground(NOTIFICATION_ID, notification);
+			startForeground(5, notification);
 		} else {
 			//Notification panel when the screen is locked
 			//Red
 			Notification notification = notificationBuilder
 					.setOngoing(true)
 					.setOnlyAlertOnce(true)
+					.setChannelId(getString(R.string.app_name))
 					.setSmallIcon(R.drawable.locked_icon)
 					.setColor(Color.RED)
-					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNotes())
+					.setContentTitle(getString(R.string.number_of_notes_to_play) + " " + sp.getSharedmPrefNumberOfNotesToPlay())
 					.setContentText(getString(R.string.service_running))
 					.setPriority(NotificationManager.IMPORTANCE_HIGH)
 					.setCategory(Notification.CATEGORY_SERVICE)
 					.setContentIntent(pendingIntent)
 					.addAction(increaseNotes)
 					.build();
-			startForeground(NOTIFICATION_ID, notification);
+			startForeground(5, notification);
 		}
-
-		NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
-		chan.setLightColor(Color.GREEN);
-		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-		((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).createNotificationChannel(chan);
 	}
 
 	//Unregisters the receiver
 	@Override
 	public void onDestroy() {
+		super.onDestroy();
 		unregisterReceiver(mReceiver);
 		sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null)
+			telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);
 		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-		super.onDestroy();
-	}
-
-	private void parseXmlNotes(Context cntx) {
-		try {
-			InputStream is = cntx.getAssets().open("notes.xml");
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = factory.newDocumentBuilder();
-			docum = dBuilder.parse(is);
-			docum.getDocumentElement().normalize();
-			totalVal = docum.getElementsByTagName("note").getLength();
-		} catch (ParserConfigurationException | SAXException | IOException ignored) {}
 	}
 
 	private void startLockScreenActivity() {
-		val = sp.getSharedmPrefNotes();
-		parseXmlNotes(this);
+		XMLParser parser = new XMLParser();
+		parser.setNotes(sp.getSharedmPrefNumberOfNotesToPlay());
+		parser.parseXmlNotes(this);
 		startActivity(new Intent(this, LockScreenActivity.class)
-        		.setAction(Intent.ACTION_VIEW)
-        		.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
-	public static class IncrementNumberOfNotes extends BroadcastReceiver {
+	@Override
+	public void startActivity(Intent intent) {
+		super.startActivity(intent);
+	}
+
+	//Periodic request to start VolumeAdapterService due to possible interrupting events that can be resumed
+    private void startVolumeAdapterService() {
+		//dontStartLockScreenActivity is only modified by phone call states and is useful to correctly set stopVolumeAdapterService
+		if (!dontStartLockScreenActivity)
+			stopVolumeAdapterService = false;
+    	timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (stopVolumeAdapterService) {
+					timer.cancel();
+					stopService(new Intent(getApplicationContext(), VolumeAdapterService.class));
+				} else
+					startService(new Intent(getApplicationContext(), VolumeAdapterService.class));
+			}
+		}, 0, 2 * 1000); //every 2 seconds
+	}
+
+	//Manages phone calls
+	private class CheckCalls extends PhoneStateListener {
+		@Override
+		public void onCallStateChanged(int state, String incomingNumber) {
+			if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+				stopVolumeAdapterService = true; //does not stop the current VolumeAdapterService
+				dontStartLockScreenActivity = true;
+			} else if (state == TelephonyManager.CALL_STATE_IDLE) {
+				stopVolumeAdapterService = false;
+				dontStartLockScreenActivity = false;
+				if (new CheckPermissions().getIsScreenLocked(getApplicationContext()))
+					startVolumeAdapterService();
+			}
+		}
+	}
+
+	public static class IncrementNumberOfNotes extends Service {
 		int numIncremented;
 		int actualNumNotes;
 
 		@Override
-		public void onReceive(Context context, Intent intent) {
-			/*Increments the number of notes to play when the user clicks on "NOTE++" in the notification panel
-			and when the number reaches 8, the limit number, after another click the count restarts*/
-			if (!(new CheckPermissions().getIsLockScreenRunning() || ((KeyguardManager) Objects.requireNonNull(context.getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked())) {
-				SharedPref sp = new SharedPref(context);
-				actualNumNotes = Integer.parseInt(sp.getSharedmPrefNotes());
+		public IBinder onBind(@Nullable Intent intent) {
+			return null;
+		}
+
+		@Override
+		public int onStartCommand(Intent intent, int flags, int startId) {
+			if (!new CheckPermissions().getIsScreenLocked(this)) {
+				SharedPref sp = new SharedPref(this);
+				actualNumNotes = Integer.parseInt(sp.getSharedmPrefNumberOfNotesToPlay());
 				if (actualNumNotes < 8)
 					numIncremented = actualNumNotes + 1;
 				else
 					numIncremented = 1;
-				sp.setSharedmPrefNotes(String.valueOf(numIncremented));
+				sp.setSharedmPrefNumberOfNotesToPlay(String.valueOf(numIncremented));
 			}
+			return super.onStartCommand(intent, flags, startId);
 		}
-
 	}
 
 }

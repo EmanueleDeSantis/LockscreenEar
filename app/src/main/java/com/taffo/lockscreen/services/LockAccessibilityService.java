@@ -23,7 +23,6 @@ import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
@@ -33,50 +32,43 @@ import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
-public class LockAccessibilityService extends AccessibilityService {
-    SharedPref sp;
-    public static LockAccessibilityService instance;
-
-    //Locks the screen (also used in LockScreenService)
-    public void lockTheScreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && instance != null)
-            instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
-    }
+public final class LockAccessibilityService extends AccessibilityService {
+    private SharedPref sp;
+    private static LockAccessibilityService instance;
 
     @Override
     protected void onServiceConnected() {
+        super.onServiceConnected();
         if (instance == null)
             instance = this;
         sp = new SharedPref(this);
-        //Executed only at first boot
-        if (sp.getSharedmPrefFirstRunAccessibilitySettings()) {
+        CheckPermissions cp = new CheckPermissions();
+        if (cp.checkPermissions(this)) {
             sp.setSharedmPrefService(true);
             startForegroundService(new Intent(this, LockScreenService.class));
             TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+        }
+        //Executed only at first connection
+        if (sp.getSharedmPrefFirstRunAccessibilitySettings()) {
+            sp.setSharedmPrefFirstRunAccessibilitySettings(false);
             startActivity(new Intent(this, MainActivity.class)
-                    .setAction(Intent.ACTION_VIEW)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
-            if (new CheckPermissions().checkPermissions(this)) {
-                //Auto-starts the service on boot if the accessibility service is running
-                sp.setSharedmPrefService(true);
-                startForegroundService(new Intent(this, LockScreenService.class));
-                TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+            //Auto-starts the service on boot if the restart setting is on
+            if (cp.checkPermissions(this) && sp.getSharedmPrefOnRestartSwitchSetting()) {
+                sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefOnRestartListSettingNumberOfNotesToPlay());
                 lockTheScreen();
             }
-            super.onServiceConnected();
         }
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         instance = null;
-        if (sp.getSharedmPrefFirstRunAccessibilitySettings())
-            sp.setSharedmPrefFirstRunAccessibilitySettings(false);
         sp.setSharedmPrefService(false);
         stopService(new Intent(this, LockScreenService.class));
         TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-        super.onDestroy();
     }
 
     @Override
@@ -87,6 +79,12 @@ public class LockAccessibilityService extends AccessibilityService {
     @Override
     public void onInterrupt() {
 
+    }
+
+    //Locks the screen (also used in LockTileService)
+    public void lockTheScreen() {
+        if (instance != null)
+            instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
     }
 
     public boolean isAccessibilitySettingsOn(Context context) {
