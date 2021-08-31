@@ -49,12 +49,12 @@
                 android:gravity="center"
                 android:text="@string/number_of_notes_to_play"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="20sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/id"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:boxBackgroundMode="filled">
 
@@ -65,9 +65,10 @@
                     android:layout_weight="1"
                     android:text="@string/_3"
                     android:textSize="18sp"
-                    android:gravity="center_horizontal"
+                    android:gravity="end"
                     android:inputType="none"
                     tools:ignore="LabelFor" />
+
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 

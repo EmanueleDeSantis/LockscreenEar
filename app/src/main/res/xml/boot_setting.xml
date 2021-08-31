@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
+        <Preference
+            app:selectable="false"
+            app:layout="@layout/boot_setting" />
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+        <SwitchPreference
+            app:key="@string/boot_switch_setting_shared_pref"
+            app:title="@string/lock_device_on_boot"
+            app:summaryOn="@string/enabled"
+            app:summaryOff="@string/disabled"
+            app:defaultValue="@string/disabled"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="@string/boot_list_setting_number_of_notes_to_play_shared_pref"
+            app:title="@string/number_of_notes_to_play"
+            app:entries="@array/lock_on_boot_number_of_notes"
+            app:entryValues="@array/lock_on_boot_number_of_notes_value"
+            app:defaultValue="@string/_3"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="@string/boot_switch_setting_shared_pref" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

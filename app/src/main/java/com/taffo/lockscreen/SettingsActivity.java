@@ -56,6 +56,12 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home)
             super.onBackPressed();
@@ -76,28 +82,29 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class OnRestartSettingFragment extends PreferenceFragmentCompat {
+    public static class BootSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.on_restart_setting, rootKey);
+            setPreferencesFromResource(R.xml.boot_setting, rootKey);
             Context context = requireContext();
             Activity activity = requireActivity();
             SharedPref sp = new SharedPref(context);
-            activity.setTitle(R.string.on_restart_setting_title);
-            SwitchPreference switchOnRestartSetting = findPreference(getString(R.string.on_restart_switch_setting_shared_pref));
-            ListPreference listNumberOfNotes = findPreference(getString(R.string.on_restart_list_setting_number_of_notes_to_play_shared_pref));
+            activity.setTitle(R.string.boot_setting_title);
+            SwitchPreference switchBootSetting = findPreference(getString(R.string.boot_switch_setting_shared_pref));
+            ListPreference listNumberOfNotes = findPreference(getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref));
 
             if (!new CheckPermissions().checkPermissions(context))
-                Objects.requireNonNull(switchOnRestartSetting).setEnabled(false);
+                Objects.requireNonNull(switchBootSetting).setEnabled(false);
+
             //Saves OnRestartSetting state
-            Objects.requireNonNull(switchOnRestartSetting).setOnPreferenceChangeListener((preference, newValue) -> {
-                sp.setSharedmPrefOnRestartSetting((Boolean.parseBoolean(newValue.toString())));
+            Objects.requireNonNull(switchBootSetting).setOnPreferenceChangeListener((preference, newValue) -> {
+                sp.setSharedmPrefBootSetting((Boolean.parseBoolean(newValue.toString())));
                 return true;
             });
 
             //Saves OnRestartNumberOfNotesToPlay
             Objects.requireNonNull(listNumberOfNotes).setOnPreferenceChangeListener((preference, newValue) -> {
-                sp.setSharedmPrefOnRestartListSettingNumberOfNotesToPlay(newValue.toString());
+                sp.setSharedmPrefBootListSettingNumberOfNotesToPlay(newValue.toString());
                 return true;
             });
         }
@@ -112,6 +119,9 @@ public class SettingsActivity extends AppCompatActivity {
             activity.setTitle(R.string.volume_adapter_setting_title);
             setPreferencesFromResource(R.xml.volume_adapter_setting, rootKey);
             SwitchPreference switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
+
+            if (!new CheckPermissions().checkPermissions(context))
+                Objects.requireNonNull(switchVolumeAdapterSetting).setEnabled(false);
 
             //Asks for permissions
             Objects.requireNonNull(switchVolumeAdapterSetting).setOnPreferenceClickListener(preference -> {
@@ -130,7 +140,28 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class Warnings extends PreferenceFragmentCompat {
+    public static class QuickSettingFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            Context context = requireContext();
+            Activity activity = requireActivity();
+            SharedPref sp = new SharedPref(context);
+            activity.setTitle(R.string.quick_setting_title);
+            setPreferencesFromResource(R.xml.quick_setting, rootKey);
+            SwitchPreference switchQuickSetting = findPreference(getString(R.string.quick_setting_switch_enabled_shared_pref));
+
+            if (!new CheckPermissions().checkPermissions(context))
+                Objects.requireNonNull(switchQuickSetting).setEnabled(false);
+
+            //Saves QuickSetting state
+            Objects.requireNonNull(switchQuickSetting).setOnPreferenceChangeListener((preference, newValue) -> {
+                sp.setSharedmPrefQuickSettingSwitchEnabled((Boolean.parseBoolean(newValue.toString())));
+                return true;
+            });
+        }
+    }
+
+    public static class WarningsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             requireActivity().setTitle(R.string.warnings_title);

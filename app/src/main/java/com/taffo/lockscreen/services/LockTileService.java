@@ -20,7 +20,6 @@ package com.taffo.lockscreen.services;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
@@ -68,8 +67,9 @@ public final class LockTileService extends TileService {
             tile.setState(Tile.STATE_ACTIVE);
             sp.setSharedmPrefService(true);
             startForegroundService(new Intent(this, LockScreenService.class));
-            //Locks the screen when the service gets started by the quick setting tile (requires android 9+)
-            new LockAccessibilityService().lockTheScreen();
+            //Locks the screen when the service is started via quick setting tile
+            if (sp.getSharedmPrefQuickSettingSwitchEnabled())
+                new LockAccessibilityService().lockTheDevice();
         }
         tile.updateTile();
         updateTileService();
@@ -82,21 +82,17 @@ public final class LockTileService extends TileService {
         tile = getQsTile();
         if (cp.getIsScreenLocked(this)) {
             tile.setLabel(getString(R.string.app_name) + " on: " + sp.getSharedmPrefNumberOfNotesToPlay());
-            tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
             tile.setState(Tile.STATE_UNAVAILABLE);
         } else {
             if (!cp.checkPermissions(this)) {
                 tile.setLabel(getString(R.string.app_name) + " off");
-                tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
                 tile.setState(Tile.STATE_UNAVAILABLE);
             } else {
                 if (sp.getSharedmPrefService()) {
                     tile.setLabel(getString(R.string.app_name) + " on: " + sp.getSharedmPrefNumberOfNotesToPlay());
-                    tile.setIcon(Icon.createWithResource(this, R.drawable.locked_icon));
                     tile.setState(Tile.STATE_ACTIVE);
                 } else {
                     tile.setLabel(getString(R.string.app_name) + " off: " + sp.getSharedmPrefNumberOfNotesToPlay());
-                    tile.setIcon(Icon.createWithResource(this, R.drawable.unlocked_icon));
                     tile.setState(Tile.STATE_INACTIVE);
                 }
             }

@@ -10,7 +10,7 @@
         <item>8</item>
     </string-array>
 
-    <string-array name="on_restart_number_of_notes">
+    <string-array name="lock_on_boot_number_of_notes">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -18,7 +18,7 @@
         <item>5</item>
     </string-array>
 
-    <string-array name="on_restart_number_of_notes_value">
+    <string-array name="lock_on_boot_number_of_notes_value">
         <item>1</item>
         <item>2</item>
         <item>3</item>

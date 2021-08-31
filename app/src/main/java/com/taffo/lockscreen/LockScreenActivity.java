@@ -283,7 +283,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         super.onStop();
         finish();
         if (new CheckPermissions().getIsLockScreenRunning())
-            new LockAccessibilityService().lockTheScreen();
+            new LockAccessibilityService().lockTheDevice();
     }
 
     @Override

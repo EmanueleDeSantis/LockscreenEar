@@ -4,23 +4,30 @@
 
     <PreferenceCategory app:title="@string/basics" app:iconSpaceReserved="false">
         <Preference
-            app:key="@string/on_restart_setting"
-            app:title="@string/on_restart_setting_title"
+            app:key="@string/boot_setting"
+            app:title="@string/boot_setting_title"
             app:icon="@drawable/restart_icon"
-            app:fragment="com.taffo.lockscreen.SettingsActivity$OnRestartSettingFragment" />
+            app:fragment="com.taffo.lockscreen.SettingsActivity$BootSettingFragment" />
 
         <Preference
             app:key="@string/volume_adapter_setting"
             app:title="@string/volume_adapter_setting_title"
             app:icon="@drawable/volume_icon"
             app:fragment="com.taffo.lockscreen.SettingsActivity$VolumeAdapterSettingFragment" />
+
+        <Preference
+            app:key="@string/quick_setting"
+            app:title="@string/quick_setting_title"
+            app:icon="@drawable/locked_icon"
+            app:fragment="com.taffo.lockscreen.SettingsActivity$QuickSettingFragment" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/about" app:iconSpaceReserved="false">
         <Preference
             app:title="@string/warnings_title"
             app:iconSpaceReserved="false"
-            app:fragment="com.taffo.lockscreen.SettingsActivity$Warnings" />
+            app:fragment="com.taffo.lockscreen.SettingsActivity$WarningsFragment" />
+
         <Preference
             app:title="@string/source_code"
             app:iconSpaceReserved="false">
@@ -28,9 +35,12 @@
                 android:action="android.intent.action.VIEW"
                 android:data="https://www.github.com/EmanueleDeSantis/LockScreen" />
         </Preference>
+
         <Preference
             app:key="@string/about"
             app:title="@string/build_version"
+            app:selectable="false"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>
+
 </PreferenceScreen>

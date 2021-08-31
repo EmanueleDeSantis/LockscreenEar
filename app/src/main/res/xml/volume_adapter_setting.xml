@@ -3,6 +3,7 @@
 
     <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
         <Preference
+            app:selectable="false"
             app:layout="@layout/volume_adapter_setting" />
     </PreferenceCategory>
 
@@ -15,4 +16,5 @@
         app:defaultValue="@string/disabled"
         app:iconSpaceReserved="false"/>
     </PreferenceCategory>
+
 </PreferenceScreen>

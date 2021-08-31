@@ -31,6 +31,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
+import android.text.Html;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +52,7 @@ public final class MainActivity extends AppCompatActivity {
     private SharedPref sp;
     private SwitchCompat switchStart;
     private AutoCompleteTextView numberInput;
-    //Apparently listeners must be declared here in order to work, so please ignore warnings
+    //Apparently listeners must be declared here (and not in onCreate) in order to work, so please ignore warnings
     private SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
     private SharedPreferences.OnSharedPreferenceChangeListener listenerService;
 
@@ -75,7 +76,7 @@ public final class MainActivity extends AppCompatActivity {
         if (sp.getSharedmPrefFirstRunMain()) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.warnings_title))
-                    .setMessage(getString(R.string.warnings_message))
+                    .setMessage(Html.fromHtml(getString(R.string.warnings_message_html), Html.FROM_HTML_MODE_LEGACY))
                     .setPositiveButton(getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefFirstRunMain(false))
                     .create()
                     .show();
@@ -130,18 +131,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (cp.checkPermissions(this))
-            switchStart.setChecked(sp.getSharedmPrefService());
-        else
-            switchStart.setChecked(false);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         //The array of notes must also (see above) be set here, otherwise it would not show
+        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout, getResources().getStringArray(R.array.number_of_notes)));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());

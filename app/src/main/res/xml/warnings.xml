@@ -3,6 +3,7 @@
 
     <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
         <Preference
+            app:selectable="false"
             app:layout="@layout/warnings" />
     </PreferenceCategory>
 

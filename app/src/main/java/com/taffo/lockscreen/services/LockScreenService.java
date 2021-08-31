@@ -123,6 +123,8 @@ public final class LockScreenService extends Service {
 
 	//"Foreground" service (with pending notification): Since android 10 (maybe before?) after 20 seconds services go in background. Solved using priorities in the manifest
 	private void startLockForeground() {
+		if (sp.getSharedmPrefFirstRunAccessibilitySettings())
+			sp.setSharedmPrefFirstRunAccessibilitySettings(false);
 		NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
 		chan.setLightColor(Color.GREEN);
 		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
@@ -146,7 +148,7 @@ public final class LockScreenService extends Service {
 					.setChannelId(getString(R.string.app_name))
 					.setSmallIcon(R.drawable.locked_icon)
 					.setColor(Color.GREEN)
-					.setContentTitle(getString(R.string.number_of_notes_to_play) + " " + sp.getSharedmPrefNumberOfNotesToPlay())
+					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNumberOfNotesToPlay())
 					.setContentText(getString(R.string.service_running))
 					.setPriority(NotificationManager.IMPORTANCE_HIGH)
 					.setCategory(Notification.CATEGORY_SERVICE)
@@ -163,7 +165,7 @@ public final class LockScreenService extends Service {
 					.setChannelId(getString(R.string.app_name))
 					.setSmallIcon(R.drawable.locked_icon)
 					.setColor(Color.RED)
-					.setContentTitle(getString(R.string.number_of_notes_to_play) + " " + sp.getSharedmPrefNumberOfNotesToPlay())
+					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNumberOfNotesToPlay())
 					.setContentText(getString(R.string.service_running))
 					.setPriority(NotificationManager.IMPORTANCE_HIGH)
 					.setCategory(Notification.CATEGORY_SERVICE)
