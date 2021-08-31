@@ -8,6 +8,9 @@
     <string name="grant_and_start">Avvia/Interrompi il servizio</string>
     <string name="accessibility_service_description">Il seguente servizio di accessibilità si impegna esclusivamente a BLOCCARE IL DISPOSITIVO quando:\n1) viene compiuta qualsivoglia azione volta all\'elusione del blocco schermo, se attivo, offerto da LockScreen;\n2) viene attivato il servizio principale tramite impostazione rapida;\n3) questo servizio viene avviato (situazione che si verifica anche all\'avvio del dispositivo), se esplicitamente richiesto tramite impostazioni.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
     <string name="number_of_notes_to_play">Numero di note da riprodurre</string>
+    <string name="on">\u0020on:\u0020</string>
+    <string name="off">\u0020off:\u0020</string>
+    <string name="unavailable">\u0020non disponibile</string>
     <string name="Do">Do</string>
     <string name="Dodie">Do#</string>
     <string name="Re">Re</string>
@@ -22,12 +25,12 @@
     <string name="Si">Si</string>
     <string name="training">Allenamento</string>
     <string name="warnings_title">Avvertenze</string>
-    <string name="warnings_message">Se attivo, il servizio principale si impegna, dopo il risveglio del dispositivo (ad esempio dopo che il blocco schermo di sistema è stato superato), ad avviare il blocco schermo offerto da LockScreen.\n\n<b>Se durante questa attività verrà compiuta qualsivoglia azione volta alla sua elusione, lo schermo verrà nuovamente bloccato.</b>\n\nQuesto servizio può anche essere gestito tramite impostazione rapida, la quale, <b>se specificato nelle impostazioni, provvede anche a bloccare lo schermo.</b>\n\nPer favore non attivarlo se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il dispositivo in situazioni di emergenza!</string>
-    <string name="warnings_message_html">Se attivo, il servizio principale si impegna, dopo il risveglio del dispositivo (ad esempio dopo che il blocco schermo di sistema è stato superato), ad avviare il blocco schermo offerto da LockScreen.&lt;br />&lt;br />&lt;b>Se durante questa attività verrà compiuta qualsivoglia azione volta alla sua elusione, lo schermo verrà nuovamente bloccato.&lt;/b>&lt;br />&lt;br />Questo servizio può anche essere gestito tramite impostazione rapida, la quale, &lt;b>se specificato nelle impostazioni, provvede anche a bloccare lo schermo.&lt;/b>&lt;br />&lt;br />Per favore non attivarlo se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il dispositivo in situazioni di emergenza!</string>
+    <string name="warnings_message">Se attivato, il servizio principale si impegna, dopo il risveglio del dispositivo (ad esempio dopo che il blocco schermo di sistema è stato superato), ad avviare il blocco schermo offerto da LockScreen.\n\n<b>Se durante questa attività verrà compiuta qualsivoglia azione volta alla sua elusione, lo schermo verrà nuovamente bloccato.</b>\n\nQuesto servizio può anche essere gestito tramite impostazione rapida, la quale, <b>se specificato nelle impostazioni, provvede anche a bloccare lo schermo.</b>\n\nPer favore non attivarlo se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il dispositivo in situazioni di emergenza!</string>
+    <string name="warnings_message_html">Se attivato, il servizio principale si impegna, dopo il risveglio del dispositivo (ad esempio dopo che il blocco schermo di sistema è stato superato), ad avviare il blocco schermo offerto da LockScreen.&lt;br />&lt;br />&lt;b>Se durante questa attività verrà compiuta qualsivoglia azione volta alla sua elusione, lo schermo verrà nuovamente bloccato.&lt;/b>&lt;br />&lt;br />Questo servizio può anche essere gestito tramite impostazione rapida, la quale, &lt;b>se specificato nelle impostazioni, provvede anche a bloccare lo schermo.&lt;/b>&lt;br />&lt;br />Per favore non attivarlo se non hai l\'orecchio assoluto, potresti non riuscire a sbloccare il dispositivo in situazioni di emergenza!</string>
     <string name="boot_setting_message">Se questa impostazione è attivata, ogni volta che il servizio di accessibilità verrà avviato (situazione che si verifica anche all\'avvio del dispositivo), il numero di note da riprodurre verrà impostato al valore presente nell\'impostazione in basso; <b>inoltre lo schermo verrà bloccato automaticamente.</b>\n\nSe questa impostazione è disattivata, ogni volta che il servizio di accessibilità verrà avviato, verrà solamente avviato il servizio principale.</string>
     <string name="lock_device_on_boot">Blocca lo schermo all\'avvio</string>
     <string name="volume_adapter_setting_title">Volume automatico</string>
-    <string name="volume_adapter_setting_message">Se questa impostazione è attivata, se il servizio principale adibito al blocco schermo è attivo e lo schermo è bloccato, verrà stabilito il valore ottimale da assegnare al volume multimediale in base al rumore medio percepito dal microfono.\n\nAumenta il consumo della batteria.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
+    <string name="volume_adapter_setting_message">Se questa impostazione è attivata, se il servizio principale adibito al blocco schermo è attivo e lo schermo è bloccato, verrà assegnato il valore ottimale al volume multimediale in base al rumore medio percepito dal microfono.\n\nAumenta il consumo della batteria.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
     <string name="automatic_volume_level">Regola automaticamente il volume</string>
     <string name="number_of_notes_warning">Il numero deve essere compreso tra 1 e 8</string>
     <string name="settings">Impostazioni</string>
@@ -40,6 +43,6 @@
     <string name="boot_setting_title">Accensione</string>
     <string name="quick_setting_title">Impostazione rapida</string>
     <string name="quick_setting_message">Se questa impostazione è attivata, quando l\'impostazione rapida di LockScreen viene cliccata e attivata, oltre ad essere avviato il servizio principale, in aggiunta <b>verrà anche bloccato lo schermo</b></string>
-    <string name="lock_device_when_quick_setting_enabled">Blocca lo schermo quando attiva</string>
+    <string name="lock_device_when_quick_setting_enabled">Blocca lo schermo quando attivata</string>
     <string name="double_tap_gesture_setting_title">Gesto di doppio tocco</string>
 </resources>

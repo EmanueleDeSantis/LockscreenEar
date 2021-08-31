@@ -24,7 +24,6 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,7 +31,6 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.IBinder;
-import android.service.quicksettings.TileService;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
@@ -102,7 +100,6 @@ public final class VolumeAdapterService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
     }
 
     private final int LIST_EL = 5;

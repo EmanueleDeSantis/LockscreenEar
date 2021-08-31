@@ -25,12 +25,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.service.quicksettings.TileService;
 import android.text.Html;
 import android.text.InputType;
 import android.view.Menu;
@@ -41,7 +39,6 @@ import android.widget.Button;
 
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.services.LockScreenService;
-import com.taffo.lockscreen.services.LockTileService;
 import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.services.EarTrainingService;
 
@@ -89,7 +86,6 @@ public final class MainActivity extends AppCompatActivity {
                 //The array of notes must also be set here, otherwise it would collapse to 1 item
                 numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout,
                         getResources().getStringArray(R.array.number_of_notes)));
-                TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
             }
         };
         sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
@@ -113,7 +109,6 @@ public final class MainActivity extends AppCompatActivity {
                     stopService(new Intent(this, LockScreenService.class));
             } else
                 switchStart.setChecked(false);
-            TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         });
 
         //Redirect to accessibility setting's page
@@ -134,12 +129,18 @@ public final class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //The array of notes must also (see above) be set here, otherwise it would not show
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout, getResources().getStringArray(R.array.number_of_notes)));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else
             switchStart.setChecked(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
+        sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerService);
     }
 
     @Override

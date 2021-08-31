@@ -77,7 +77,6 @@ public final class LockScreenService extends Service {
 						//else unlocks the screen without starting LockScreenActivity, so notification color changes to green
 						startLockForeground();
 					stopVolumeAdapterService = true;
-					TileService.requestListeningState(context, new ComponentName(context, LockTileService.class));
 				}
 			}
 		}
@@ -110,10 +109,8 @@ public final class LockScreenService extends Service {
 		if (new CheckPermissions().checkPermissions(this) && sp.getSharedmPrefService()) {
 			startLockForeground();
 			listenerNotes = (prefs, key) -> {
-				if (prefs.equals(sp.getmPrefNotes())) {
+				if (prefs.equals(sp.getmPrefNotes()))
 					startLockForeground();
-					TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-				}
 			};
 			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
 		} else
@@ -174,6 +171,8 @@ public final class LockScreenService extends Service {
 					.build();
 			startForeground(5, notification);
 		}
+		//Updates the tile
+		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
 	}
 
 	//Unregisters the receiver
@@ -184,6 +183,7 @@ public final class LockScreenService extends Service {
 		sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null)
 			telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);
+		//Updates the tile
 		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
 	}
 

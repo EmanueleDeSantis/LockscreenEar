@@ -11,6 +11,9 @@
     <string name="training">Training</string>
     <string name="ok" translatable="false">OK</string>
     <string name="number_of_notes_to_play">Number of notes to play</string>
+    <string name="on">\u0020on:\u0020</string>
+    <string name="off">\u0020off:\u0020</string>
+    <string name="unavailable">\u0020unavailable</string>
 
     <string name="settings">Settings</string>
     <string name="basics">Basics</string>
@@ -24,7 +27,7 @@
     <string name="volume_adapter_setting" translatable="false">Volume Adapter setting</string>
     <string name="volume_adapter_setting_title">Volume</string>
     <string name="automatic_volume_level">Auto adjust volume level</string>
-    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the device is locked, it will be settled the optimal value to be assigned to the multimedia volume based on perceived noise from the microphone.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
+    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the device is locked, it will be assigned the optimal value to the multimedia volume based on perceived noise from the microphone.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
     <string name="quick_setting" translatable="false">Quick setting</string>
     <string name="quick_setting_title">Quick setting</string>
     <string name="quick_setting_message">If this setting is enabled, when LockScreen\'s quick setting is clicked and activated, in addition to starting the main service, <b>the device gets also locked.</b></string>

@@ -6,7 +6,7 @@
         <Preference
             app:key="@string/boot_setting"
             app:title="@string/boot_setting_title"
-            app:icon="@drawable/restart_icon"
+            app:icon="@drawable/boot_icon"
             app:fragment="com.taffo.lockscreen.SettingsActivity$BootSettingFragment" />
 
         <Preference

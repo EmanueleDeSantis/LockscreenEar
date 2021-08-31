@@ -20,13 +20,11 @@ package com.taffo.lockscreen.services;
 
 import android.accessibilityservice.AccessibilityService;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
 import android.os.Build;
 import android.provider.Settings;
-import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.annotation.RequiresApi;
@@ -38,7 +36,6 @@ import com.taffo.lockscreen.utils.SharedPref;
 public final class LockAccessibilityService extends AccessibilityService {
     private SharedPref sp;
     private static LockAccessibilityService instance;
-    static boolean onCrea = false;
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -51,7 +48,6 @@ public final class LockAccessibilityService extends AccessibilityService {
         if (cp.checkPermissions(this)) {
             sp.setSharedmPrefService(true);
             startForegroundService(new Intent(this, LockScreenService.class));
-            TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         }
         //Executed only at first connection
         if (sp.getSharedmPrefFirstRunAccessibilitySettings())
@@ -69,11 +65,9 @@ public final class LockAccessibilityService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        onCrea = false;
         instance = null;
         sp.setSharedmPrefService(false);
         stopService(new Intent(this, LockScreenService.class));
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
     }
 
     @Override

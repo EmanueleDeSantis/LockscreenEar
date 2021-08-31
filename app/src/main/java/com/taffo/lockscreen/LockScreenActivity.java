@@ -25,21 +25,18 @@ import androidx.core.text.HtmlCompat;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.service.quicksettings.TileService;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.taffo.lockscreen.services.LockAccessibilityService;
-import com.taffo.lockscreen.services.LockTileService;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.XMLParser;
 
@@ -85,7 +82,6 @@ public final class LockScreenActivity extends AppCompatActivity {
 
         cp = new CheckPermissions();
         cp.setIsLockScreenRunning(true);
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
 
         play();
 
@@ -518,7 +514,6 @@ public final class LockScreenActivity extends AppCompatActivity {
     private void unlockAndFinish() {
         cp.setIsLockScreenRunning(false);
         sendBroadcast(new Intent("changeNotificationColor"));
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         finish();
     }
 

@@ -81,18 +81,18 @@ public final class LockTileService extends TileService {
         cp = new CheckPermissions();
         tile = getQsTile();
         if (cp.getIsScreenLocked(this)) {
-            tile.setLabel(getString(R.string.app_name) + " on: " + sp.getSharedmPrefNumberOfNotesToPlay());
+            tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());
             tile.setState(Tile.STATE_UNAVAILABLE);
         } else {
             if (!cp.checkPermissions(this)) {
-                tile.setLabel(getString(R.string.app_name) + " off");
+                tile.setLabel(getString(R.string.app_name) + getString(R.string.unavailable));
                 tile.setState(Tile.STATE_UNAVAILABLE);
             } else {
                 if (sp.getSharedmPrefService()) {
-                    tile.setLabel(getString(R.string.app_name) + " on: " + sp.getSharedmPrefNumberOfNotesToPlay());
+                    tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());
                     tile.setState(Tile.STATE_ACTIVE);
                 } else {
-                    tile.setLabel(getString(R.string.app_name) + " off: " + sp.getSharedmPrefNumberOfNotesToPlay());
+                    tile.setLabel(getString(R.string.app_name) + getString(R.string.off) + sp.getSharedmPrefNumberOfNotesToPlay());
                     tile.setState(Tile.STATE_INACTIVE);
                 }
             }
