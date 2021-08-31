@@ -38,6 +38,7 @@ import com.taffo.lockscreen.utils.SharedPref;
 public final class LockAccessibilityService extends AccessibilityService {
     private SharedPref sp;
     private static LockAccessibilityService instance;
+    static boolean onCrea = false;
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -53,10 +54,10 @@ public final class LockAccessibilityService extends AccessibilityService {
             TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
         }
         //Executed only at first connection
-        if (sp.getSharedmPrefFirstRunAccessibilitySettings()) {
+        if (sp.getSharedmPrefFirstRunAccessibilitySettings())
             startActivity(new Intent(this, MainActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } else {
+        else {
             //Auto-starts the service on boot if the restart setting is on
             if (cp.checkPermissions(this) && sp.getSharedmPrefBootSwitchSetting()) {
                 sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
@@ -68,6 +69,7 @@ public final class LockAccessibilityService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        onCrea = false;
         instance = null;
         sp.setSharedmPrefService(false);
         stopService(new Intent(this, LockScreenService.class));

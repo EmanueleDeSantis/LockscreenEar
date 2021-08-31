@@ -21,6 +21,7 @@ package com.taffo.lockscreen;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -56,15 +57,14 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
+    public void onBackPressed() {
+        navigateBack();
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home)
-            super.onBackPressed();
+            navigateBack();
         return super.onOptionsItemSelected(item);
     }
 
@@ -167,6 +167,16 @@ public class SettingsActivity extends AppCompatActivity {
             requireActivity().setTitle(R.string.warnings_title);
             setPreferencesFromResource(R.xml.warnings, rootKey);
         }
+    }
+
+    private void navigateBack() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            startActivity(new Intent(this, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+        }
+        else
+            super.onBackPressed();
     }
 
 }

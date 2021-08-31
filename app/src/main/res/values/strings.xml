@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">LockScreen</string>
     <string name="insert_notes">Enter notes</string>
-    <string name="click_to_grant_permissions_and_start_the_service">Perfect pitch lockscreen</string>
+    <string name="click_to_grant_permissions_and_start_the_service">Lockscreen for perfect pitch</string>
     <string name="service_running">Service running</string>
     <string name="notes_increase">NUMBER OF NOTES +1</string>
     <string name="grant_and_start">Start/Stop the service</string>
