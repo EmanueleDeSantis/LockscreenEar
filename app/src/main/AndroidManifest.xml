@@ -24,7 +24,8 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +37,8 @@
             android:exported="true"
             android:label="@string/settings"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MainActivity">
+            android:theme="@style/Theme.MainActivity"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
             </intent-filter>
@@ -48,7 +50,8 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.LockScreenActivity"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter android:priority="999999999">
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -59,7 +62,8 @@
             android:launchMode="singleInstance"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.LockScreenActivity" />
+            android:theme="@style/Theme.LockScreenActivity"
+            tools:ignore="LockedOrientationActivity" />
 
         <service
             android:name=".services.LockScreenService"

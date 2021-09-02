@@ -35,7 +35,7 @@ import com.taffo.lockscreen.services.LockAccessibilityService;
 import java.util.Objects;
 
 public final class CheckPermissions {
-    LockAccessibilityService las = new LockAccessibilityService();
+    private final LockAccessibilityService las = new LockAccessibilityService();
     private static boolean isLockScreenRunning = false;
 
     public boolean checkPermissions(Context context) {

@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.ListPreference;
@@ -51,9 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
                     .replace(R.id.settings_frame_layout, new SettingsFragment())
                     .commit();
         }
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -174,8 +171,7 @@ public class SettingsActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             finish();
-        }
-        else
+        } else
             super.onBackPressed();
     }
 

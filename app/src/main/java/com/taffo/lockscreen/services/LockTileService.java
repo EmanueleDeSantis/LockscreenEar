@@ -31,9 +31,9 @@ import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
 public final class LockTileService extends TileService {
-    Tile tile;
-    SharedPref sp;
-    CheckPermissions cp;
+    private Tile tile;
+    private SharedPref sp;
+    CheckPermissions cp = new CheckPermissions();
 
     @Override
     public IBinder onBind(@Nullable Intent intent) {
@@ -78,7 +78,7 @@ public final class LockTileService extends TileService {
     //Sets the correct state of the tile
     private void updateTileService() {
         sp = new SharedPref(this);
-        cp = new CheckPermissions();
+        //CheckPermissions cp = new CheckPermissions();
         tile = getQsTile();
         if (cp.getIsScreenLocked(this)) {
             tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());

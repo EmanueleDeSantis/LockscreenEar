@@ -49,7 +49,6 @@ public final class MainActivity extends AppCompatActivity {
     private SharedPref sp;
     private SwitchCompat switchStart;
     private AutoCompleteTextView numberInput;
-    //Apparently listeners must be declared here (and not in onCreate) in order to work, so please ignore warnings
     private SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
     private SharedPreferences.OnSharedPreferenceChangeListener listenerService;
 

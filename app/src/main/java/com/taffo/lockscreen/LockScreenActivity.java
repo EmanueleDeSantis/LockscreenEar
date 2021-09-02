@@ -57,7 +57,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     private int systemScreenOffTimeoutDefaultValue;
     private CheckCalls callsListener;
     private TelephonyManager telephony;
-    private CheckPermissions cp;
+    CheckPermissions cp = new CheckPermissions();
 
     private TextView textViewNotes;
     private Button buttonDo;
@@ -79,8 +79,6 @@ public final class LockScreenActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lockscreen);
-
-        cp = new CheckPermissions();
         cp.setIsLockScreenRunning(true);
 
         play();
@@ -278,7 +276,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         finish();
-        if (new CheckPermissions().getIsLockScreenRunning())
+        if (cp.getIsLockScreenRunning())
             new LockAccessibilityService().lockTheDevice();
     }
 

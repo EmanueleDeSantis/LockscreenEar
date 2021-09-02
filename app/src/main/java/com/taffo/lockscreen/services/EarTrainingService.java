@@ -29,7 +29,7 @@ import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;
 
 public final class EarTrainingService extends Service {
-	SharedPref sp;
+	private SharedPref sp;
 
 	@Override
 	public IBinder onBind(@Nullable Intent intent) {

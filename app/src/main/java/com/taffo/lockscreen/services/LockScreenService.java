@@ -55,6 +55,7 @@ import java.util.TimerTask;
 public final class LockScreenService extends Service {
 	private static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
 	private SharedPref sp;
+	CheckPermissions cp = new CheckPermissions();
 	private Timer timer;
 	private CheckCalls callsListener;
 	private TelephonyManager telephony;
@@ -106,7 +107,7 @@ public final class LockScreenService extends Service {
 		filter.addAction("changeNotificationColor"); //Changes color of the notification, green when screen is unlocked, red when is locked
 		registerReceiver(mReceiver, filter);
 
-		if (new CheckPermissions().checkPermissions(this) && sp.getSharedmPrefService()) {
+		if (cp.checkPermissions(this) && sp.getSharedmPrefService()) {
 			startLockForeground();
 			listenerNotes = (prefs, key) -> {
 				if (prefs.equals(sp.getmPrefNotes()))
@@ -123,7 +124,6 @@ public final class LockScreenService extends Service {
 		if (sp.getSharedmPrefFirstRunAccessibilitySettings())
 			sp.setSharedmPrefFirstRunAccessibilitySettings(false);
 		NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
-		chan.setLightColor(Color.GREEN);
 		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
 		((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).createNotificationChannel(chan);
 
@@ -136,7 +136,7 @@ public final class LockScreenService extends Service {
 		NotificationCompat.Action increaseNotes = new NotificationCompat.Action.Builder(0, getString(R.string.notes_increase), actionIncrementNotes).build();
 
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.app_name));
-		if (!new CheckPermissions().getIsScreenLocked(this)) {
+		if (!cp.getIsScreenLocked(this)) {
 			//Notification panel when the screen is unlocked
 			//Green
 			Notification notification = notificationBuilder
