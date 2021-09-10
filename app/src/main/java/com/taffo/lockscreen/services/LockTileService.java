@@ -33,7 +33,7 @@ import com.taffo.lockscreen.utils.SharedPref;
 public final class LockTileService extends TileService {
     private Tile tile;
     private SharedPref sp;
-    CheckPermissions cp = new CheckPermissions();
+    private final CheckPermissions cp = new CheckPermissions();
 
     @Override
     public IBinder onBind(@Nullable Intent intent) {
@@ -69,7 +69,7 @@ public final class LockTileService extends TileService {
             startForegroundService(new Intent(this, LockScreenService.class));
             //Locks the screen when the service is started via quick setting tile
             if (sp.getSharedmPrefQuickSettingSwitchEnabled())
-                new LockAccessibilityService().lockTheDevice();
+                LockAccessibilityService.lockTheScreen();
         }
         tile.updateTile();
         updateTileService();
@@ -78,9 +78,8 @@ public final class LockTileService extends TileService {
     //Sets the correct state of the tile
     private void updateTileService() {
         sp = new SharedPref(this);
-        //CheckPermissions cp = new CheckPermissions();
         tile = getQsTile();
-        if (cp.getIsScreenLocked(this)) {
+        if (CheckPermissions.getIsScreenLocked(this)) {
             tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());
             tile.setState(Tile.STATE_UNAVAILABLE);
         } else {

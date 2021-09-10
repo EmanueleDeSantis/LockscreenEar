@@ -20,9 +20,12 @@ package com.taffo.lockscreen;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -54,14 +57,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        navigateBack();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home)
-            navigateBack();
+            super.onBackPressed();
         return super.onOptionsItemSelected(item);
     }
 
@@ -166,13 +164,19 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void navigateBack() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            startActivity(new Intent(this, MainActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
-        } else
-            super.onBackPressed();
+    public static class UninstallLockScreen extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.root_preferences, rootKey);
+            Context context = requireContext();
+            ComponentName admin = new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class);
+            DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+            if (dpm.isAdminActive(admin))
+                dpm.removeActiveAdmin(admin);
+            startActivity(new Intent(Intent.ACTION_DELETE)
+                    //.setPackage(context.getPackageName()));
+                    .setData(Uri.parse("package:" + context.getPackageName())));
+        }
     }
 
 }

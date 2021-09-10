@@ -37,6 +37,11 @@
         </Preference>
 
         <Preference
+            app:title="@string/uninstallLockScreen"
+            app:iconSpaceReserved="false"
+            app:fragment="com.taffo.lockscreen.SettingsActivity$UninstallLockScreen" />
+
+        <Preference
             app:key="@string/about"
             app:title="@string/build_version"
             app:selectable="false"

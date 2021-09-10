@@ -20,15 +20,19 @@ package com.taffo.lockscreen.services;
 
 import android.accessibilityservice.AccessibilityService;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
 import android.os.Build;
 import android.provider.Settings;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.taffo.lockscreen.DeviceAdminActivity;
 import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
@@ -56,8 +60,11 @@ public final class LockAccessibilityService extends AccessibilityService {
         else {
             //Auto-starts the service on boot if the restart setting is on
             if (cp.checkPermissions(this) && sp.getSharedmPrefBootSwitchSetting()) {
-                sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
-                lockTheDevice();
+                DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                if (dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class))) {
+                    sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
+                    dpm.lockNow();
+                }
             }
         }
     }
@@ -85,8 +92,8 @@ public final class LockAccessibilityService extends AccessibilityService {
         return prefString != null && prefString.contains(context.getPackageName() + "/" + getClass().getName());
     }
 
-    //Locks the screen (also used in LockTileService and in LockScreenService)
-    public void lockTheDevice() {
+    //Locks the screen (used in LockTileService)
+    public static void lockTheScreen() {
         if (instance != null)
             instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
     }

@@ -18,6 +18,7 @@
 
 package com.taffo.lockscreen;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -25,8 +26,12 @@ import androidx.core.text.HtmlCompat;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.admin.DevicePolicyManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -35,9 +40,12 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.taffo.lockscreen.services.LockAccessibilityService;
+import com.taffo.lockscreen.services.LockScreenService;
 import com.taffo.lockscreen.utils.CheckPermissions;
+import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;
 
 import org.w3c.dom.Document;
@@ -55,9 +63,9 @@ public final class LockScreenActivity extends AppCompatActivity {
     private final Document doc = parser.getDocum();
 
     private int systemScreenOffTimeoutDefaultValue;
-    private CheckCalls callsListener;
+    /*private CheckCalls callsListener;
     private TelephonyManager telephony;
-    CheckPermissions cp = new CheckPermissions();
+    final CheckPermissions cp = new CheckPermissions();*/
 
     private TextView textViewNotes;
     private Button buttonDo;
@@ -79,7 +87,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lockscreen);
-        cp.setIsLockScreenRunning(true);
+        CheckPermissions.setIsLockScreenRunning(true);
 
         play();
 
@@ -93,11 +101,11 @@ public final class LockScreenActivity extends AppCompatActivity {
         if (Settings.System.canWrite(this))
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 10000);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             callsListener = new CheckCalls();
             telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
             telephony.listen(callsListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
+        }*/
 
         textViewNotes = findViewById(R.id.textViewNotes);
         buttonDo = findViewById(R.id.buttonDo);
@@ -259,35 +267,36 @@ public final class LockScreenActivity extends AppCompatActivity {
         });
     }
 
-    //To prevent user from exiting (without properly unlocking) this activity,
-    //when it loses focus screen gets locked again
+    //Any action that takes this activity away does not work, except, sometimes, for home and recent tasks intents
     @Override
     protected void onPause() {
         super.onPause();
-        ((ActivityManager) Objects.requireNonNull(getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE))).moveTaskToFront(getTaskId(), 0);
+        ((ActivityManager) Objects.requireNonNull(getSystemService(Context.ACTIVITY_SERVICE))).moveTaskToFront(getTaskId(), 0);
     }
 
     //Does nothing on back press
     @Override
     public void onBackPressed() {}
 
-    //Finishes this activity if it gets properly unlocked
+    //To prevent user from exiting (without properly unlocking) this activity, when it loses focus the screen locks again
     @Override
     protected void onStop() {
         super.onStop();
+        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        if (CheckPermissions.getIsLockScreenRunning()
+                && dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
+                dpm.lockNow();
         finish();
-        if (cp.getIsLockScreenRunning())
-            new LockAccessibilityService().lockTheDevice();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null)
-            telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);
         //Sets the screen off timeout to the default value
         if (Settings.System.canWrite(this))
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null)
+            telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);*/
     }
 
     private final Random rand = new Random();
@@ -510,18 +519,34 @@ public final class LockScreenActivity extends AppCompatActivity {
     }
 
     private void unlockAndFinish() {
-        cp.setIsLockScreenRunning(false);
+        CheckPermissions.setIsLockScreenRunning(false);
         sendBroadcast(new Intent("changeNotificationColor"));
         finish();
     }
 
-    //Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
+    /*//Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
     private class CheckCalls extends PhoneStateListener {
+        //int lastState = TelephonyManager.CALL_STATE_IDLE;
+        Context context = getApplicationContext();
+        SharedPref sp = new SharedPref(context);
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
-            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK)
-                unlockAndFinish();
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                finish();
+                sp.setSharedmPrefService(false);
+                stopService(new Intent(context, LockScreenService.class));
+                DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                if (CheckPermissions.getIsLockScreenRunning()
+                        && dpm.isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
+                    dpm.lockNow();
+            }
+            if (state == TelephonyManager.CALL_STATE_IDLE)
+                if (cp.checkPermissions(context)) {
+                    sp.setSharedmPrefService(true);
+                    startForegroundService(new Intent(context, LockScreenService.class));
+                }
         }
-    }
+
+    }*/
 
 }

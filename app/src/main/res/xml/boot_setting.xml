@@ -10,7 +10,7 @@
     <PreferenceCategory>
         <SwitchPreference
             app:key="@string/boot_switch_setting_shared_pref"
-            app:title="@string/lock_device_on_boot"
+            app:title="@string/lock_screen_on_boot"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
             app:defaultValue="@string/disabled"
