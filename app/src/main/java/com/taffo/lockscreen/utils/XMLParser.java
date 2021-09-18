@@ -36,6 +36,9 @@ public final class XMLParser {
         val = s;
     }
     public int getNotes() {
+        int intVal = Integer.parseInt(val);
+        if (intVal < 1 || intVal > 8) //Integrity val check
+            val = "3";
         return Integer.parseInt(val);
     }
 

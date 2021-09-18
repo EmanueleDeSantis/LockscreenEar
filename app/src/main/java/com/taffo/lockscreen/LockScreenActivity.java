@@ -18,8 +18,8 @@
 
 package com.taffo.lockscreen;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
@@ -27,20 +27,19 @@ import androidx.core.text.HtmlCompat;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.admin.DevicePolicyManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyCallback;
 import android.telephony.TelephonyManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.taffo.lockscreen.services.LockAccessibilityService;
 import com.taffo.lockscreen.services.LockScreenService;
@@ -63,9 +62,9 @@ public final class LockScreenActivity extends AppCompatActivity {
     private final Document doc = parser.getDocum();
 
     private int systemScreenOffTimeoutDefaultValue;
-    /*private CheckCalls callsListener;
+    private CheckCalls callsListener;
+    private CheckCallsS callsListenerS;
     private TelephonyManager telephony;
-    final CheckPermissions cp = new CheckPermissions();*/
 
     private TextView textViewNotes;
     private Button buttonDo;
@@ -87,6 +86,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lockscreen);
+
         CheckPermissions.setIsLockScreenRunning(true);
 
         play();
@@ -101,11 +101,17 @@ public final class LockScreenActivity extends AppCompatActivity {
         if (Settings.System.canWrite(this))
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 10000);
 
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            callsListener = new CheckCalls();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
-            telephony.listen(callsListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }*/
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                //Not tested yet
+                callsListenerS = new CheckCallsS();
+                telephony.registerTelephonyCallback(runnable -> {}, callsListenerS);
+            } else {
+                callsListener = new CheckCalls();
+                telephony.listen(callsListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
+        }
 
         textViewNotes = findViewById(R.id.textViewNotes);
         buttonDo = findViewById(R.id.buttonDo);
@@ -285,31 +291,40 @@ public final class LockScreenActivity extends AppCompatActivity {
         DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         if (CheckPermissions.getIsLockScreenRunning()
                 && dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
-                dpm.lockNow();
+            dpm.lockNow();
         finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        for (int i = 0; i < NOTES; i++)
+            mediaPlayer[i].release();
         //Sets the screen off timeout to the default value
         if (Settings.System.canWrite(this))
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null)
-            telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);*/
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                telephony.unregisterTelephonyCallback(callsListenerS);
+            else
+                telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);
+        }
     }
 
     private final Random rand = new Random();
     private final int[] randomNotes = new int[NOTES];
     private final String[] outputtedNotes = new String[NOTES];
+    private final MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
-        for (int i = 0; i < NOTES; i++)
+        for (int i = 0; i < NOTES; i++) {
             randomNotes[i] = rand.nextInt(TOTAL_NOTES) + 1;
+            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
+                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+        }
         for (int i = 0; i < NOTES; i++)
-            MediaPlayer.create(this, getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
-                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName())).start();
+            mediaPlayer[i].start();
         Arrays.sort(randomNotes);
         for (int i = 0; i < NOTES; i++)
             outputtedNotes[i] = doc.getElementById(String.valueOf(randomNotes[i]))
@@ -524,29 +539,46 @@ public final class LockScreenActivity extends AppCompatActivity {
         finish();
     }
 
-    /*//Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
+    //Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
+    //for API <= 30
+    //See also the implementation in LockAccessibilityService class
     private class CheckCalls extends PhoneStateListener {
-        //int lastState = TelephonyManager.CALL_STATE_IDLE;
-        Context context = getApplicationContext();
-        SharedPref sp = new SharedPref(context);
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                finish();
-                sp.setSharedmPrefService(false);
-                stopService(new Intent(context, LockScreenService.class));
-                DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-                if (CheckPermissions.getIsLockScreenRunning()
-                        && dpm.isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
-                    dpm.lockNow();
+                unlockAndFinish();
+                LockAccessibilityService.lockTheScreen();
             }
-            if (state == TelephonyManager.CALL_STATE_IDLE)
-                if (cp.checkPermissions(context)) {
-                    sp.setSharedmPrefService(true);
-                    startForegroundService(new Intent(context, LockScreenService.class));
-                }
         }
+    }
 
-    }*/
+    //Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
+    //for API >= 30
+    //See also the implementation in LockAccessibilityService class
+    //Not tested yet
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private class CheckCallsS extends TelephonyCallback implements TelephonyCallback.CallStateListener {
+        Context mContext = getApplicationContext();
+        boolean isServiceRunning = false;
+        SharedPref sp = new SharedPref(mContext);
+
+        @Override
+        public void onCallStateChanged(int state) {
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                if (sp.getSharedmPrefService()) {
+                    isServiceRunning = true;
+                    sp.setSharedmPrefService(false);
+                    stopService(new Intent(mContext, LockScreenService.class));
+                }
+                else
+                    isServiceRunning = false;
+            } else if (state == TelephonyManager.CALL_STATE_IDLE && isServiceRunning) {
+                if (new CheckPermissions().checkPermissions(mContext)) {
+                    sp.setSharedmPrefService(true);
+                    startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
+                }
+            }
+        }
+    }
 
 }

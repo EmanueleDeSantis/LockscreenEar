@@ -30,6 +30,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.ListPreference;
@@ -64,31 +66,83 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
+        Context mContext;
+        Preference removeAdmin;
+        Preference uninstallLockScreen;
+        ComponentName admin;
+        DevicePolicyManager dpm;
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mContext = requireContext();
+            admin = new ComponentName(mContext, DeviceAdminActivity.DeviceAdminActivityReceiver.class);
+            dpm = (DevicePolicyManager) mContext.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        }
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            ((Preference) (Objects.requireNonNull(findPreference(getString(R.string.about))))).setSummary(BuildConfig.VERSION_NAME);
+
+            ((Preference) Objects.requireNonNull(findPreference(getString(R.string.source_code_key))))
+                    .setOnPreferenceClickListener(preference -> {
+                        startActivity(new Intent(Intent.ACTION_VIEW)
+                                .setData(Uri.parse("https://www.github.com/EmanueleDeSantis/LockScreen")));
+                        return true;
+                    });
+
+            ((Preference) (Objects.requireNonNull(findPreference(getString(R.string.about_key)))))
+                    .setSummary(BuildConfig.VERSION_NAME);
+
+            removeAdmin = findPreference(getString(R.string.deactivate_admin_key));
+            uninstallLockScreen = findPreference(getString(R.string.uninstall_lockScreen_key));
+
+            removeAdmin.setOnPreferenceClickListener(preference -> {
+                if (dpm.isAdminActive(admin)) {
+                    new AlertDialog.Builder(mContext)
+                            .setTitle(getString(R.string.warnings_title))
+                            .setMessage(getString(R.string.deactivate_admin_message))
+                            .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+                                dpm.removeActiveAdmin(admin);
+                                removeAdmin.setEnabled(false);
+                                uninstallLockScreen.setEnabled(true);
+                            })
+                            .setNegativeButton(getString(R.string.no), (dialog, which) -> dialog.dismiss())
+                            .create()
+                            .show();
+                }
+                return true;
+            });
+
+            uninstallLockScreen.setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(Intent.ACTION_DELETE)
+                    .setData(Uri.parse("package:" + mContext.getPackageName())));
+                return true;
+            });
         }
 
         @Override
         public void onResume() {
             super.onResume();
             requireActivity().setTitle(R.string.settings);
+            removeAdmin.setEnabled(dpm.isAdminActive(admin));
+            uninstallLockScreen.setEnabled(!dpm.isAdminActive(admin));
         }
+
     }
 
     public static class BootSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.boot_setting, rootKey);
-            Context context = requireContext();
+            Context mContext = requireContext();
             Activity activity = requireActivity();
-            SharedPref sp = new SharedPref(context);
+            SharedPref sp = new SharedPref(mContext);
             activity.setTitle(R.string.boot_setting_title);
             SwitchPreference switchBootSetting = findPreference(getString(R.string.boot_switch_setting_shared_pref));
             ListPreference listNumberOfNotes = findPreference(getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref));
 
-            if (!new CheckPermissions().checkPermissions(context))
+            if (!new CheckPermissions().checkPermissions(mContext))
                 Objects.requireNonNull(switchBootSetting).setEnabled(false);
 
             //Saves OnRestartSetting state
@@ -103,24 +157,26 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
         }
+
     }
 
     public static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            Context context = requireContext();
-            Activity activity = requireActivity();
-            SharedPref sp = new SharedPref(context);
-            activity.setTitle(R.string.volume_adapter_setting_title);
             setPreferencesFromResource(R.xml.volume_adapter_setting, rootKey);
+            Context mContext = requireContext();
+            Activity activity = requireActivity();
+            SharedPref sp = new SharedPref(mContext);
+            activity.setTitle(R.string.volume_adapter_setting_title);
             SwitchPreference switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
 
-            if (!new CheckPermissions().checkPermissions(context))
+            if (!new CheckPermissions().checkPermissions(mContext))
                 Objects.requireNonNull(switchVolumeAdapterSetting).setEnabled(false);
 
             //Asks for permissions
             Objects.requireNonNull(switchVolumeAdapterSetting).setOnPreferenceClickListener(preference -> {
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
                     switchVolumeAdapterSetting.setChecked(false);
                 }
@@ -133,19 +189,21 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
         }
+
     }
 
     public static class QuickSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            Context context = requireContext();
-            Activity activity = requireActivity();
-            SharedPref sp = new SharedPref(context);
-            activity.setTitle(R.string.quick_setting_title);
             setPreferencesFromResource(R.xml.quick_setting, rootKey);
+            Context mContext = requireContext();
+            Activity activity = requireActivity();
+            SharedPref sp = new SharedPref(mContext);
+            activity.setTitle(R.string.quick_setting_title);
+
             SwitchPreference switchQuickSetting = findPreference(getString(R.string.quick_setting_switch_enabled_shared_pref));
 
-            if (!new CheckPermissions().checkPermissions(context))
+            if (!new CheckPermissions().checkPermissions(mContext))
                 Objects.requireNonNull(switchQuickSetting).setEnabled(false);
 
             //Saves QuickSetting state
@@ -154,28 +212,14 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
         }
+
     }
 
     public static class WarningsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            requireActivity().setTitle(R.string.warnings_title);
             setPreferencesFromResource(R.xml.warnings, rootKey);
-        }
-    }
-
-    public static class UninstallLockScreen extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            Context context = requireContext();
-            ComponentName admin = new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class);
-            DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-            if (dpm.isAdminActive(admin))
-                dpm.removeActiveAdmin(admin);
-            startActivity(new Intent(Intent.ACTION_DELETE)
-                    //.setPackage(context.getPackageName()));
-                    .setData(Uri.parse("package:" + context.getPackageName())));
+            requireActivity().setTitle(R.string.warnings_title);
         }
     }
 

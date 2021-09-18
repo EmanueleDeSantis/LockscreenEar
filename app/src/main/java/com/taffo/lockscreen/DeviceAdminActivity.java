@@ -1,20 +1,11 @@
 package com.taffo.lockscreen;
 
 import android.app.Activity;
-import android.app.admin.DeviceAdminInfo;
 import android.app.admin.DeviceAdminReceiver;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.UserHandle;
-import android.os.UserManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.taffo.lockscreen.services.LockScreenService;
 import com.taffo.lockscreen.utils.CheckPermissions;

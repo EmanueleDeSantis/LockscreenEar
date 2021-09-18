@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CyclicBarrier;
 
 public final class EarTrainingActivity extends AppCompatActivity {
     private final XMLParser parser = new XMLParser();
@@ -230,14 +231,27 @@ public final class EarTrainingActivity extends AppCompatActivity {
     private final Random rand = new Random();
     private final int[] randomNotes = new int[NOTES];
     private final String[] outputtedNotes = new String[NOTES];
+    private final Thread[] threads = new Thread[NOTES];
+    private final Runnable[] runnables = new Runnable[NOTES];
+    private final CyclicBarrier barrier = new CyclicBarrier(NOTES);
+    private final MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (int i = 0; i < NOTES; i++)
+            mediaPlayer[i].release();
+    }
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
-        for (int i = 0; i < NOTES; i++)
+        for (int i = 0; i < NOTES; i++) {
             randomNotes[i] = rand.nextInt(TOTAL_NOTES) + 1;
+            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
+                        .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+            };
         for (int i = 0; i < NOTES; i++)
-            MediaPlayer.create(this, getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
-                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName())).start();
+            mediaPlayer[i].start();
         Arrays.sort(randomNotes);
         for (int i = 0; i < NOTES; i++)
             outputtedNotes[i] = doc.getElementById(String.valueOf(randomNotes[i]))

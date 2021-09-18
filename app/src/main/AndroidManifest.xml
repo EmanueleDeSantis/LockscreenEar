@@ -5,13 +5,20 @@
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
+        </intent>
+    </queries>
 
     <application
         android:allowBackup="false"
@@ -36,8 +43,8 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:launchMode="singleTask"
             android:exported="true"
+            android:launchMode="singleTask"
             android:label="@string/settings"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MainActivity"
@@ -82,7 +89,6 @@
                 <action android:name="android.intent.action.SCREEN_OFF" />
                 <action android:name="android.intent.action.ACTION_USER_PRESENT" />
                 <action android:name="android.intent.action.ACTION_HEADSET_PLUG" />
-                <action android:name="android.media.VOLUME_CHANGED_ACTION" />
             </intent-filter>
         </service>
         <service android:name=".services.LockScreenService$IncrementNumberOfNotes" />

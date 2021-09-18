@@ -1,51 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/basics" app:iconSpaceReserved="false">
         <Preference
-            app:key="@string/boot_setting"
+            app:key="@string/boot_setting_key"
             app:title="@string/boot_setting_title"
             app:icon="@drawable/boot_icon"
             app:fragment="com.taffo.lockscreen.SettingsActivity$BootSettingFragment" />
 
         <Preference
-            app:key="@string/volume_adapter_setting"
+            app:key="@string/volume_adapter_setting_key"
             app:title="@string/volume_adapter_setting_title"
             app:icon="@drawable/volume_icon"
             app:fragment="com.taffo.lockscreen.SettingsActivity$VolumeAdapterSettingFragment" />
 
         <Preference
-            app:key="@string/quick_setting"
+            app:key="@string/quick_setting_key"
             app:title="@string/quick_setting_title"
             app:icon="@drawable/locked_icon"
             app:fragment="com.taffo.lockscreen.SettingsActivity$QuickSettingFragment" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/about" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/about_title" app:iconSpaceReserved="false">
         <Preference
             app:title="@string/warnings_title"
             app:iconSpaceReserved="false"
             app:fragment="com.taffo.lockscreen.SettingsActivity$WarningsFragment" />
 
         <Preference
-            app:title="@string/source_code"
-            app:iconSpaceReserved="false">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://www.github.com/EmanueleDeSantis/LockScreen" />
-        </Preference>
+            app:key="@string/source_code_key"
+            app:title="@string/source_code_title"
+            app:iconSpaceReserved="false" />
 
         <Preference
-            app:title="@string/uninstallLockScreen"
-            app:iconSpaceReserved="false"
-            app:fragment="com.taffo.lockscreen.SettingsActivity$UninstallLockScreen" />
-
-        <Preference
-            app:key="@string/about"
+            app:key="@string/about_key"
             app:title="@string/build_version"
             app:selectable="false"
-            app:iconSpaceReserved="false"/>
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/uninstall" app:iconSpaceReserved="false">
+    <Preference
+        app:key="@string/deactivate_admin_key"
+        app:title="@string/deactivate_admin_title"
+        app:icon="@drawable/deactivate_admin_icon" />
+
+    <Preference
+        app:key="@string/uninstall_lockScreen_key"
+        app:title="@string/uninstall_LockScreen_title"
+        app:icon="@drawable/uninstall_icon" />
     </PreferenceCategory>
 
 </PreferenceScreen>
