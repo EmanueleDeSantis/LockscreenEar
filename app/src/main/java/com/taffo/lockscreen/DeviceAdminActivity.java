@@ -11,9 +11,9 @@ import com.taffo.lockscreen.services.LockScreenService;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
-public class DeviceAdminActivity extends Activity {
+public final class DeviceAdminActivity extends Activity {
 
-    public static class DeviceAdminActivityReceiver extends DeviceAdminReceiver {
+    public final static class DeviceAdminActivityReceiver extends DeviceAdminReceiver {
         @Override
         public void onEnabled(@NonNull Context context, @NonNull Intent intent) {
             super.onEnabled(context, intent);

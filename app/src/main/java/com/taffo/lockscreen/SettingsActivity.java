@@ -34,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -44,7 +45,7 @@ import com.taffo.lockscreen.utils.SharedPref;
 
 import java.util.Objects;
 
-public class SettingsActivity extends AppCompatActivity {
+public final class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
+    public final static class SettingsFragment extends PreferenceFragmentCompat {
         Context mContext;
         Preference removeAdmin;
         Preference uninstallLockScreen;
@@ -131,7 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    public static class BootSettingFragment extends PreferenceFragmentCompat {
+    public final static class BootSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.boot_setting, rootKey);
@@ -160,7 +161,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    public static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
+    public final static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.volume_adapter_setting, rootKey);
@@ -192,7 +193,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    public static class QuickSettingFragment extends PreferenceFragmentCompat {
+    public final static class QuickSettingFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.quick_setting, rootKey);
@@ -215,7 +216,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    public static class WarningsFragment extends PreferenceFragmentCompat {
+    public final static class WarningsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.warnings, rootKey);

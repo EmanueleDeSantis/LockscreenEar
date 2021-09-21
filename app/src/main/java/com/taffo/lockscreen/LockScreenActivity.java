@@ -42,15 +42,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.taffo.lockscreen.services.LockAccessibilityService;
-import com.taffo.lockscreen.services.LockScreenService;
 import com.taffo.lockscreen.utils.CheckPermissions;
-import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;
 
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -311,27 +309,25 @@ public final class LockScreenActivity extends AppCompatActivity {
         }
     }
 
-    private final Random rand = new Random();
-    private final int[] randomNotes = new int[NOTES];
-    private final String[] outputtedNotes = new String[NOTES];
+    private final List<Integer> randomNotesList = new ArrayList<>(NOTES);
+    private final List<String> outputtedNotesList = new ArrayList<>(NOTES);
     private final MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
         for (int i = 0; i < NOTES; i++) {
-            randomNotes[i] = rand.nextInt(TOTAL_NOTES) + 1;
-            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
+            randomNotesList.add(i, new Random().nextInt(TOTAL_NOTES + 1));
+            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotesList.get(i)))
                     .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
         }
         for (int i = 0; i < NOTES; i++)
             mediaPlayer[i].start();
-        Arrays.sort(randomNotes);
+        Collections.sort(randomNotesList);
         for (int i = 0; i < NOTES; i++)
-            outputtedNotes[i] = doc.getElementById(String.valueOf(randomNotes[i]))
-                    .getElementsByTagName("name").item(0).getTextContent();
+            outputtedNotesList.add(i, doc.getElementById(String.valueOf(randomNotesList.get(i)))
+                    .getElementsByTagName("name").item(0).getTextContent());
     }
 
-    private final List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
     private final List<Integer> notesColor = new ArrayList<>(NOTES);
     private final StringBuilder coloredStringTextViewNotes = new StringBuilder();
     //Unlocks if user guessed all and only the outputted notes
@@ -525,9 +521,13 @@ public final class LockScreenActivity extends AppCompatActivity {
             //Prints all the outputted notes on the text view, since the user inserted an incorrect entry (see also the functions above)
             for (int i = 0; i < NOTES; i++) {
                 if (i != NOTES-1)
-                    coloredStringTextViewNotes.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ").append("</font>");
+                    coloredStringTextViewNotes.append("<font color='")
+                            .append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ")
+                            .append("</font>");
                 else
-                    coloredStringTextViewNotes.append("<font color='").append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append("</font>");
+                    coloredStringTextViewNotes.append("<font color='")
+                            .append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i))
+                            .append("</font>");
             }
             textViewNotes.setText(HtmlCompat.fromHtml(coloredStringTextViewNotes.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
@@ -542,7 +542,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     //Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
     //for API <= 30
     //See also the implementation in LockAccessibilityService class
-    private class CheckCalls extends PhoneStateListener {
+    private final class CheckCalls extends PhoneStateListener {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
@@ -550,6 +550,7 @@ public final class LockScreenActivity extends AppCompatActivity {
                 LockAccessibilityService.lockTheScreen();
             }
         }
+
     }
 
     //Finishes if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
@@ -557,28 +558,15 @@ public final class LockScreenActivity extends AppCompatActivity {
     //See also the implementation in LockAccessibilityService class
     //Not tested yet
     @RequiresApi(api = Build.VERSION_CODES.S)
-    private class CheckCallsS extends TelephonyCallback implements TelephonyCallback.CallStateListener {
-        Context mContext = getApplicationContext();
-        boolean isServiceRunning = false;
-        SharedPref sp = new SharedPref(mContext);
-
+    private final class CheckCallsS extends TelephonyCallback implements TelephonyCallback.CallStateListener {
         @Override
         public void onCallStateChanged(int state) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                if (sp.getSharedmPrefService()) {
-                    isServiceRunning = true;
-                    sp.setSharedmPrefService(false);
-                    stopService(new Intent(mContext, LockScreenService.class));
-                }
-                else
-                    isServiceRunning = false;
-            } else if (state == TelephonyManager.CALL_STATE_IDLE && isServiceRunning) {
-                if (new CheckPermissions().checkPermissions(mContext)) {
-                    sp.setSharedmPrefService(true);
-                    startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
-                }
+                unlockAndFinish();
+                LockAccessibilityService.lockTheScreen();
             }
         }
+
     }
 
 }

@@ -221,17 +221,35 @@ public final class LockScreenService extends Service {
 		return sp.getSharedmVolumeAdapterServiceSetting()
 				&& ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 				&& !isVolumeAdapterRunning
-				&& !stopVolumeAdapterService;
+				&& !stopVolumeAdapterService
+				&& ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked();
 	}
 
-	private final int LIST_EL = 5;
+	private void prepareMediaRecorder() {
+		try {
+			mRecorder = new MediaRecorder();
+			mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+			mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+			mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+			mRecorder.setOutputFile("/dev/null");
+			mRecorder.prepare();
+			mRecorder.start();
+			isVolumeAdapterRunning = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			mRecorder.release();
+			mRecorder = null;
+			isVolumeAdapterRunning = false;
+		}
+	}
+
+	private final int LIST_EL = 10;
 	private final List<Double> dbList = new ArrayList<>(LIST_EL);
 	private static int dbMean = 0;
 	private final int DB_LIMIT = 110;
 	private MediaRecorder mRecorder = null;
 
 	private void volumeAdapter() {
-		mRecorder = null;
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -249,26 +267,11 @@ public final class LockScreenService extends Service {
 						mRecorder = null;
 						isVolumeAdapterRunning = false;
 					}
-					//isVolumeAdapterRunning = false;
 					dbList.clear();
 				} else {
-					if (mRecorder == null) {
-						try {
-							mRecorder = new MediaRecorder();
-							mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-							mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-							mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-							mRecorder.setOutputFile("/dev/null");
-							mRecorder.prepare();
-							mRecorder.start();
-							isVolumeAdapterRunning = true;
-						} catch (IOException e) {
-							e.printStackTrace();
-							mRecorder.release();
-							mRecorder = null;
-							isVolumeAdapterRunning = false;
-						}
-					} else {
+					if (mRecorder == null)
+						prepareMediaRecorder();
+					else {
 						double sum = 0;
 						double db = 20 * Math.log10(mRecorder.getMaxAmplitude());
 						if (db > 20 && db < DB_LIMIT)
@@ -298,7 +301,7 @@ public final class LockScreenService extends Service {
 		}, 0, 1000); //every second
 	}
 
-	public static class IncrementNumberOfNotes extends Service {
+	public final static class IncrementNumberOfNotes extends Service {
 		@Override
 		public IBinder onBind(@Nullable Intent intent) {
 			return null;

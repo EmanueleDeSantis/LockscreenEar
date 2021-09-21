@@ -33,10 +33,9 @@ import com.taffo.lockscreen.utils.XMLParser;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CyclicBarrier;
 
 public final class EarTrainingActivity extends AppCompatActivity {
     private final XMLParser parser = new XMLParser();
@@ -228,13 +227,11 @@ public final class EarTrainingActivity extends AppCompatActivity {
         });
     }
 
-    private final Random rand = new Random();
-    private final int[] randomNotes = new int[NOTES];
-    private final String[] outputtedNotes = new String[NOTES];
-    private final Thread[] threads = new Thread[NOTES];
-    private final Runnable[] runnables = new Runnable[NOTES];
-    private final CyclicBarrier barrier = new CyclicBarrier(NOTES);
-    private final MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finishAndRemoveTask();
+    }
 
     @Override
     protected void onDestroy() {
@@ -243,25 +240,28 @@ public final class EarTrainingActivity extends AppCompatActivity {
             mediaPlayer[i].release();
     }
 
+    private final List<Integer> randomNotesList = new ArrayList<>(NOTES);
+    private final List<String> outputtedNotesList = new ArrayList<>(NOTES);
+    private final MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
+
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
         for (int i = 0; i < NOTES; i++) {
-            randomNotes[i] = rand.nextInt(TOTAL_NOTES) + 1;
-            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotes[i]))
-                        .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
-            };
+            randomNotesList.add(i, new Random().nextInt(TOTAL_NOTES + 1));
+            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotesList.get(i)))
+                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+        }
         for (int i = 0; i < NOTES; i++)
             mediaPlayer[i].start();
-        Arrays.sort(randomNotes);
+        Collections.sort(randomNotesList);
         for (int i = 0; i < NOTES; i++)
-            outputtedNotes[i] = doc.getElementById(String.valueOf(randomNotes[i]))
-                    .getElementsByTagName("name").item(0).getTextContent();
+            outputtedNotesList.add(i, doc.getElementById(String.valueOf(randomNotesList.get(i)))
+                    .getElementsByTagName("name").item(0).getTextContent());
     }
 
-    //Unlocks if user guessed all and only the outputted notes
-    private final List<String> outputtedNotesList = Arrays.asList(outputtedNotes);
     private final List<Integer> notesColor = new ArrayList<>(NOTES);
     private final StringBuilder coloredStringTextViewNotes = new StringBuilder();
+    //Unlocks if user guessed all and only the outputted notes
     private void unlock() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
             finish();

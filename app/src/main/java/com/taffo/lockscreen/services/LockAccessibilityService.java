@@ -21,6 +21,7 @@ package com.taffo.lockscreen.services;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,7 +45,7 @@ import com.taffo.lockscreen.utils.SharedPref;
 
 import java.util.Objects;
 
-public final class LockAccessibilityService extends AccessibilityService {
+public final class LockAccessibilityService extends AccessibilityService /*implements GestureDetector.OnDoubleTapListener */{
     private SharedPref sp;
     private CheckPermissions cp;
     private CheckCalls callsListener;
@@ -73,6 +74,7 @@ public final class LockAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
+        getServiceInfo().flags = AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE;
         if (instance == null)
             instance = this;
         if (cp.checkPermissions(this)) {
@@ -134,7 +136,7 @@ public final class LockAccessibilityService extends AccessibilityService {
     //and restarts it when the call terminates
     //for API <= 30
     //See also the implementation in LockScreenActivity class
-    private class CheckCalls extends PhoneStateListener {
+    private final class CheckCalls extends PhoneStateListener {
         Context context = getApplicationContext();
         boolean isServiceRunning = false;
 
@@ -164,7 +166,7 @@ public final class LockAccessibilityService extends AccessibilityService {
     //See also the implementation in LockScreenActivity class
     //Not tested yet
     @RequiresApi(api = Build.VERSION_CODES.S)
-    private class CheckCallsS extends TelephonyCallback implements TelephonyCallback.CallStateListener {
+    private final class CheckCallsS extends TelephonyCallback implements TelephonyCallback.CallStateListener {
         Context mContext = getApplicationContext();
         boolean isServiceRunning = false;
 
@@ -185,6 +187,7 @@ public final class LockAccessibilityService extends AccessibilityService {
                 }
             }
         }
+
     }
 
 }
