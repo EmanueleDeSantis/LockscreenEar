@@ -137,7 +137,7 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
     //for API <= 30
     //See also the implementation in LockScreenActivity class
     private final class CheckCalls extends PhoneStateListener {
-        Context context = getApplicationContext();
+        final Context context = getApplicationContext();
         boolean isServiceRunning = false;
 
         @Override
@@ -167,7 +167,7 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
     //Not tested yet
     @RequiresApi(api = Build.VERSION_CODES.S)
     private final class CheckCallsS extends TelephonyCallback implements TelephonyCallback.CallStateListener {
-        Context mContext = getApplicationContext();
+        final Context mContext = getApplicationContext();
         boolean isServiceRunning = false;
 
         @Override

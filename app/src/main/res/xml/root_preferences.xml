@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/basics" app:iconSpaceReserved="false">
         <Preference
@@ -30,7 +31,10 @@
         <Preference
             app:key="@string/source_code_key"
             app:title="@string/source_code_title"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://www.github.com/EmanueleDeSantis/LockScreen" />
+        </Preference>
 
         <Preference
             app:key="@string/about_key"

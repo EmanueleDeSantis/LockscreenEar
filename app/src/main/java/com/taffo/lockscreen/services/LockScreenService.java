@@ -225,18 +225,8 @@ public final class LockScreenService extends Service {
 				&& ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked();
 	}
 
-	private void prepareMediaRecorder() {
-		try {
-			mRecorder = new MediaRecorder();
-			mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-			mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-			mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-			mRecorder.setOutputFile("/dev/null");
-			mRecorder.prepare();
-			mRecorder.start();
-			isVolumeAdapterRunning = true;
-		} catch (IOException e) {
-			e.printStackTrace();
+	private void releaseMediaRecorder() {
+		if (mRecorder != null) {
 			mRecorder.release();
 			mRecorder = null;
 			isVolumeAdapterRunning = false;
@@ -262,16 +252,23 @@ public final class LockScreenService extends Service {
 								.getProfileConnectionState(BluetoothProfile.HEADSET)) {
 					if (stopVolumeAdapterService)
 						timer.cancel();
-					if (mRecorder != null) {
-						mRecorder.release();
-						mRecorder = null;
-						isVolumeAdapterRunning = false;
-					}
+					releaseMediaRecorder();
 					dbList.clear();
 				} else {
-					if (mRecorder == null)
-						prepareMediaRecorder();
-					else {
+					if (!isVolumeAdapterRunning)
+						try {
+							mRecorder = new MediaRecorder();
+							mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+							mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+							mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+							mRecorder.setOutputFile("/dev/null");
+							mRecorder.prepare();
+							mRecorder.start();
+							isVolumeAdapterRunning = true;
+						} catch (IOException e) {
+							releaseMediaRecorder();
+						}
+					else if (mRecorder != null) { //Just another precaution
 						double sum = 0;
 						double db = 20 * Math.log10(mRecorder.getMaxAmplitude());
 						if (db > 20 && db < DB_LIMIT)
@@ -284,12 +281,12 @@ public final class LockScreenService extends Service {
 								sum += (1 / dbList.get(i));
 							}
 							dbMean = (int) ((LIST_EL - 2) / sum); //Harmonic mean
-							Collections.rotate(dbList, -1); //List rotation
+							Collections.rotate(dbList, -1); //List rotation to remove and update the last value in the list
 							dbList.remove(LIST_EL - 1); //Remove last value from the list
 						} else {
 							for (int i = 0; i < dbList.size(); i++) {
 								sum += (1 / dbList.get(i));
-								if (i == dbList.size() - 1)  //last element
+								if (i == dbList.size() - 1)  //Last element
 									dbMean = (int) (dbList.size() / sum);
 							}
 						}
@@ -298,7 +295,7 @@ public final class LockScreenService extends Service {
 					}
 				}
 			}
-		}, 0, 1000); //every second
+		}, 0, 1000); //Every second
 	}
 
 	public final static class IncrementNumberOfNotes extends Service {

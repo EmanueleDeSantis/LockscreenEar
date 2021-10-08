@@ -45,7 +45,7 @@ import com.taffo.lockscreen.utils.SharedPref;
 
 import java.util.Objects;
 
-public final class SettingsActivity extends AppCompatActivity {
+public final class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +64,20 @@ public final class SettingsActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home)
             super.onBackPressed();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
+        setTitle(pref.getTitle());
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.settings_frame_layout, getSupportFragmentManager().getFragmentFactory().instantiate(
+                        getClassLoader(),
+                        pref.getFragment()))
+                .addToBackStack(null)
+                .commit();
+        return true;
     }
 
     public final static class SettingsFragment extends PreferenceFragmentCompat {
@@ -85,13 +99,6 @@ public final class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            ((Preference) Objects.requireNonNull(findPreference(getString(R.string.source_code_key))))
-                    .setOnPreferenceClickListener(preference -> {
-                        startActivity(new Intent(Intent.ACTION_VIEW)
-                                .setData(Uri.parse("https://www.github.com/EmanueleDeSantis/LockScreen")));
-                        return true;
-                    });
-
             ((Preference) (Objects.requireNonNull(findPreference(getString(R.string.about_key)))))
                     .setSummary(BuildConfig.VERSION_NAME);
 
@@ -104,11 +111,16 @@ public final class SettingsActivity extends AppCompatActivity {
                             .setTitle(getString(R.string.warnings_title))
                             .setMessage(getString(R.string.deactivate_admin_message))
                             .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                                dpm.removeActiveAdmin(admin);
-                                removeAdmin.setEnabled(false);
-                                uninstallLockScreen.setEnabled(true);
+                                try {
+                                    dpm.removeActiveAdmin(admin);
+                                    removeAdmin.setEnabled(false);
+                                    uninstallLockScreen.setEnabled(true);
+                                } catch (SecurityException e) {
+                                    removeAdmin.setEnabled(true);
+                                    uninstallLockScreen.setEnabled(false);
+                                }
                             })
-                            .setNegativeButton(getString(R.string.no), (dialog, which) -> dialog.dismiss())
+                            .setNegativeButton(getString(R.string.no), null)
                             .create()
                             .show();
                 }
@@ -116,8 +128,9 @@ public final class SettingsActivity extends AppCompatActivity {
             });
 
             uninstallLockScreen.setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(Intent.ACTION_DELETE)
-                    .setData(Uri.parse("package:" + mContext.getPackageName())));
+                if (!dpm.isAdminActive(admin))
+                    startActivity(new Intent(Intent.ACTION_DELETE)
+                            .setData(Uri.parse("package:" + mContext.getPackageName())));
                 return true;
             });
         }
@@ -137,9 +150,8 @@ public final class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.boot_setting, rootKey);
             Context mContext = requireContext();
-            Activity activity = requireActivity();
             SharedPref sp = new SharedPref(mContext);
-            activity.setTitle(R.string.boot_setting_title);
+
             SwitchPreference switchBootSetting = findPreference(getString(R.string.boot_switch_setting_shared_pref));
             ListPreference listNumberOfNotes = findPreference(getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref));
 
@@ -168,7 +180,7 @@ public final class SettingsActivity extends AppCompatActivity {
             Context mContext = requireContext();
             Activity activity = requireActivity();
             SharedPref sp = new SharedPref(mContext);
-            activity.setTitle(R.string.volume_adapter_setting_title);
+
             SwitchPreference switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
 
             if (!new CheckPermissions().checkPermissions(mContext))
@@ -198,9 +210,7 @@ public final class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.quick_setting, rootKey);
             Context mContext = requireContext();
-            Activity activity = requireActivity();
             SharedPref sp = new SharedPref(mContext);
-            activity.setTitle(R.string.quick_setting_title);
 
             SwitchPreference switchQuickSetting = findPreference(getString(R.string.quick_setting_switch_enabled_shared_pref));
 
@@ -220,8 +230,8 @@ public final class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.warnings, rootKey);
-            requireActivity().setTitle(R.string.warnings_title);
         }
+
     }
 
 }
