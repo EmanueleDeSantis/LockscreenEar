@@ -43,8 +43,6 @@ import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
-import java.util.Objects;
-
 public final class LockAccessibilityService extends AccessibilityService /*implements GestureDetector.OnDoubleTapListener */{
     private SharedPref sp;
     private CheckPermissions cp;
@@ -59,7 +57,7 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
         sp = new SharedPref(this);
         cp = new CheckPermissions();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
+            telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 //Not tested yet
                 callsListenerS = new CheckCallsS();

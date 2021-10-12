@@ -81,11 +81,11 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
     }
 
     public final static class SettingsFragment extends PreferenceFragmentCompat {
-        Context mContext;
-        Preference removeAdmin;
-        Preference uninstallLockScreen;
-        ComponentName admin;
-        DevicePolicyManager dpm;
+        private Context mContext;
+        private Preference removeAdmin;
+        private Preference uninstallLockScreen;
+        private ComponentName admin;
+        private DevicePolicyManager dpm;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,17 +110,15 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
                     new AlertDialog.Builder(mContext)
                             .setTitle(getString(R.string.warnings_title))
                             .setMessage(getString(R.string.deactivate_admin_message))
-                            .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                                try {
-                                    dpm.removeActiveAdmin(admin);
-                                    removeAdmin.setEnabled(false);
-                                    uninstallLockScreen.setEnabled(true);
-                                } catch (SecurityException e) {
-                                    removeAdmin.setEnabled(true);
-                                    uninstallLockScreen.setEnabled(false);
-                                }
-                            })
+                            .setPositiveButton(getString(R.string.yes), (dialog, which) -> dpm.removeActiveAdmin(admin))
                             .setNegativeButton(getString(R.string.no), null)
+                            //This seems the only way to update the fragment
+                            //This fragment must be updated in order to check if the removal of the admin has been successful,
+                            //because after the initial boot of the device, apparently the admin cannot be managed for the first 2 minutes more or less
+                            .setOnDismissListener(dialogInterface -> getParentFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.settings_frame_layout, new SettingsFragment())
+                                    .commit())
                             .create()
                             .show();
                 }
@@ -128,7 +126,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             });
 
             uninstallLockScreen.setOnPreferenceClickListener(preference -> {
-                if (!dpm.isAdminActive(admin))
+                if (!dpm.isAdminActive(admin)) //Just for precaution
                     startActivity(new Intent(Intent.ACTION_DELETE)
                             .setData(Uri.parse("package:" + mContext.getPackageName())));
                 return true;
@@ -146,17 +144,17 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
     }
 
     public final static class BootSettingFragment extends PreferenceFragmentCompat {
+        private SwitchPreference switchBootSetting;
+        private Context mContext;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.boot_setting, rootKey);
-            Context mContext = requireContext();
+            mContext = requireContext();
             SharedPref sp = new SharedPref(mContext);
 
-            SwitchPreference switchBootSetting = findPreference(getString(R.string.boot_switch_setting_shared_pref));
+            switchBootSetting = findPreference(getString(R.string.boot_switch_setting_shared_pref));
             ListPreference listNumberOfNotes = findPreference(getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref));
-
-            if (!new CheckPermissions().checkPermissions(mContext))
-                Objects.requireNonNull(switchBootSetting).setEnabled(false);
 
             //Saves OnRestartSetting state
             Objects.requireNonNull(switchBootSetting).setOnPreferenceChangeListener((preference, newValue) -> {
@@ -171,20 +169,26 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             });
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            switchBootSetting.setEnabled(new CheckPermissions().checkPermissions(mContext));
+        }
     }
 
     public final static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
+        private SwitchPreference switchVolumeAdapterSetting;
+        private Context mContext;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.volume_adapter_setting, rootKey);
-            Context mContext = requireContext();
+            mContext = requireContext();
             Activity activity = requireActivity();
             SharedPref sp = new SharedPref(mContext);
 
-            SwitchPreference switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
-
-            if (!new CheckPermissions().checkPermissions(mContext))
-                Objects.requireNonNull(switchVolumeAdapterSetting).setEnabled(false);
+            switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
+            SwitchPreference switchRestorePreviousVolumeLevelSetting = findPreference(getString(R.string.restore_previous_volume_level_switch_setting_shared_pref));
 
             //Asks for permissions
             Objects.requireNonNull(switchVolumeAdapterSetting).setOnPreferenceClickListener(preference -> {
@@ -196,32 +200,51 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
                 return true;
             });
 
-            //Saves VolumeAdapterService state
+            //Saves VolumeAdapterSetting state
             switchVolumeAdapterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
                 sp.setSharedmVolumeAdapterServiceSetting((Boolean.parseBoolean(newValue.toString())));
                 return true;
             });
+
+            //Saves RestorePreviousVolumeLevelSetting state
+            Objects.requireNonNull(switchRestorePreviousVolumeLevelSetting).setOnPreferenceChangeListener((preference, newValue) -> {
+                sp.setSharedmRestorePreviousVolumeServiceSetting((Boolean.parseBoolean(newValue.toString())));
+                return true;
+            });
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED)
+                Objects.requireNonNull(switchVolumeAdapterSetting).setChecked(false);
+        }
     }
 
     public final static class QuickSettingFragment extends PreferenceFragmentCompat {
+        private SwitchPreference switchQuickSetting;
+        private Context mContext;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.quick_setting, rootKey);
-            Context mContext = requireContext();
+            mContext = requireContext();
             SharedPref sp = new SharedPref(mContext);
 
-            SwitchPreference switchQuickSetting = findPreference(getString(R.string.quick_setting_switch_enabled_shared_pref));
-
-            if (!new CheckPermissions().checkPermissions(mContext))
-                Objects.requireNonNull(switchQuickSetting).setEnabled(false);
+            switchQuickSetting = findPreference(getString(R.string.quick_setting_switch_enabled_shared_pref));
 
             //Saves QuickSetting state
             Objects.requireNonNull(switchQuickSetting).setOnPreferenceChangeListener((preference, newValue) -> {
                 sp.setSharedmPrefQuickSettingSwitchEnabled((Boolean.parseBoolean(newValue.toString())));
                 return true;
             });
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            switchQuickSetting.setEnabled(new CheckPermissions().checkPermissions(mContext));
         }
 
     }

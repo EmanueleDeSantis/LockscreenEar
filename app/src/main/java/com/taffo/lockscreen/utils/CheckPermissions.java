@@ -36,8 +36,6 @@ import com.taffo.lockscreen.DeviceAdminActivity;
 import com.taffo.lockscreen.R;
 import com.taffo.lockscreen.services.LockAccessibilityService;
 
-import java.util.Objects;
-
 public final class CheckPermissions {
     private final LockAccessibilityService las = new LockAccessibilityService();
     private static boolean isLockScreenRunning = false;
@@ -67,11 +65,8 @@ public final class CheckPermissions {
     public static void setIsLockScreenRunning(boolean b) {
         isLockScreenRunning = b;
     }
-    public static boolean getIsLockScreenRunning() {
-        return isLockScreenRunning;
-    }
     public static boolean getIsScreenLocked(Context context) {
-        return isLockScreenRunning || ((KeyguardManager) Objects.requireNonNull(context.getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked();
+        return isLockScreenRunning || ((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked();
     }
 
 }

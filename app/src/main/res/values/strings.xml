@@ -37,7 +37,8 @@
     <string name="volume_adapter_setting_key" translatable="false">Volume Adapter setting</string>
     <string name="volume_adapter_setting_title">Volume</string>
     <string name="automatic_volume_level">Auto adjust volume level</string>
-    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the screen is locked, it will be assigned the optimal value to the media volume based on perceived noise from the microphone.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
+    <string name="restore_previous_volume_level">Restore the previous volume level</string>
+    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the screen is locked, <b>it will be assigned the optimal value to the media volume based on perceived noise from the microphone.</b>\n\It is also possible to restore the volume level prior to this service modification.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
     <string name="quick_setting_key" translatable="false">Quick setting</string>
     <string name="quick_setting_title">Quick setting</string>
     <string name="quick_setting_message">If this setting is enabled, when LockScreen\'s quick setting is clicked and activated, in addition to starting the main service, <b>the screen gets also locked.</b></string>
@@ -58,6 +59,7 @@
     <string name="first_run_main_shared_pref" translatable="false">First run main</string>
     <string name="first_run_accessibility_setting_shared_pref" translatable="false">First run accessibility setting</string>
     <string name="volume_adapter_switch_setting_shared_pref" translatable="false">Volume adapter switch setting</string>
+    <string name="restore_previous_volume_level_switch_setting_shared_pref" translatable="false">Restore previous volume switch setting</string>
     <string name="quick_setting_switch_enabled_shared_pref" translatable="false">Quick setting switch enabled</string>
     <string name="default_launcher_shared_pref" translatable="false">Default launcher shared pref</string>
 

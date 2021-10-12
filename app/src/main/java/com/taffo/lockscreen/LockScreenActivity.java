@@ -50,7 +50,6 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public final class LockScreenActivity extends AppCompatActivity {
@@ -100,7 +99,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 10000);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            telephony = (TelephonyManager) Objects.requireNonNull(getSystemService(Context.TELEPHONY_SERVICE));
+            telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 //Not tested yet
                 callsListenerS = new CheckCallsS();
@@ -275,7 +274,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ((ActivityManager) Objects.requireNonNull(getSystemService(Context.ACTIVITY_SERVICE))).moveTaskToFront(getTaskId(), 0);
+        ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE)).moveTaskToFront(getTaskId(), 0);
     }
 
     //Does nothing on back press
@@ -287,8 +286,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        if (CheckPermissions.getIsLockScreenRunning()
-                && dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
+        if (!isFinishing() && dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
             dpm.lockNow();
         finish();
     }
@@ -307,6 +305,8 @@ public final class LockScreenActivity extends AppCompatActivity {
             else
                 telephony.listen(callsListener, PhoneStateListener.LISTEN_NONE);
         }
+        sendBroadcast(new Intent("finishedLockScreenActivity"));
+        CheckPermissions.setIsLockScreenRunning(false);
     }
 
     private final List<Integer> randomNotesList = new ArrayList<>(NOTES);
@@ -534,7 +534,6 @@ public final class LockScreenActivity extends AppCompatActivity {
     }
 
     private void unlockAndFinish() {
-        CheckPermissions.setIsLockScreenRunning(false);
         sendBroadcast(new Intent("changeNotificationColor"));
         finish();
     }

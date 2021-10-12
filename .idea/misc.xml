@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/boot_setting.xml" value="0.19972826086956522" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/quick_setting.xml" value="0.19972826086956522" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/root_preferences.xml" value="0.19972826086956522" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/volume_adapter_setting.xml" value="0.19972826086956522" />
+      </map>
+    </option>
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

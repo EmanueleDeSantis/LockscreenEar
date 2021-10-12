@@ -88,6 +88,10 @@
                 <action android:name="android.intent.action.SCREEN_OFF" />
                 <action android:name="android.intent.action.ACTION_USER_PRESENT" />
                 <action android:name="android.intent.action.ACTION_HEADSET_PLUG" />
+                <action android:name="android.intent.action.ACTION_REBOOT" />
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+                <action android:name="changeNotificationColor" />
+                <action android:name="finishedLockScreenActivity" />
             </intent-filter>
         </service>
         <service android:name=".services.LockScreenService$IncrementNumberOfNotes" />

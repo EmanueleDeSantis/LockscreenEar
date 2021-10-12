@@ -13,8 +13,8 @@
             app:title="@string/lock_screen_when_quick_setting_enabled"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
-            app:defaultValue="@string/disabled"
-            app:iconSpaceReserved="false"/>
+            app:defaultValue="false"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -58,7 +58,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,6 +69,7 @@ public final class LockScreenService extends Service {
 	private static boolean isVolumeAdapterRunning = false;
 	private ContentObserver volumeObserver;
 	private AudioManager audio;
+	private static int previousVolume;
 	private static boolean areHeadPhonesPlugged = false;
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -83,15 +83,23 @@ public final class LockScreenService extends Service {
 				stopVolumeAdapterService = true;
 				startLockScreenActivity();
 			}
-			if (Intent.ACTION_HEADSET_PLUG.equals(intent.getAction())) {
+			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
 				int state = intent.getIntExtra("state", -1);
 				if (state == 0)
 					areHeadPhonesPlugged = false;
 				if (state == 1)
 					areHeadPhonesPlugged = true;
 			}
+			if (intent.getAction().equals(Intent.ACTION_REBOOT)
+					|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
+					&& (sp.getSharedmRestorePreviousVolumeServiceSetting()
+							&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
+				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
 			if (intent.getAction().equals("changeNotificationColor"))
 				startLockForeground();
+			if (intent.getAction().equals("finishedLockScreenActivity") && sp.getSharedmRestorePreviousVolumeServiceSetting()) {
+				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
+			}
 		}
 	};
 
@@ -113,7 +121,10 @@ public final class LockScreenService extends Service {
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		filter.addAction(Intent.ACTION_USER_PRESENT);
 		filter.addAction(Intent.ACTION_HEADSET_PLUG);
-		filter.addAction("changeNotificationColor"); //Changes color of the notification, green when screen is unlocked, red when is locked
+		filter.addAction(Intent.ACTION_REBOOT);
+		filter.addAction(Intent.ACTION_SHUTDOWN);
+		filter.addAction("changeNotificationColor"); //Used to change color of the notification, green when screen is unlocked, red when is locked
+		filter.addAction("finishedLockScreenActivity"); //Used to set previousVolume avoiding increasing volume while LockScreenActivity finishes
 		registerReceiver(mReceiver, filter);
 
 		if (cp.checkPermissions(this) && sp.getSharedmPrefService()) {
@@ -136,17 +147,29 @@ public final class LockScreenService extends Service {
 		return START_NOT_STICKY;
 	}
 
+	//Unregisters the receiver
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(mReceiver);
+		getContentResolver().unregisterContentObserver(volumeObserver);
+		sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
+		if (sp.getSharedmRestorePreviousVolumeServiceSetting()
+				&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
+			audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
+		releaseMediaRecorder();
+		//Updates the tile
+		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+	}
+
 	//"Foreground" service (with pending notification): Since android 10 (maybe before?) after 20 seconds services go in background. Solved using priorities in the manifest
 	private void startLockForeground() {
 		if (sp.getSharedmPrefFirstRunAccessibilitySettings())
 			sp.setSharedmPrefFirstRunAccessibilitySettings(false);
 
-		if (canVolumeAdapterBeStarted())
-			volumeAdapter();
-
 		NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
 		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-		((NotificationManager) Objects.requireNonNull(getSystemService(Context.NOTIFICATION_SERVICE))).createNotificationChannel(chan);
+		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(chan);
 
 		Intent notificationIntent = new Intent(this, MainActivity.class)
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -167,8 +190,8 @@ public final class LockScreenService extends Service {
 					.setSmallIcon(R.drawable.locked_icon)
 					.setColor(Color.GREEN)
 					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNumberOfNotesToPlay())
-					.setContentText(getString(R.string.volume_level) + ": " + (audio.getStreamVolume(AudioManager.STREAM_MUSIC)  * 100
-							/ audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) + "%")
+					.setContentText(getString(R.string.volume_level) + ": " + audio.getStreamVolume(AudioManager.STREAM_MUSIC)
+							+ "/" + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 					.setPriority(NotificationManager.IMPORTANCE_HIGH)
 					.setCategory(Notification.CATEGORY_SERVICE)
 					.setContentIntent(pendingIntent)
@@ -185,8 +208,8 @@ public final class LockScreenService extends Service {
 						.setSmallIcon(R.drawable.locked_icon)
 						.setColor(Color.RED)
 						.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNumberOfNotesToPlay())
-						.setContentText(getString(R.string.volume_level) + ": " + (audio.getStreamVolume(AudioManager.STREAM_MUSIC)  * 100
-								/ audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) + "%")
+						.setContentText(getString(R.string.volume_level) + ": " + audio.getStreamVolume(AudioManager.STREAM_MUSIC)
+								+ "/" + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
 						.setPriority(NotificationManager.IMPORTANCE_HIGH)
 						.setCategory(Notification.CATEGORY_SERVICE)
 						.setContentIntent(pendingIntent)
@@ -194,17 +217,10 @@ public final class LockScreenService extends Service {
 						.build();
 			startForeground(5, notification);
 		}
-		//Updates the tile
-		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-	}
 
-	//Unregisters the receiver
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(mReceiver);
-		getContentResolver().unregisterContentObserver(volumeObserver);
-		sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
+		if (canVolumeAdapterBeStarted())
+			volumeAdapter();
+
 		//Updates the tile
 		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
 	}
@@ -222,40 +238,46 @@ public final class LockScreenService extends Service {
 				&& ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 				&& !isVolumeAdapterRunning
 				&& !stopVolumeAdapterService
-				&& ((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked();
+				&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked();
 	}
 
 	private void releaseMediaRecorder() {
 		if (mRecorder != null) {
 			mRecorder.release();
 			mRecorder = null;
-			isVolumeAdapterRunning = false;
 		}
+		isVolumeAdapterRunning = false;
 	}
 
+	private MediaRecorder mRecorder = null;
 	private final int LIST_EL = 10;
 	private final List<Double> dbList = new ArrayList<>(LIST_EL);
 	private static int dbMean = 0;
-	private final int DB_LIMIT = 110;
-	private MediaRecorder mRecorder = null;
+	private final int DB_LIMIT = 100;
 
 	private void volumeAdapter() {
+		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				if (stopVolumeAdapterService
-						|| !((KeyguardManager) Objects.requireNonNull(getSystemService(Context.KEYGUARD_SERVICE))).isKeyguardLocked()
-						|| Objects.requireNonNull(audio).isMusicActive()
+						|| !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
+						|| audio.isMusicActive()
+						|| (audio.isSpeakerphoneOn() && mRecorder == null)
 						|| areHeadPhonesPlugged
 						|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
-								.getProfileConnectionState(BluetoothProfile.HEADSET)) {
-					if (stopVolumeAdapterService)
-						timer.cancel();
+								.getProfileConnectionState(BluetoothProfile.HEADSET)
+						|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
+								.getProfileConnectionState(BluetoothProfile.HEARING_AID)) {
 					releaseMediaRecorder();
 					dbList.clear();
+					if (stopVolumeAdapterService) {
+						cancel();
+						timer.cancel();
+					}
 				} else {
-					if (!isVolumeAdapterRunning)
+					if (!isVolumeAdapterRunning && mRecorder == null)
 						try {
 							mRecorder = new MediaRecorder();
 							mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -268,10 +290,10 @@ public final class LockScreenService extends Service {
 						} catch (IOException e) {
 							releaseMediaRecorder();
 						}
-					else if (mRecorder != null) { //Just another precaution
+					else {
 						double sum = 0;
 						double db = 20 * Math.log10(mRecorder.getMaxAmplitude());
-						if (db > 20 && db < DB_LIMIT)
+						if (db > 10 && db < DB_LIMIT)
 							dbList.add(db);
 						if (dbList.size() == LIST_EL) {
 							for (int i = 0; i < LIST_EL; i++) {
@@ -281,7 +303,7 @@ public final class LockScreenService extends Service {
 								sum += (1 / dbList.get(i));
 							}
 							dbMean = (int) ((LIST_EL - 2) / sum); //Harmonic mean
-							Collections.rotate(dbList, -1); //List rotation to remove and update the last value in the list
+							Collections.rotate(dbList, -1); //List left rotation to remove (and in the next cycle of the timer to add) the last value in the list
 							dbList.remove(LIST_EL - 1); //Remove last value from the list
 						} else {
 							for (int i = 0; i < dbList.size(); i++) {
@@ -290,8 +312,9 @@ public final class LockScreenService extends Service {
 									dbMean = (int) (dbList.size() / sum);
 							}
 						}
-						Objects.requireNonNull(audio).setStreamVolume(AudioManager.STREAM_MUSIC,
-								-1 + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * dbMean / DB_LIMIT, 0); //Experimental formula
+						int chosenVolumeLevel = -2 + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * dbMean / DB_LIMIT; //Experimental formula
+						if (chosenVolumeLevel > 0)
+							audio.setStreamVolume(AudioManager.STREAM_MUSIC, chosenVolumeLevel, 0);
 					}
 				}
 			}

@@ -13,7 +13,7 @@
             app:title="@string/lock_screen_on_boot"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
-            app:defaultValue="@string/disabled"
+            app:defaultValue="false"
             app:iconSpaceReserved="false" />
 
         <ListPreference

@@ -32,6 +32,7 @@ public final class SharedPref {
     private final SharedPreferences mPrefBootSwitchSetting;
     private final SharedPreferences mPrefBootListSettingNumberOfNotesToPlay;
     private final SharedPreferences mPrefVolumeAdapterServiceSetting;
+    private final SharedPreferences mPrefRestorePreviousVolumeServiceSetting;
     private final SharedPreferences mPrefQuickSettingSwitchEnabled;
 
     public SharedPref(Context context) {
@@ -43,6 +44,7 @@ public final class SharedPref {
         mPrefBootSwitchSetting = context.getSharedPreferences(mContext.getString(R.string.boot_switch_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefBootListSettingNumberOfNotesToPlay = context.getSharedPreferences(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
         mPrefVolumeAdapterServiceSetting = context.getSharedPreferences(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), Context.MODE_PRIVATE);
+        mPrefRestorePreviousVolumeServiceSetting = context.getSharedPreferences(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefQuickSettingSwitchEnabled = context.getSharedPreferences(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), Context.MODE_PRIVATE);
     }
 
@@ -75,49 +77,66 @@ public final class SharedPref {
     public boolean getSharedmVolumeAdapterServiceSetting() {
         return mPrefVolumeAdapterServiceSetting.getBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), false);
     }
+    public boolean getSharedmRestorePreviousVolumeServiceSetting() {
+        return mPrefRestorePreviousVolumeServiceSetting.getBoolean(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), true);
+    }
     public boolean getSharedmPrefQuickSettingSwitchEnabled() {
         return mPrefQuickSettingSwitchEnabled.getBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), false);
     }
 
     public void setSharedmPrefNumberOfNotesToPlay(String s) {
-        SharedPreferences.Editor editor = mPrefNumberOfNotesToPlay.edit();
-        editor.putString(mContext.getString(R.string.number_of_notes_to_play_shared_pref), s);
-        editor.apply();
+        mPrefNumberOfNotesToPlay
+                .edit()
+                .putString(mContext.getString(R.string.number_of_notes_to_play_shared_pref), s)
+                .apply();
     }
     public void setSharedmPrefService(Boolean b) {
-        SharedPreferences.Editor editor = mPrefStartService.edit();
-        editor.putBoolean(mContext.getString(R.string.start_service_shared_pref), b);
-        editor.apply();
+        mPrefStartService
+                .edit()
+                .putBoolean(mContext.getString(R.string.start_service_shared_pref), b)
+                .apply();
     }
     public void setSharedmPrefFirstRunMain(Boolean b) {
-        SharedPreferences.Editor editor = mPrefFirstRunMain.edit();
-        editor.putBoolean(mContext.getString(R.string.first_run_main_shared_pref), b);
-        editor.apply();
+        mPrefFirstRunMain
+                .edit()
+                .putBoolean(mContext.getString(R.string.first_run_main_shared_pref), b)
+                .apply();
     }
     public void setSharedmPrefFirstRunAccessibilitySettings(Boolean b) {
-        SharedPreferences.Editor editor = mPrefFirstRunAccessibilitySettings.edit();
-        editor.putBoolean(mContext.getString(R.string.first_run_accessibility_setting_shared_pref), b);
-        editor.apply();
+        mPrefFirstRunAccessibilitySettings
+                .edit()
+                .putBoolean(mContext.getString(R.string.first_run_accessibility_setting_shared_pref), b)
+                .apply();
     }
     public void setSharedmPrefBootSetting(Boolean b) {
-        SharedPreferences.Editor editor = mPrefBootSwitchSetting.edit();
-        editor.putBoolean(mContext.getString(R.string.boot_switch_setting_shared_pref), b);
-        editor.apply();
+        mPrefBootSwitchSetting
+                .edit()
+                .putBoolean(mContext.getString(R.string.boot_switch_setting_shared_pref), b)
+                .apply();
     }
     public void setSharedmPrefBootListSettingNumberOfNotesToPlay(String s) {
-        SharedPreferences.Editor editor = mPrefBootListSettingNumberOfNotesToPlay.edit();
-        editor.putString(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), s);
-        editor.apply();
+        mPrefBootListSettingNumberOfNotesToPlay
+                .edit()
+                .putString(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), s)
+                .apply();
     }
     public void setSharedmVolumeAdapterServiceSetting(Boolean b) {
-        SharedPreferences.Editor editor = mPrefVolumeAdapterServiceSetting.edit();
-        editor.putBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), b);
-        editor.apply();
+        mPrefVolumeAdapterServiceSetting
+                .edit()
+                .putBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), b)
+                .apply();
+    }
+    public void setSharedmRestorePreviousVolumeServiceSetting(Boolean b) {
+       mPrefRestorePreviousVolumeServiceSetting
+               .edit()
+               .putBoolean(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), b)
+               .apply();
     }
     public void setSharedmPrefQuickSettingSwitchEnabled(Boolean b) {
-        SharedPreferences.Editor editor = mPrefQuickSettingSwitchEnabled.edit();
-        editor.putBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), b);
-        editor.apply();
+        mPrefQuickSettingSwitchEnabled
+                .edit()
+                .putBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), b)
+                .apply();
     }
 
 }
