@@ -80,8 +80,6 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
         return true;
     }
 
-
-
     public final static class SettingsFragment extends PreferenceFragmentCompat {
         private Context mContext;
         private Preference removeAdmin;
@@ -201,6 +199,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
                     switchVolumeAdapterSetting.setChecked(false);
+                    switchRestorePreviousVolumeLevelSetting.setChecked(false);
                 }
                 return true;
             });
@@ -208,8 +207,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             //Saves VolumeAdapterSetting state
             switchVolumeAdapterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
                 sp.setSharedmVolumeAdapterServiceSetting(Boolean.parseBoolean(newValue.toString()));
-                if (!Boolean.parseBoolean(newValue.toString()))
-                    switchRestorePreviousVolumeLevelSetting.setChecked(false);
+                switchRestorePreviousVolumeLevelSetting.setChecked(Boolean.parseBoolean(newValue.toString()));
                 return true;
             });
 

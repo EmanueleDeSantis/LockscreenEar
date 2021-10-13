@@ -92,16 +92,14 @@ public final class LockScreenService extends Service {
 				if (state == 1)
 					areHeadPhonesPlugged = true;
 			}
+			if (intent.getAction().equals("changeNotificationColor"))
+				startLockForeground();
 			if (intent.getAction().equals(Intent.ACTION_REBOOT)
 					|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
+					|| intent.getAction().equals("finishedLockScreenActivity")
 					&& (sp.getSharedmRestorePreviousVolumeServiceSetting()
 							&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
 				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
-			if (intent.getAction().equals("changeNotificationColor"))
-				startLockForeground();
-			if (intent.getAction().equals("finishedLockScreenActivity") && sp.getSharedmRestorePreviousVolumeServiceSetting()) {
-				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
-			}
 		}
 	};
 
@@ -267,7 +265,7 @@ public final class LockScreenService extends Service {
 				if (stopVolumeAdapterService
 						|| !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
 						|| audio.isMusicActive()
-						|| (audio.isSpeakerphoneOn() && mRecorder == null)
+						|| audio.getMode() != AudioManager.MODE_NORMAL //Check if microphone is (not) available
 						|| areHeadPhonesPlugged
 						|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
 								.getProfileConnectionState(BluetoothProfile.HEADSET)
