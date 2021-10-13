@@ -21,7 +21,7 @@
         app:title="@string/restore_previous_volume_level"
         app:summaryOn="@string/enabled"
         app:summaryOff="@string/disabled"
-        app:defaultValue="true"
+        app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:dependency="@string/volume_adapter_switch_setting_shared_pref" />
     </PreferenceCategory>

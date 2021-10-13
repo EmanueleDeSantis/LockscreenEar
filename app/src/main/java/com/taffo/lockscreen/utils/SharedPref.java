@@ -78,7 +78,7 @@ public final class SharedPref {
         return mPrefVolumeAdapterServiceSetting.getBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), false);
     }
     public boolean getSharedmRestorePreviousVolumeServiceSetting() {
-        return mPrefRestorePreviousVolumeServiceSetting.getBoolean(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), true);
+        return mPrefRestorePreviousVolumeServiceSetting.getBoolean(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), false);
     }
     public boolean getSharedmPrefQuickSettingSwitchEnabled() {
         return mPrefQuickSettingSwitchEnabled.getBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), false);

@@ -80,6 +80,8 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
         return true;
     }
 
+
+
     public final static class SettingsFragment extends PreferenceFragmentCompat {
         private Context mContext;
         private Preference removeAdmin;
@@ -173,11 +175,14 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
         public void onResume() {
             super.onResume();
             switchBootSetting.setEnabled(new CheckPermissions().checkPermissions(mContext));
+            if (!new CheckPermissions().checkPermissions(mContext))
+                switchBootSetting.setChecked(false);
         }
     }
 
     public final static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
         private SwitchPreference switchVolumeAdapterSetting;
+        SwitchPreference switchRestorePreviousVolumeLevelSetting;
         private Context mContext;
 
         @Override
@@ -188,7 +193,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             SharedPref sp = new SharedPref(mContext);
 
             switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
-            SwitchPreference switchRestorePreviousVolumeLevelSetting = findPreference(getString(R.string.restore_previous_volume_level_switch_setting_shared_pref));
+            switchRestorePreviousVolumeLevelSetting = findPreference(getString(R.string.restore_previous_volume_level_switch_setting_shared_pref));
 
             //Asks for permissions
             Objects.requireNonNull(switchVolumeAdapterSetting).setOnPreferenceClickListener(preference -> {
@@ -202,7 +207,9 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
 
             //Saves VolumeAdapterSetting state
             switchVolumeAdapterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
-                sp.setSharedmVolumeAdapterServiceSetting((Boolean.parseBoolean(newValue.toString())));
+                sp.setSharedmVolumeAdapterServiceSetting(Boolean.parseBoolean(newValue.toString()));
+                if (!Boolean.parseBoolean(newValue.toString()))
+                    switchRestorePreviousVolumeLevelSetting.setChecked(false);
                 return true;
             });
 
@@ -216,9 +223,14 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
         @Override
         public void onResume() {
             super.onResume();
+            switchVolumeAdapterSetting.setEnabled(new CheckPermissions().checkPermissions(mContext));
+            if (!new CheckPermissions().checkPermissions(mContext)) {
+                switchVolumeAdapterSetting.setChecked(false);
+                switchRestorePreviousVolumeLevelSetting.setChecked(false);
+            }
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO)
                     != PackageManager.PERMISSION_GRANTED)
-                Objects.requireNonNull(switchVolumeAdapterSetting).setChecked(false);
+                switchVolumeAdapterSetting.setChecked(false);
         }
     }
 
@@ -245,6 +257,8 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
         public void onResume() {
             super.onResume();
             switchQuickSetting.setEnabled(new CheckPermissions().checkPermissions(mContext));
+            if (!new CheckPermissions().checkPermissions(mContext))
+                switchQuickSetting.setChecked(false);
         }
 
     }

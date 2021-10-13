@@ -40,8 +40,10 @@ import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -253,7 +255,8 @@ public final class LockScreenService extends Service {
 	private final int LIST_EL = 10;
 	private final List<Double> dbList = new ArrayList<>(LIST_EL);
 	private static int dbMean = 0;
-	private final int DB_LIMIT = 100;
+	private final int DB_MIN = 25;
+	private final int DB_MAX = 90;
 
 	private void volumeAdapter() {
 		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -293,12 +296,12 @@ public final class LockScreenService extends Service {
 					else {
 						double sum = 0;
 						double db = 20 * Math.log10(mRecorder.getMaxAmplitude());
-						if (db > 10 && db < DB_LIMIT)
+						if (db > DB_MIN && db < DB_MAX)
 							dbList.add(db);
 						if (dbList.size() == LIST_EL) {
 							for (int i = 0; i < LIST_EL; i++) {
 								//Mean does not include max and min registered db sounds
-								if (Collections.max(dbList).equals(dbList.get(i)) || Collections.min(dbList).equals(dbList.get(i)))
+								if (dbList.get(i).equals(Collections.max(dbList)) || (dbList.get(i).equals(Collections.min(dbList))))
 									continue;
 								sum += (1 / dbList.get(i));
 							}
@@ -309,12 +312,12 @@ public final class LockScreenService extends Service {
 							for (int i = 0; i < dbList.size(); i++) {
 								sum += (1 / dbList.get(i));
 								if (i == dbList.size() - 1)  //Last element
-									dbMean = (int) (dbList.size() / sum);
+									dbMean = (int) Math.round(dbList.size() / sum); //Harmonic mean
 							}
 						}
-						int chosenVolumeLevel = -2 + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * dbMean / DB_LIMIT; //Experimental formula
-						if (chosenVolumeLevel > 0)
-							audio.setStreamVolume(AudioManager.STREAM_MUSIC, chosenVolumeLevel, 0);
+						int chosenVolumeLevel = 1 + (((audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) - 1)
+								* (dbMean - DB_MIN)) / (DB_MAX - DB_MIN)); //Experimental formula
+						audio.setStreamVolume(AudioManager.STREAM_MUSIC, chosenVolumeLevel, 0);
 					}
 				}
 			}

@@ -34,9 +34,9 @@
     <string name="boot_setting_message">Se questa impostazione è attivata, ogni volta che il servizio di accessibilità verrà avviato (situazione che si verifica anche all\'avvio del dispositivo), il numero di note da riprodurre verrà impostato al valore presente nell\'impostazione in basso; <b>inoltre lo schermo verrà bloccato automaticamente.</b>\n\nSe questa impostazione è disattivata, ogni volta che il servizio di accessibilità verrà avviato, verrà solamente avviato il servizio principale.</string>
     <string name="lock_screen_on_boot">Blocca lo schermo all\'avvio</string>
     <string name="volume_adapter_setting_title">Volume automatico</string>
-    <string name="volume_adapter_setting_message">Se questa impostazione è attivata, se il servizio principale adibito al blocco schermo è attivo e lo schermo è bloccato, <b>verrà assegnato il valore ottimale al volume multimediale in base al rumore medio percepito dal microfono.</b>\n\nÈ inoltre possibile ripristinare il valore del volume precedente alla modifica effettuata da questo servizio.\n\nAumenta il consumo della batteria.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
+    <string name="volume_adapter_setting_message">Se questa impostazione è attivata, se il servizio principale adibito al blocco schermo è attivo e lo schermo è bloccato, <b>verrà assegnato il valore ottimale al volume multimediale in base al rumore medio percepito dal microfono.</b>\n\nÈ inoltre possibile ripristinare il livello del volume precedente alla modifica effettuata da questo servizio.\n\nAumenta il consumo della batteria.\n\nIn nessun caso verranno raccolti i tuoi dati personali.</string>
     <string name="automatic_volume_level">Regola automaticamente il volume</string>
-    <string name="restore_previous_volume_level">Ripristina il livello del volume precedente</string>
+    <string name="restore_previous_volume_level">Ripristina il volume precedente</string>
     <string name="number_of_notes_warning">Il numero deve essere compreso tra 1 e 8</string>
     <string name="settings">Impostazioni</string>
     <string name="about_title">Info</string>
