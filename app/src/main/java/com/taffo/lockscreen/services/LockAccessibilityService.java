@@ -72,7 +72,6 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        getServiceInfo().flags = AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE;
         if (instance == null)
             instance = this;
         if (cp.checkPermissions(this)) {

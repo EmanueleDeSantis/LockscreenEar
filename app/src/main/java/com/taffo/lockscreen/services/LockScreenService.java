@@ -40,10 +40,8 @@ import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -97,8 +95,8 @@ public final class LockScreenService extends Service {
 			if (intent.getAction().equals(Intent.ACTION_REBOOT)
 					|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
 					|| intent.getAction().equals("finishedLockScreenActivity")
-					&& (sp.getSharedmRestorePreviousVolumeServiceSetting()
-							&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
+					&& sp.getSharedmRestorePreviousVolumeServiceSetting()
+					&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
 				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
 		}
 	};
@@ -218,7 +216,11 @@ public final class LockScreenService extends Service {
 			startForeground(5, notification);
 		}
 
-		if (canVolumeAdapterBeStarted())
+		if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+					&& sp.getSharedmVolumeAdapterServiceSetting()
+					&& !stopVolumeAdapterService
+					&& !isVolumeAdapterRunning
+					&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
 			volumeAdapter();
 
 		//Updates the tile
@@ -231,14 +233,6 @@ public final class LockScreenService extends Service {
 		parser.parseXmlNotes(this);
 		startActivity(new Intent(this, LockScreenActivity.class)
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-	}
-
-	private boolean canVolumeAdapterBeStarted() {
-		return sp.getSharedmVolumeAdapterServiceSetting()
-				&& ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-				&& !isVolumeAdapterRunning
-				&& !stopVolumeAdapterService
-				&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked();
 	}
 
 	private void releaseMediaRecorder() {
@@ -273,12 +267,13 @@ public final class LockScreenService extends Service {
 								.getProfileConnectionState(BluetoothProfile.HEARING_AID)) {
 					releaseMediaRecorder();
 					dbList.clear();
-					if (stopVolumeAdapterService) {
-						cancel();
+					if (stopVolumeAdapterService
+								|| !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) {
 						timer.cancel();
+						cancel();
 					}
 				} else {
-					if (!isVolumeAdapterRunning && mRecorder == null)
+					if (mRecorder == null)
 						try {
 							mRecorder = new MediaRecorder();
 							mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
