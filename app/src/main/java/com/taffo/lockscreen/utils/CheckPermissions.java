@@ -39,13 +39,15 @@ import com.taffo.lockscreen.services.LockAccessibilityService;
 public final class CheckPermissions {
     private final LockAccessibilityService las = new LockAccessibilityService();
     private static boolean isLockScreenRunning = false;
+    private static boolean isCallLive = false;
 
     public boolean checkPermissions(Context context) {
         return (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
                 && Settings.System.canWrite(context)
                 && ((DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE))
                             .isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class))
-                && las.isAccessibilitySettingsOn(context));
+                && las.isAccessibilitySettingsOn(context)
+                && !isCallLive);
     }
 
     public void askPermissions(AppCompatActivity activity, Context context) {
@@ -62,6 +64,9 @@ public final class CheckPermissions {
             context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
     }
 
+    public static void setIsCallLive(boolean b) {
+        isCallLive = b;
+    }
     public static void setIsLockScreenRunning(boolean b) {
         isLockScreenRunning = b;
     }

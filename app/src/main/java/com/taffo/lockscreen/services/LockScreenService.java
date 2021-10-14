@@ -65,7 +65,6 @@ public final class LockScreenService extends Service {
 	private static SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
 	private SharedPref sp;
 	private final CheckPermissions cp = new CheckPermissions();
-	private static boolean stopVolumeAdapterService = false;
 	private static boolean isVolumeAdapterRunning = false;
 	private ContentObserver volumeObserver;
 	private AudioManager audio;
@@ -75,14 +74,10 @@ public final class LockScreenService extends Service {
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-				stopVolumeAdapterService = false;
+			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) || intent.getAction().equals("changeNotificationColor"))
 				startLockForeground();
-			}
-			if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-				stopVolumeAdapterService = true;
+			if (intent.getAction().equals(Intent.ACTION_USER_PRESENT))
 				startLockScreenActivity();
-			}
 			if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
 				int state = intent.getIntExtra("state", -1);
 				if (state == 0)
@@ -90,13 +85,11 @@ public final class LockScreenService extends Service {
 				if (state == 1)
 					areHeadPhonesPlugged = true;
 			}
-			if (intent.getAction().equals("changeNotificationColor"))
-				startLockForeground();
-			if (intent.getAction().equals(Intent.ACTION_REBOOT)
-					|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
-					|| intent.getAction().equals("finishedLockScreenActivity")
-					&& sp.getSharedmRestorePreviousVolumeServiceSetting()
-					&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
+			if (intent.getAction().equals("finishedLockScreenActivity")
+						|| (intent.getAction().equals(Intent.ACTION_REBOOT)
+								|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
+								&& sp.getSharedmRestorePreviousVolumeServiceSetting()
+								&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
 				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
 		}
 	};
@@ -218,7 +211,6 @@ public final class LockScreenService extends Service {
 
 		if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 					&& sp.getSharedmVolumeAdapterServiceSetting()
-					&& !stopVolumeAdapterService
 					&& !isVolumeAdapterRunning
 					&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
 			volumeAdapter();
@@ -235,20 +227,12 @@ public final class LockScreenService extends Service {
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 
-	private void releaseMediaRecorder() {
-		if (mRecorder != null) {
-			mRecorder.release();
-			mRecorder = null;
-		}
-		isVolumeAdapterRunning = false;
-	}
-
 	private MediaRecorder mRecorder = null;
 	private final int LIST_EL = 10;
 	private final List<Double> dbList = new ArrayList<>(LIST_EL);
 	private static int dbMean = 0;
 	private final int DB_MIN = 25;
-	private final int DB_MAX = 90;
+	private final int DB_MAX = 110;
 
 	private void volumeAdapter() {
 		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -256,8 +240,7 @@ public final class LockScreenService extends Service {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				if (stopVolumeAdapterService
-						|| !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
+				if (!((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
 						|| audio.isMusicActive()
 						|| audio.getMode() != AudioManager.MODE_NORMAL //Check if microphone is (not) available
 						|| areHeadPhonesPlugged
@@ -267,8 +250,7 @@ public final class LockScreenService extends Service {
 								.getProfileConnectionState(BluetoothProfile.HEARING_AID)) {
 					releaseMediaRecorder();
 					dbList.clear();
-					if (stopVolumeAdapterService
-								|| !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) {
+					if (!((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) {
 						timer.cancel();
 						cancel();
 					}
@@ -283,7 +265,7 @@ public final class LockScreenService extends Service {
 							mRecorder.prepare();
 							mRecorder.start();
 							isVolumeAdapterRunning = true;
-						} catch (IOException e) {
+						} catch (IOException | RuntimeException e) {
 							releaseMediaRecorder();
 						}
 					else {
@@ -308,13 +290,21 @@ public final class LockScreenService extends Service {
 									dbMean = (int) Math.round(dbList.size() / sum); //Harmonic mean
 							}
 						}
-						int chosenVolumeLevel = 1 + (((audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) - 1)
-								* (dbMean - DB_MIN)) / (DB_MAX - DB_MIN)); //Experimental formula
-						audio.setStreamVolume(AudioManager.STREAM_MUSIC, chosenVolumeLevel, 0);
+						audio.setStreamVolume(AudioManager.STREAM_MUSIC,
+							1 + (((audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) - 1) //Experimental
+									* (dbMean - DB_MIN)) / (DB_MAX - DB_MIN)), 0); //Formula
 					}
 				}
 			}
 		}, 0, 1000); //Every second
+	}
+
+	private void releaseMediaRecorder() {
+		if (mRecorder != null) {
+			mRecorder.release();
+			mRecorder = null;
+		}
+		isVolumeAdapterRunning = false;
 	}
 
 	public final static class IncrementNumberOfNotes extends Service {

@@ -43,7 +43,7 @@ import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
-public final class LockAccessibilityService extends AccessibilityService /*implements GestureDetector.OnDoubleTapListener */{
+public final class LockAccessibilityService extends AccessibilityService {
     private SharedPref sp;
     private CheckPermissions cp;
     private CheckCalls callsListener;
@@ -74,21 +74,21 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
         super.onServiceConnected();
         if (instance == null)
             instance = this;
-        if (cp.checkPermissions(this)) {
-            sp.setSharedmPrefService(true);
-            startForegroundService(new Intent(this, LockScreenService.class));
-        }
         //Executed only at first connection
         if (sp.getSharedmPrefFirstRunAccessibilitySettings())
             startActivity(new Intent(this, MainActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         else {
             //Auto-starts the service on boot if the restart setting is on
-            if (cp.checkPermissions(this) && sp.getSharedmPrefBootSwitchSetting()) {
-                DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-                if (dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class))) {
-                    sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
-                    dpm.lockNow();
+            if (cp.checkPermissions(this)) {
+                sp.setSharedmPrefService(true);
+                startForegroundService(new Intent(this, LockScreenService.class));
+                if (sp.getSharedmPrefBootSwitchSetting()) {
+                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                    if (dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class))) {
+                        sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
+                        dpm.lockNow();
+                    }
                 }
             }
         }
@@ -142,12 +142,13 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
+                    CheckPermissions.setIsCallLive(true);
                     sp.setSharedmPrefService(false);
                     stopService(new Intent(context, LockScreenService.class));
-                }
-                else
+                } else
                     isServiceRunning = false;
             } else if (state == TelephonyManager.CALL_STATE_IDLE && isServiceRunning) {
+                CheckPermissions.setIsCallLive(false);
                 if (cp.checkPermissions(context)) {
                     sp.setSharedmPrefService(true);
                     startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
@@ -172,12 +173,13 @@ public final class LockAccessibilityService extends AccessibilityService /*imple
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
+                    CheckPermissions.setIsCallLive(true);
                     sp.setSharedmPrefService(false);
                     stopService(new Intent(mContext, LockScreenService.class));
-                }
-                else
+                } else
                     isServiceRunning = false;
             } else if (state == TelephonyManager.CALL_STATE_IDLE && isServiceRunning) {
+                CheckPermissions.setIsCallLive(false);
                 if (cp.checkPermissions(mContext)) {
                     sp.setSharedmPrefService(true);
                     startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
