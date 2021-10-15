@@ -84,6 +84,7 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="changeNotificationColor" />
                 <action android:name="finishedLockScreenActivity" />
+                <action android:name="parsingError" />
             </intent-filter>
         </service>
         <service android:name=".services.LockScreenService$IncrementNumberOfNotes" />

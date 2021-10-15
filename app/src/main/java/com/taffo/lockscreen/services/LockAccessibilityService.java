@@ -137,9 +137,9 @@ public final class LockAccessibilityService extends AccessibilityService {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                CheckPermissions.setIsCallLive(true);
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
-                    CheckPermissions.setIsCallLive(true);
                     sp.setSharedmPrefService(false);
                     stopService(new Intent(context, LockScreenService.class));
                 } else
@@ -168,9 +168,9 @@ public final class LockAccessibilityService extends AccessibilityService {
         @Override
         public void onCallStateChanged(int state) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                CheckPermissions.setIsCallLive(true);
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
-                    CheckPermissions.setIsCallLive(true);
                     sp.setSharedmPrefService(false);
                     stopService(new Intent(mContext, LockScreenService.class));
                 } else
