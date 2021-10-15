@@ -25,7 +25,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -38,10 +38,13 @@ import android.database.ContentObserver;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.TileService;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -70,6 +73,7 @@ public final class LockScreenService extends Service {
 	private AudioManager audio;
 	private static int previousVolume;
 	private static boolean areHeadPhonesPlugged = false;
+	private static boolean dontStartEarActivities = false;
 
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -91,6 +95,8 @@ public final class LockScreenService extends Service {
 								&& sp.getSharedmRestorePreviousVolumeServiceSetting()
 								&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
 				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
+			if (intent.getAction().equals("parsingError"))
+				dontStartEarActivities = true;
 		}
 	};
 
@@ -114,8 +120,12 @@ public final class LockScreenService extends Service {
 		filter.addAction(Intent.ACTION_HEADSET_PLUG);
 		filter.addAction(Intent.ACTION_REBOOT);
 		filter.addAction(Intent.ACTION_SHUTDOWN);
-		filter.addAction("changeNotificationColor"); //Used to change color of the notification, green when screen is unlocked, red when is locked
-		filter.addAction("finishedLockScreenActivity"); //Used to set previousVolume avoiding increasing volume while LockScreenActivity finishes
+		//Used to change color of the notification, green when screen is unlocked, red when is locked
+		filter.addAction("changeNotificationColor");
+		//Used to set previousVolume avoiding increasing volume while LockScreenActivity finishes
+		filter.addAction("finishedLockScreenActivity");
+		//Used to prevent Ear Training activities from starting when a parsing error occurs
+		filter.addAction("parsingError");
 		registerReceiver(mReceiver, filter);
 
 		if (cp.checkPermissions(this) && sp.getSharedmPrefService()) {
@@ -125,7 +135,7 @@ public final class LockScreenService extends Service {
 					startLockForeground();
 			};
 			sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
-			volumeObserver = new ContentObserver(new Handler()) {
+			volumeObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
 				@Override
 				public void onChange(boolean selfChange) {
 					super.onChange(selfChange);
@@ -151,6 +161,21 @@ public final class LockScreenService extends Service {
 		releaseMediaRecorder();
 		//Updates the tile
 		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+	}
+
+	private void startLockScreenActivity() {
+		XMLParser parser = new XMLParser();
+		parser.setNotes(sp.getSharedmPrefNumberOfNotesToPlay());
+		parser.parseXmlNotes(this);
+		if (dontStartEarActivities) {
+			Toast.makeText(this, getString(R.string.cant_start_service), Toast.LENGTH_LONG).show();
+			startActivity(new Intent(this, MainActivity.class)
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+			sp.setSharedmPrefService(false);
+			stopSelf();
+		} else
+			startActivity(new Intent(this, LockScreenActivity.class)
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 
 	//"Foreground" service (with pending notification): Since android 10 (maybe before?) after 20 seconds services go in background. Solved using priorities in the manifest
@@ -210,21 +235,13 @@ public final class LockScreenService extends Service {
 		}
 
 		if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-					&& sp.getSharedmVolumeAdapterServiceSetting()
+					&& sp.getSharedmPrefVolumeAdapterServiceSetting()
 					&& !isVolumeAdapterRunning
 					&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
-			volumeAdapter();
+			volumeAdapter(this);
 
 		//Updates the tile
 		TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
-	}
-
-	private void startLockScreenActivity() {
-		XMLParser parser = new XMLParser();
-		parser.setNotes(sp.getSharedmPrefNumberOfNotesToPlay());
-		parser.parseXmlNotes(this);
-		startActivity(new Intent(this, LockScreenActivity.class)
-				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 
 	private MediaRecorder mRecorder = null;
@@ -232,9 +249,10 @@ public final class LockScreenService extends Service {
 	private final List<Double> dbList = new ArrayList<>(LIST_EL);
 	private static int dbMean = 0;
 	private final int DB_MIN = 25;
-	private final int DB_MAX = 110;
+	private int DB_MAX = 100; //In case sp is not yet initialized
 
-	private void volumeAdapter() {
+	private void volumeAdapter(Context context) {
+		DB_MAX = Integer.parseInt(sp.getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting()); //80, 100, 120
 		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -244,10 +262,10 @@ public final class LockScreenService extends Service {
 						|| audio.isMusicActive()
 						|| audio.getMode() != AudioManager.MODE_NORMAL //Check if microphone is (not) available
 						|| areHeadPhonesPlugged
-						|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
-								.getProfileConnectionState(BluetoothProfile.HEADSET)
-						|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
-								.getProfileConnectionState(BluetoothProfile.HEARING_AID)) {
+						|| BluetoothProfile.STATE_CONNECTED == ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
+								.getAdapter().getProfileConnectionState(BluetoothProfile.HEADSET)
+						|| BluetoothProfile.STATE_CONNECTED == ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
+								.getAdapter().getProfileConnectionState(BluetoothProfile.HEARING_AID)) {
 					releaseMediaRecorder();
 					dbList.clear();
 					if (!((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) {
@@ -257,7 +275,10 @@ public final class LockScreenService extends Service {
 				} else {
 					if (mRecorder == null)
 						try {
-							mRecorder = new MediaRecorder();
+							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+								mRecorder = new MediaRecorder(context);
+							else
+								mRecorder = new MediaRecorder();
 							mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 							mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 							mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
@@ -281,8 +302,8 @@ public final class LockScreenService extends Service {
 								sum += (1 / dbList.get(i));
 							}
 							dbMean = (int) ((LIST_EL - 2) / sum); //Harmonic mean
-							Collections.rotate(dbList, -1); //List left rotation to remove (and in the next cycle of the timer to add) the last value in the list
-							dbList.remove(LIST_EL - 1); //Remove last value from the list
+							Collections.rotate(dbList, -1); //List left rotation to
+							dbList.remove(LIST_EL - 1); //remove last value from the list  (it will be added in the next cycle)
 						} else {
 							for (int i = 0; i < dbList.size(); i++) {
 								sum += (1 / dbList.get(i));

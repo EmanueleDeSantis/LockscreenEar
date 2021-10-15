@@ -21,7 +21,6 @@ package com.taffo.lockscreen.services;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -78,17 +77,15 @@ public final class LockAccessibilityService extends AccessibilityService {
         if (sp.getSharedmPrefFirstRunAccessibilitySettings())
             startActivity(new Intent(this, MainActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        else {
-            //Auto-starts the service on boot if the restart setting is on
-            if (cp.checkPermissions(this)) {
-                sp.setSharedmPrefService(true);
-                startForegroundService(new Intent(this, LockScreenService.class));
-                if (sp.getSharedmPrefBootSwitchSetting()) {
-                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-                    if (dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class))) {
-                        sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
-                        dpm.lockNow();
-                    }
+        //Auto-starts the service on boot if the restart setting is on
+        if (cp.checkPermissions(this)) {
+            sp.setSharedmPrefService(true);
+            startForegroundService(new Intent(this, LockScreenService.class));
+            if (sp.getSharedmPrefBootSwitchSetting()) {
+                DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                if (dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class))) {
+                    sp.setSharedmPrefNumberOfNotesToPlay(sp.getSharedmPrefBootListSettingNumberOfNotesToPlay());
+                    dpm.lockNow();
                 }
             }
         }

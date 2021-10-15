@@ -19,17 +19,33 @@
 package com.taffo.lockscreen.services;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.taffo.lockscreen.EarTrainingActivity;
+import com.taffo.lockscreen.LockScreenActivity;
+import com.taffo.lockscreen.MainActivity;
+import com.taffo.lockscreen.R;
 import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;
 
 public final class EarTrainingService extends Service {
 	private SharedPref sp;
+	private static boolean dontStartEarActivities = false;
+
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals("parsingError"))
+				dontStartEarActivities = true;
+		}
+	};
 
 	@Override
 	public IBinder onBind(@Nullable Intent intent) {
@@ -37,8 +53,16 @@ public final class EarTrainingService extends Service {
 	}
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public void onCreate() {
 		sp = new SharedPref(this);
+		super.onCreate();
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		//Used to prevent Ear Training activities from starting when a parsing error occurs
+		registerReceiver(mReceiver, new IntentFilter("parsingError"));
+
 		startEarTrainingActivity();
 		return super.onStartCommand(intent, flags, startId);
 	}
@@ -47,8 +71,13 @@ public final class EarTrainingService extends Service {
 		XMLParser parser = new XMLParser();
 		parser.setNotes(sp.getSharedmPrefNumberOfNotesToPlay());
 		parser.parseXmlNotes(this);
-		startActivity(new Intent(this, EarTrainingActivity.class)
-				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+		if (dontStartEarActivities) {
+			Toast.makeText(this, getString(R.string.cant_start_service), Toast.LENGTH_LONG).show();
+			sp.setSharedmPrefService(false);
+			stopSelf();
+		} else
+			startActivity(new Intent(this, EarTrainingActivity.class)
+					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 
 }

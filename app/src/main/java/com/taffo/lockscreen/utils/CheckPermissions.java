@@ -58,8 +58,8 @@ public final class CheckPermissions {
         else if (!((DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE))
                     .isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
             context.startActivity(new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
-                    .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class))
-                    .putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, context.getString(R.string.device_admin_personal_data)));
+                    .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+                            new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)));
         else if (!las.isAccessibilitySettingsOn(context))
             context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
     }

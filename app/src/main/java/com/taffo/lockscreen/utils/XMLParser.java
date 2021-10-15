@@ -19,6 +19,7 @@
 package com.taffo.lockscreen.utils;
 
 import android.content.Context;
+import android.content.Intent;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -31,6 +32,11 @@ import javax.xml.parsers.ParserConfigurationException;
 public final class XMLParser {
     //The actual number of notes to play (used in all "guess the notes" activities)
     private static String val;
+    //The actual total number of stored notes in "res/raw" folder
+    //got from the xml document "notes.xml" in "src/main/assets" folder (used in all "guess the notes" activities)
+    private static int totalVal;
+    //The Document containing information about the notes to be played
+    private static Document docum;
     //Used by services to update the correct number of notes to play
     public void setNotes(String s) {
         val = s;
@@ -41,25 +47,22 @@ public final class XMLParser {
             val = "3";
         return Integer.parseInt(val);
     }
-
-    //The actual total number of stored notes in "res/raw" folder got from the xml document "notes.xml" in "src/main/assets" folder (used in all "guess the notes" activities)
-    private static int totalVal;
     public int getTotalNotes() {
         return totalVal;
     }
-
-    //The xml document is parsed here for optimizing time (used in all "guess the notes" activities)
-    private static Document docum;
     public Document getDocum() {
         return docum;
     }
 
+    //The xml document is parsed here for more usability (used in all "guess the notes" activities)
     public void parseXmlNotes(Context context) {
         try {
             docum = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(context.getAssets().open("notes.xml"));
             docum.getDocumentElement().normalize();
             totalVal = docum.getElementsByTagName("note").getLength();
-        } catch (ParserConfigurationException | SAXException | IOException ignored) {}
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            context.sendBroadcast(new Intent("parsingError"));
+        }
     }
 
 }

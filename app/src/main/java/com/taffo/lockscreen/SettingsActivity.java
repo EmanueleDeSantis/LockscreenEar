@@ -47,7 +47,7 @@ import java.util.Objects;
 
 public final class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         if (savedInstanceState == null) {
@@ -156,13 +156,13 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             switchBootSetting = findPreference(getString(R.string.boot_switch_setting_shared_pref));
             ListPreference listNumberOfNotes = findPreference(getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref));
 
-            //Saves OnRestartSetting state
+            //Saves BootSetting state
             Objects.requireNonNull(switchBootSetting).setOnPreferenceChangeListener((preference, newValue) -> {
                 sp.setSharedmPrefBootSetting((Boolean.parseBoolean(newValue.toString())));
                 return true;
             });
 
-            //Saves OnRestartNumberOfNotesToPlay
+            //Saves BootSettingNumberOfNotesToPlay state
             Objects.requireNonNull(listNumberOfNotes).setOnPreferenceChangeListener((preference, newValue) -> {
                 sp.setSharedmPrefBootListSettingNumberOfNotesToPlay(newValue.toString());
                 return true;
@@ -180,7 +180,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
 
     public final static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
         private SwitchPreference switchVolumeAdapterSetting;
-        SwitchPreference switchRestorePreviousVolumeLevelSetting;
+        private SwitchPreference switchRestorePreviousVolumeLevelSetting;
         private Context mContext;
 
         @Override
@@ -191,6 +191,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             SharedPref sp = new SharedPref(mContext);
 
             switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_switch_setting_shared_pref));
+            ListPreference listVolumeAdjustmentLevelSetting = findPreference(getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref));
             switchRestorePreviousVolumeLevelSetting = findPreference(getString(R.string.restore_previous_volume_level_switch_setting_shared_pref));
 
             //Asks for permissions
@@ -206,8 +207,14 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
 
             //Saves VolumeAdapterSetting state
             switchVolumeAdapterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
-                sp.setSharedmVolumeAdapterServiceSetting(Boolean.parseBoolean(newValue.toString()));
+                sp.setSharedmPrefVolumeAdapterServiceSetting(Boolean.parseBoolean(newValue.toString()));
                 switchRestorePreviousVolumeLevelSetting.setChecked(Boolean.parseBoolean(newValue.toString()));
+                return true;
+            });
+
+            //Saves VolumeAdjustmentLevel state
+            Objects.requireNonNull(listVolumeAdjustmentLevelSetting).setOnPreferenceChangeListener((preference, newValue) -> {
+                sp.setSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting(newValue.toString());
                 return true;
             });
 

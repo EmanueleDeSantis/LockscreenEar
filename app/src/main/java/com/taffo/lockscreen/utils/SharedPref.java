@@ -29,11 +29,12 @@ public final class SharedPref {
     private final SharedPreferences mPrefStartService;
     private final SharedPreferences mPrefFirstRunMain;
     private final SharedPreferences mPrefFirstRunAccessibilitySettings;
-    private final SharedPreferences mPrefBootSwitchSetting;
-    private final SharedPreferences mPrefBootListSettingNumberOfNotesToPlay;
+    private final SharedPreferences mPrefBootSetting;
+    private final SharedPreferences mPrefBootSettingNumberOfNotesToPlay;
     private final SharedPreferences mPrefVolumeAdapterServiceSetting;
+    private final SharedPreferences mPrefVolumeAdjustmentLevelAdapterServiceSetting;
     private final SharedPreferences mPrefRestorePreviousVolumeServiceSetting;
-    private final SharedPreferences mPrefQuickSettingSwitchEnabled;
+    private final SharedPreferences mPrefQuickSettingEnabled;
 
     public SharedPref(Context context) {
         mContext = context;
@@ -41,11 +42,12 @@ public final class SharedPref {
         mPrefStartService = context.getSharedPreferences(mContext.getString(R.string.start_service_shared_pref), Context.MODE_PRIVATE);
         mPrefFirstRunMain = context.getSharedPreferences(mContext.getString(R.string.first_run_main_shared_pref), Context.MODE_PRIVATE);
         mPrefFirstRunAccessibilitySettings = context.getSharedPreferences(mContext.getString(R.string.first_run_accessibility_setting_shared_pref), Context.MODE_PRIVATE);
-        mPrefBootSwitchSetting = context.getSharedPreferences(mContext.getString(R.string.boot_switch_setting_shared_pref), Context.MODE_PRIVATE);
-        mPrefBootListSettingNumberOfNotesToPlay = context.getSharedPreferences(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
+        mPrefBootSetting = context.getSharedPreferences(mContext.getString(R.string.boot_switch_setting_shared_pref), Context.MODE_PRIVATE);
+        mPrefBootSettingNumberOfNotesToPlay = context.getSharedPreferences(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
         mPrefVolumeAdapterServiceSetting = context.getSharedPreferences(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), Context.MODE_PRIVATE);
+        mPrefVolumeAdjustmentLevelAdapterServiceSetting = context.getSharedPreferences(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefRestorePreviousVolumeServiceSetting = context.getSharedPreferences(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), Context.MODE_PRIVATE);
-        mPrefQuickSettingSwitchEnabled = context.getSharedPreferences(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), Context.MODE_PRIVATE);
+        mPrefQuickSettingEnabled = context.getSharedPreferences(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), Context.MODE_PRIVATE);
     }
 
     //Used for listeners
@@ -57,31 +59,44 @@ public final class SharedPref {
     }
 
     public String getSharedmPrefNumberOfNotesToPlay() {
-        return mPrefNumberOfNotesToPlay.getString(mContext.getString(R.string.number_of_notes_to_play_shared_pref), mContext.getString(R.string._3));
+        return mPrefNumberOfNotesToPlay
+                .getString(mContext.getString(R.string.number_of_notes_to_play_shared_pref), mContext.getString(R.string._3));
     }
     public boolean getSharedmPrefService() {
-        return mPrefStartService.getBoolean(mContext.getString(R.string.start_service_shared_pref), false);
+        return mPrefStartService
+                .getBoolean(mContext.getString(R.string.start_service_shared_pref), false);
     }
     public boolean getSharedmPrefFirstRunMain() {
-        return mPrefFirstRunMain.getBoolean(mContext.getString(R.string.first_run_main_shared_pref), true);
+        return mPrefFirstRunMain
+                .getBoolean(mContext.getString(R.string.first_run_main_shared_pref), true);
     }
     public boolean getSharedmPrefFirstRunAccessibilitySettings() {
-        return mPrefFirstRunAccessibilitySettings.getBoolean(mContext.getString(R.string.first_run_accessibility_setting_shared_pref), true);
+        return mPrefFirstRunAccessibilitySettings
+                .getBoolean(mContext.getString(R.string.first_run_accessibility_setting_shared_pref), true);
     }
     public boolean getSharedmPrefBootSwitchSetting() {
-        return mPrefBootSwitchSetting.getBoolean(mContext.getString(R.string.boot_switch_setting_shared_pref), false);
+        return mPrefBootSetting
+                .getBoolean(mContext.getString(R.string.boot_switch_setting_shared_pref), false);
     }
     public String getSharedmPrefBootListSettingNumberOfNotesToPlay() {
-        return mPrefBootListSettingNumberOfNotesToPlay.getString(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), mContext.getString(R.string._3));
+        return mPrefBootSettingNumberOfNotesToPlay
+                .getString(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), mContext.getString(R.string._3));
     }
-    public boolean getSharedmVolumeAdapterServiceSetting() {
-        return mPrefVolumeAdapterServiceSetting.getBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), false);
+    public boolean getSharedmPrefVolumeAdapterServiceSetting() {
+        return mPrefVolumeAdapterServiceSetting
+                .getBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), false);
+    }
+    public String getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting() {
+        return mPrefVolumeAdjustmentLevelAdapterServiceSetting
+                .getString(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref), "100");
     }
     public boolean getSharedmRestorePreviousVolumeServiceSetting() {
-        return mPrefRestorePreviousVolumeServiceSetting.getBoolean(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), false);
+        return mPrefRestorePreviousVolumeServiceSetting
+                .getBoolean(mContext.getString(R.string.restore_previous_volume_level_switch_setting_shared_pref), false);
     }
     public boolean getSharedmPrefQuickSettingSwitchEnabled() {
-        return mPrefQuickSettingSwitchEnabled.getBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), false);
+        return mPrefQuickSettingEnabled
+                .getBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), false);
     }
 
     public void setSharedmPrefNumberOfNotesToPlay(String s) {
@@ -109,21 +124,27 @@ public final class SharedPref {
                 .apply();
     }
     public void setSharedmPrefBootSetting(Boolean b) {
-        mPrefBootSwitchSetting
+        mPrefBootSetting
                 .edit()
                 .putBoolean(mContext.getString(R.string.boot_switch_setting_shared_pref), b)
                 .apply();
     }
     public void setSharedmPrefBootListSettingNumberOfNotesToPlay(String s) {
-        mPrefBootListSettingNumberOfNotesToPlay
+        mPrefBootSettingNumberOfNotesToPlay
                 .edit()
                 .putString(mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), s)
                 .apply();
     }
-    public void setSharedmVolumeAdapterServiceSetting(Boolean b) {
+    public void setSharedmPrefVolumeAdapterServiceSetting(Boolean b) {
         mPrefVolumeAdapterServiceSetting
                 .edit()
                 .putBoolean(mContext.getString(R.string.volume_adapter_switch_setting_shared_pref), b)
+                .apply();
+    }
+    public void setSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting(String s) {
+        mPrefVolumeAdjustmentLevelAdapterServiceSetting
+                .edit()
+                .putString(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref), s)
                 .apply();
     }
     public void setSharedmRestorePreviousVolumeServiceSetting(Boolean b) {
@@ -133,7 +154,7 @@ public final class SharedPref {
                .apply();
     }
     public void setSharedmPrefQuickSettingSwitchEnabled(Boolean b) {
-        mPrefQuickSettingSwitchEnabled
+        mPrefQuickSettingEnabled
                 .edit()
                 .putBoolean(mContext.getString(R.string.quick_setting_switch_enabled_shared_pref), b)
                 .apply();

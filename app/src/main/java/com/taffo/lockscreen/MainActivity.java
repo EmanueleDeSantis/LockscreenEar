@@ -84,7 +84,7 @@ public final class MainActivity extends AppCompatActivity {
                 numberInput.setText(sp.getSharedmPrefNumberOfNotesToPlay());
                 //The array of notes must also be set here, otherwise it would collapse to 1 item
                 numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout,
-                        getResources().getStringArray(R.array.number_of_notes)));
+                        getResources().getStringArray(R.array.start_service_array_number_of_notes)));
             }
         };
         sp.getmPrefNotes().registerOnSharedPreferenceChangeListener(listenerNotes);
@@ -128,7 +128,7 @@ public final class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //The array of notes must also (see above) be set here, otherwise it would not show
-        numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout, getResources().getStringArray(R.array.number_of_notes)));
+        numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout, getResources().getStringArray(R.array.start_service_array_number_of_notes)));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else

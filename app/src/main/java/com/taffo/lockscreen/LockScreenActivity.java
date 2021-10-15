@@ -299,7 +299,8 @@ public final class LockScreenActivity extends AppCompatActivity {
         //Sets the screen off timeout to the default value
         if (Settings.System.canWrite(this))
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                && telephony != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 telephony.unregisterTelephonyCallback(callsListenerS);
             else
@@ -317,8 +318,9 @@ public final class LockScreenActivity extends AppCompatActivity {
     private void play() {
         for (int i = 0; i < NOTES; i++) {
             randomNotesList.add(i, new Random().nextInt(TOTAL_NOTES + 1));
-            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotesList.get(i)))
-                    .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(),
+                    getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotesList.get(i)))
+                            .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
         }
         for (int i = 0; i < NOTES; i++)
             mediaPlayer[i].start();

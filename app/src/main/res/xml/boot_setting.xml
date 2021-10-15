@@ -19,8 +19,8 @@
         <ListPreference
             app:key="@string/boot_list_setting_number_of_notes_to_play_shared_pref"
             app:title="@string/number_of_notes_to_play"
-            app:entries="@array/lock_on_boot_number_of_notes"
-            app:entryValues="@array/lock_on_boot_number_of_notes_value"
+            app:entries="@array/lock_screen_on_boot_array_number_of_notes"
+            app:entryValues="@array/lock_screen_on_boot_array_number_of_notes_value"
             app:defaultValue="@string/_3"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"

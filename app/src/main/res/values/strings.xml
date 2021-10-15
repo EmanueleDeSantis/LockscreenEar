@@ -16,6 +16,7 @@
     <string name="on">\u0020on:\u0020</string>
     <string name="off">\u0020off:\u0020</string>
     <string name="unavailable">\u0020unavailable</string>
+    <string name="cant_start_service">Type \"guess the notes\" activities cannot be started</string>
 
     <string name="settings">Settings</string>
     <string name="basics">Basics</string>
@@ -36,9 +37,13 @@
     <string name="boot_setting_message">If this setting is enabled, every time the accessibility service gets started (a situation that also occurs when the screen is booted), the number of notes to be played will be set to the value in the box below; <b>also the screen will be locked automatically.</b>\n\nIf this setting is disabled, every time the accessibility service is started, it will only start the main service.</string>
     <string name="volume_adapter_setting_key" translatable="false">Volume Adapter setting</string>
     <string name="volume_adapter_setting_title">Volume</string>
+    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the screen is locked, <b>it will be assigned the optimal value to the media volume based on your environment.</b>\n\You can also restore the volume level prior to this service modification.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
     <string name="automatic_volume_level">Auto adjust volume level</string>
+    <string name="volume_adjustment_level">Volume adjustment level</string>
+    <string name="array_item_volume_adjustment_level_quiet">Quiet</string>
+    <string name="array_item_volume_adjustment_level_normal">Normal</string>
+    <string name="array_item_volume_adjustment_level_loud">Loud</string>
     <string name="restore_previous_volume_level">Restore the previous volume level</string>
-    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the screen is locked, <b>it will be assigned the optimal value to the media volume based on perceived noise from the microphone.</b>\n\It is also possible to restore the volume level prior to this service modification.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
     <string name="quick_setting_key" translatable="false">Quick setting</string>
     <string name="quick_setting_title">Quick setting</string>
     <string name="quick_setting_message">If this setting is enabled, when LockScreen\'s quick setting is clicked and activated, in addition to starting the main service, <b>the screen gets also locked.</b></string>
@@ -50,7 +55,6 @@
     <string name="warnings_message_html">If enabled, the main service undertakes, after the screen wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.&lt;br />&lt;br />&lt;b>If during this activity any action is taken to bypass it, the screen will be locked again.&lt;/b>&lt;br />&lt;br />This service can also be managed via quick setting, which, &lt;b>if specified in settings, also provides to lock the screen.&lt;/b>&lt;br />&lt;br />Please do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!</string>
     <string name="accessibility_service_description">The following accessibility service undertakes only to LOCK THE SCREEN when:\n1) any action is taken to bypass the lockscreen, if active, offered by LockScreen;\n2) the main service gets started via quick setting;\n3) this service gets started (a situation that also occurs when the screen is booted), if explicitly requested via settings.\n\nIn no case your personal data will be collected.</string>
     <string name="device_admin_description">Allow LockScreen to lock the screen</string>
-    <string name="device_admin_personal_data">In no case your personal data will be collected</string>
 
     <string name="number_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>
     <string name="boot_switch_setting_shared_pref" translatable="false">Boot switch number of notes to play</string>
@@ -59,6 +63,7 @@
     <string name="first_run_main_shared_pref" translatable="false">First run main</string>
     <string name="first_run_accessibility_setting_shared_pref" translatable="false">First run accessibility setting</string>
     <string name="volume_adapter_switch_setting_shared_pref" translatable="false">Volume adapter switch setting</string>
+    <string name="volume_adjustment_level_adapter_list_setting_shared_pref" translatable="false">Adjustment volume level adapter list setting</string>
     <string name="restore_previous_volume_level_switch_setting_shared_pref" translatable="false">Restore previous volume switch setting</string>
     <string name="quick_setting_switch_enabled_shared_pref" translatable="false">Quick setting switch enabled</string>
     <string name="default_launcher_shared_pref" translatable="false">Default launcher shared pref</string>

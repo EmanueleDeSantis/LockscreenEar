@@ -16,6 +16,16 @@
         app:defaultValue="false"
         app:iconSpaceReserved="false" />
 
+        <ListPreference
+            app:key="@string/volume_adjustment_level_adapter_list_setting_shared_pref"
+            app:title="@string/volume_adjustment_level"
+            app:entries="@array/array_volume_adjustment_level"
+            app:entryValues="@array/array_volume_adjustment_level_value"
+            app:defaultValue="100"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="@string/volume_adapter_switch_setting_shared_pref" />
+
         <SwitchPreference
         app:key="@string/restore_previous_volume_level_switch_setting_shared_pref"
         app:title="@string/restore_previous_volume_level"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="number_of_notes">
+    <string-array name="start_service_array_number_of_notes">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -11,7 +11,7 @@
         <item>8</item>
     </string-array>
 
-    <string-array name="lock_on_boot_number_of_notes">
+    <string-array name="lock_screen_on_boot_array_number_of_notes">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -19,11 +19,23 @@
         <item>5</item>
     </string-array>
 
-    <string-array name="lock_on_boot_number_of_notes_value">
+    <string-array name="lock_screen_on_boot_array_number_of_notes_value">
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
         <item>5</item>
+    </string-array>
+
+    <string-array name="array_volume_adjustment_level">
+        <item>@string/array_item_volume_adjustment_level_quiet</item>
+        <item>@string/array_item_volume_adjustment_level_normal</item>
+        <item>@string/array_item_volume_adjustment_level_loud</item>
+    </string-array>
+
+    <string-array name="array_volume_adjustment_level_value">
+        <item>125</item> <!--quiet-->
+        <item>100</item> <!--normal-->
+        <item>75</item> <!--loud-->
     </string-array>
 </resources>
