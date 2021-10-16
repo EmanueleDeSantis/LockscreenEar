@@ -25,6 +25,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
@@ -57,7 +58,6 @@ import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -182,7 +182,8 @@ public final class LockScreenService extends Service {
 					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 
-	//"Foreground" service (with pending notification): Since android 10 (maybe before?) after 20 seconds services go in background. Solved using priorities in the manifest
+	//Foreground service (with pending intent):
+	//Since android 10 (maybe before?) after 20 seconds services go in background. Solved using accessibility service
 	private void startLockForeground() {
 		if (sp.getSharedmPrefFirstRunAccessibilitySettings())
 			sp.setSharedmPrefFirstRunAccessibilitySettings(false);
@@ -193,11 +194,14 @@ public final class LockScreenService extends Service {
 
 		Intent notificationIntent = new Intent(this, MainActivity.class)
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+		PendingIntent pendingIntent = PendingIntent
+				.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent broadcastIntent = new Intent(this, IncrementNumberOfNotes.class);
-		PendingIntent actionIncrementNotes = PendingIntent.getService(this, 0, broadcastIntent, PendingIntent.FLAG_IMMUTABLE);
-		NotificationCompat.Action increaseNotes = new NotificationCompat.Action.Builder(0, getString(R.string.notes_increase), actionIncrementNotes).build();
+		PendingIntent actionIncrementNotes = PendingIntent
+				.getService(this, 0, broadcastIntent, PendingIntent.FLAG_IMMUTABLE);
+		NotificationCompat.Action increaseNotes = new NotificationCompat.Action.Builder(
+				0, getString(R.string.notes_increase), actionIncrementNotes).build();
 
 		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.app_name));
 		if (!CheckPermissions.getIsScreenLocked(this)) {
@@ -222,26 +226,30 @@ public final class LockScreenService extends Service {
 			//Notification panel when the screen is locked
 			//Red
 			Notification notification = notificationBuilder
-						.setOngoing(true)
-						.setOnlyAlertOnce(true)
-						.setChannelId(getString(R.string.app_name))
-						.setSmallIcon(R.drawable.locked_icon)
-						.setColor(Color.RED)
-						.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNumberOfNotesToPlay())
-						.setContentText(getString(R.string.volume_level) + ": " + audio.getStreamVolume(AudioManager.STREAM_MUSIC)
-								+ "/" + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
-						.setPriority(NotificationManager.IMPORTANCE_HIGH)
-						.setCategory(Notification.CATEGORY_SERVICE)
-						.setContentIntent(pendingIntent)
-						.addAction(increaseNotes)
-						.build();
+					.setOngoing(true)
+					.setOnlyAlertOnce(true)
+					.setChannelId(getString(R.string.app_name))
+					.setSmallIcon(R.drawable.locked_icon)
+					.setColor(Color.RED)
+					.setContentTitle(getString(R.string.number_of_notes_to_play) + ": " + sp.getSharedmPrefNumberOfNotesToPlay())
+					.setContentText(getString(R.string.volume_level) + ": " + audio.getStreamVolume(AudioManager.STREAM_MUSIC)
+							+ "/" + audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
+					.setPriority(NotificationManager.IMPORTANCE_HIGH)
+					.setCategory(Notification.CATEGORY_SERVICE)
+					.setContentIntent(pendingIntent)
+					.addAction(increaseNotes)
+					.build();
 			startForeground(5, notification);
 		}
 
+		if (sp.getSharedmRestorePreviousVolumeServiceSetting() && mustVolumeAdapterStop())
+			//When volumeAdapter cant execute anymore,
+			//volume must be updated even when LockScreenActivity is running
+			audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
 		if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-					&& sp.getSharedmPrefVolumeAdapterServiceSetting()
-					&& !isVolumeAdapterRunning
-					&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
+				&& sp.getSharedmPrefVolumeAdapterServiceSetting()
+				&& !isVolumeAdapterRunning
+				&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked())
 			volumeAdapter(this);
 
 		//Updates the tile
@@ -269,14 +277,7 @@ public final class LockScreenService extends Service {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				if (!((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
-						|| audio.isMusicActive()
-						|| audio.getMode() != AudioManager.MODE_NORMAL //Check if microphone is (not) available
-						|| areHeadPhonesPlugged
-						|| BluetoothProfile.STATE_CONNECTED == ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
-								.getAdapter().getProfileConnectionState(BluetoothProfile.HEADSET)
-						|| BluetoothProfile.STATE_CONNECTED == ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
-								.getAdapter().getProfileConnectionState(BluetoothProfile.HEARING_AID)) {
+				if (mustVolumeAdapterStop()) {
 					releaseMediaRecorder();
 					dbList.clear();
 					if (!((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()) {
@@ -312,7 +313,7 @@ public final class LockScreenService extends Service {
 									continue;
 								sum += (1 / dbList.get(i));
 							}
-							dbMean = (int) ((LIST_EL - 2) / sum); //Harmonic mean
+							dbMean = (int) Math.round((LIST_EL - 2) / sum); //Harmonic mean
 							Collections.rotate(dbList, -1); //List left rotation to
 							dbList.remove(LIST_EL - 1); //remove last value from the list  (it will be added in the next cycle)
 						} else {
@@ -324,19 +325,51 @@ public final class LockScreenService extends Service {
 						}
 						audio.setStreamVolume(AudioManager.STREAM_MUSIC,
 							1 + (((audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC) - 1) //Experimental
-									* (dbMean - DB_MIN)) / (DB_MAX - DB_MIN)), 0); //Formula
+									* (dbMean - DB_MIN)) / (DB_MAX - DB_MIN)), 0); //formula
 					}
 				}
 			}
 		}, 0, 1000); //Every second
 	}
 
+	private boolean mustVolumeAdapterStop() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+			return !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
+					|| audio.isMusicActive()
+					|| audio.getMode() != AudioManager.MODE_NORMAL //Check if microphone is (not) available
+					|| areHeadPhonesPlugged
+					|| BluetoothProfile.STATE_CONNECTED == ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
+							.getAdapter().getProfileConnectionState(BluetoothProfile.HEADSET)
+					|| BluetoothProfile.STATE_CONNECTED == ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
+							.getAdapter().getProfileConnectionState(BluetoothProfile.HEARING_AID);
+		else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+			return !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
+					|| audio.isMusicActive()
+					|| audio.getMode() != AudioManager.MODE_NORMAL
+					|| areHeadPhonesPlugged
+					|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
+							.getProfileConnectionState(BluetoothProfile.HEADSET)
+					|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
+							.getProfileConnectionState(BluetoothProfile.HEARING_AID);
+		else
+			return !((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()
+					|| audio.isMusicActive()
+					|| audio.getMode() != AudioManager.MODE_NORMAL
+					|| areHeadPhonesPlugged
+					|| BluetoothProfile.STATE_CONNECTED == BluetoothAdapter.getDefaultAdapter()
+							.getProfileConnectionState(BluetoothProfile.HEADSET);
+	}
+
 	private void releaseMediaRecorder() {
 		if (mRecorder != null) {
-			mRecorder.release();
-			mRecorder = null;
+			try {
+				mRecorder.release();
+				mRecorder = null;
+				isVolumeAdapterRunning = false;
+			} catch (RuntimeException e) {
+				LockAccessibilityService.lockTheScreen();
+			}
 		}
-		isVolumeAdapterRunning = false;
 	}
 
 	public final static class IncrementNumberOfNotes extends Service {
@@ -347,7 +380,6 @@ public final class LockScreenService extends Service {
 
 		@Override
 		public int onStartCommand(Intent intent, int flags, int startId) {
-			new CheckPermissions();
 			if (!CheckPermissions.getIsScreenLocked(this)) {
 				SharedPref sp = new SharedPref(this);
 				int actualNumNotes = Integer.parseInt(sp.getSharedmPrefNumberOfNotesToPlay());

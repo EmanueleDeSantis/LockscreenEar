@@ -60,7 +60,7 @@ public final class EarTrainingService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		//Used to prevent Ear Training activities from starting when a parsing error occurs
+		//Used to prevent "guess the notes" activities from starting when a parsing error occurs
 		registerReceiver(mReceiver, new IntentFilter("parsingError"));
 
 		startEarTrainingActivity();

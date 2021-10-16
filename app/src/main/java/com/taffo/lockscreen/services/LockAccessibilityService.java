@@ -94,7 +94,8 @@ public final class LockAccessibilityService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED && telephony != null) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                && telephony != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 telephony.unregisterTelephonyCallback(callsListenerS);
             else
@@ -131,7 +132,7 @@ public final class LockAccessibilityService extends AccessibilityService {
     //for API <= 30
     //See also the implementation in LockScreenActivity class
     private final class CheckCalls extends PhoneStateListener {
-        final Context context = getApplicationContext();
+        final Context mContext = getApplicationContext();
         boolean isServiceRunning = false;
 
         @Override
@@ -141,12 +142,12 @@ public final class LockAccessibilityService extends AccessibilityService {
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
                     sp.setSharedmPrefService(false);
-                    stopService(new Intent(context, LockScreenService.class));
+                    stopService(new Intent(mContext, LockScreenService.class));
                 } else
                     isServiceRunning = false;
-            } else if (state == TelephonyManager.CALL_STATE_IDLE && isServiceRunning) {
+            } else if (state == TelephonyManager.CALL_STATE_IDLE) {
                 CheckPermissions.setIsCallLive(false);
-                if (cp.checkPermissions(context)) {
+                if (cp.checkPermissions(mContext) && isServiceRunning) {
                     sp.setSharedmPrefService(true);
                     startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
                 }
@@ -175,9 +176,9 @@ public final class LockAccessibilityService extends AccessibilityService {
                     stopService(new Intent(mContext, LockScreenService.class));
                 } else
                     isServiceRunning = false;
-            } else if (state == TelephonyManager.CALL_STATE_IDLE && isServiceRunning) {
+            } else if (state == TelephonyManager.CALL_STATE_IDLE) {
                 CheckPermissions.setIsCallLive(false);
-                if (cp.checkPermissions(mContext)) {
+                if (cp.checkPermissions(mContext) && isServiceRunning) {
                     sp.setSharedmPrefService(true);
                     startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
                 }

@@ -316,18 +316,24 @@ public final class LockScreenActivity extends AppCompatActivity {
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void play() {
-        for (int i = 0; i < NOTES; i++) {
-            randomNotesList.add(i, new Random().nextInt(TOTAL_NOTES + 1));
-            mediaPlayer[i] = MediaPlayer.create(getApplicationContext(),
-                    getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotesList.get(i)))
-                            .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+        try {
+            for (int i = 0; i < NOTES; i++) {
+                int randomId = new Random().nextInt(TOTAL_NOTES) + 1;
+                randomNotesList.add(i, randomId);
+                outputtedNotesList.add(i, doc.getElementById(String.valueOf(randomId))
+                        .getElementsByTagName("name").item(0).getTextContent());
+                mediaPlayer[i] = MediaPlayer.create(getApplicationContext(),
+                        getResources().getIdentifier(doc.getElementById(String.valueOf(randomNotesList.get(i)))
+                                .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+            }
+
+            for (int i = 0; i < NOTES; i++)
+                mediaPlayer[i].start();
+
+            Collections.sort(randomNotesList);
+        } catch (NullPointerException e) {
+            sendBroadcast(new Intent("parsingError"));
         }
-        for (int i = 0; i < NOTES; i++)
-            mediaPlayer[i].start();
-        Collections.sort(randomNotesList);
-        for (int i = 0; i < NOTES; i++)
-            outputtedNotesList.add(i, doc.getElementById(String.valueOf(randomNotesList.get(i)))
-                    .getElementsByTagName("name").item(0).getTextContent());
     }
 
     private final List<Integer> notesColor = new ArrayList<>(NOTES);

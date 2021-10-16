@@ -28,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,18 +43,7 @@ import androidx.preference.SwitchPreference;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONStringer;
-
-import java.sql.Blob;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public final class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     @Override
