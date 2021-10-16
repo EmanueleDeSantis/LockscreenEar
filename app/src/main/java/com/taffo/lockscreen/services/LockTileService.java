@@ -43,12 +43,6 @@ public final class LockTileService extends TileService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        updateTileService();
-    }
-
-    @Override
     public void onTileAdded() {
         super.onTileAdded();
         updateTileService();

@@ -8,20 +8,20 @@
     </PreferenceCategory>
 
     <PreferenceCategory>
-    <SwitchPreference
-        app:key="@string/volume_adapter_switch_setting_shared_pref"
-        app:title="@string/automatic_volume_level"
-        app:summaryOn="@string/enabled"
-        app:summaryOff="@string/disabled"
-        app:defaultValue="false"
-        app:iconSpaceReserved="false" />
+        <SwitchPreference
+            app:key="@string/volume_adapter_switch_setting_shared_pref"
+            app:title="@string/automatic_volume_level"
+            app:summaryOn="@string/enabled"
+            app:summaryOff="@string/disabled"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false" />
 
         <ListPreference
             app:key="@string/volume_adjustment_level_adapter_list_setting_shared_pref"
             app:title="@string/volume_adjustment_level"
             app:entries="@array/array_volume_adjustment_level"
             app:entryValues="@array/array_volume_adjustment_level_value"
-            app:defaultValue="100"
+            app:defaultValue="@string/array_item_volume_adjustment_level_normal_string_value"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             app:dependency="@string/volume_adapter_switch_setting_shared_pref" />

@@ -34,8 +34,8 @@
     </string-array>
 
     <string-array name="array_volume_adjustment_level_value">
-        <item>125</item> <!--quiet-->
-        <item>100</item> <!--normal-->
-        <item>75</item> <!--loud-->
+        <item>{db_min:30, db_max:125}</item> <!--quiet-->
+        <item>{db_min:25, db_max:100}</item> <!--normal-->
+        <item>{db_min:20, db_max:75}</item> <!--loud-->
     </string-array>
 </resources>

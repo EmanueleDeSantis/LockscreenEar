@@ -5,10 +5,11 @@
       <map>
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/layout/activity_lockscreen.xml" value="0.1716485507246377" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/layout/volume_adapter_setting.xml" value="0.1716485507246377" />
-        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/boot_setting.xml" value="0.19972826086956522" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/boot_setting.xml" value="0.17249240121580547" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/quick_setting.xml" value="0.19972826086956522" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/root_preferences.xml" value="0.19972826086956522" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/volume_adapter_setting.xml" value="0.19972826086956522" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/warnings.xml" value="0.17249240121580547" />
       </map>
     </option>
   </component>

@@ -57,6 +57,10 @@ import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -248,11 +252,18 @@ public final class LockScreenService extends Service {
 	private final int LIST_EL = 10;
 	private final List<Double> dbList = new ArrayList<>(LIST_EL);
 	private static int dbMean = 0;
-	private final int DB_MIN = 25;
-	private int DB_MAX = 100; //In case sp is not yet initialized
+	private int DB_MIN;
+	private int DB_MAX;
 
 	private void volumeAdapter(Context context) {
-		DB_MAX = Integer.parseInt(sp.getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting()); //80, 100, 120
+		try {
+			JSONObject object = new JSONObject(sp.getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting());
+			DB_MIN = Integer.parseInt(object.getString("db_min"));
+			DB_MAX = Integer.parseInt(object.getString("db_max"));
+		} catch (JSONException e) {
+			DB_MIN = 25; //Normal
+			DB_MAX = 100; //level
+		}
 		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -276,7 +287,7 @@ public final class LockScreenService extends Service {
 					if (mRecorder == null)
 						try {
 							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-								mRecorder = new MediaRecorder(context);
+								mRecorder = new MediaRecorder(context); //Not tested yet
 							else
 								mRecorder = new MediaRecorder();
 							mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);

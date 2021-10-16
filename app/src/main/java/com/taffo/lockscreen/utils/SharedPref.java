@@ -88,7 +88,8 @@ public final class SharedPref {
     }
     public String getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting() {
         return mPrefVolumeAdjustmentLevelAdapterServiceSetting
-                .getString(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref), "100");
+                .getString(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref),
+                        mContext.getString(R.string.array_item_volume_adjustment_level_normal_string_value));
     }
     public boolean getSharedmRestorePreviousVolumeServiceSetting() {
         return mPrefRestorePreviousVolumeServiceSetting
