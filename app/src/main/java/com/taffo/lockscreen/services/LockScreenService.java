@@ -94,10 +94,10 @@ public final class LockScreenService extends Service {
 					areHeadPhonesPlugged = true;
 			}
 			if (intent.getAction().equals("finishedLockScreenActivity")
-						|| (intent.getAction().equals(Intent.ACTION_REBOOT)
-								|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
-								&& sp.getSharedmRestorePreviousVolumeServiceSetting()
-								&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
+					&& sp.getSharedmRestorePreviousVolumeServiceSetting()
+					|| (intent.getAction().equals(Intent.ACTION_REBOOT)
+							|| intent.getAction().equals(Intent.ACTION_SHUTDOWN)
+							&& ((KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked()))
 				audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
 			if (intent.getAction().equals("parsingError"))
 				dontStartEarActivities = true;
@@ -126,7 +126,7 @@ public final class LockScreenService extends Service {
 		filter.addAction(Intent.ACTION_SHUTDOWN);
 		//Used to change color of the notification, green when screen is unlocked, red when is locked
 		filter.addAction("changeNotificationColor");
-		//Used to set previousVolume avoiding increasing volume while LockScreenActivity finishes
+		//Used instead of "changeNotificationColor" to set previousVolume avoiding increasing volume while LockScreenActivity finishes
 		filter.addAction("finishedLockScreenActivity");
 		//Used to prevent Ear Training activities from starting when a parsing error occurs
 		filter.addAction("parsingError");
@@ -242,10 +242,6 @@ public final class LockScreenService extends Service {
 			startForeground(5, notification);
 		}
 
-		if (sp.getSharedmRestorePreviousVolumeServiceSetting() && mustVolumeAdapterStop())
-			//When volumeAdapter cant execute anymore,
-			//volume must be updated even when LockScreenActivity is running
-			audio.setStreamVolume(AudioManager.STREAM_MUSIC, previousVolume, 0);
 		if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 				&& sp.getSharedmPrefVolumeAdapterServiceSetting()
 				&& !isVolumeAdapterRunning
@@ -264,6 +260,7 @@ public final class LockScreenService extends Service {
 	private int DB_MAX;
 
 	private void volumeAdapter(Context context) {
+		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 		try {
 			JSONObject object = new JSONObject(sp.getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting());
 			DB_MIN = Integer.parseInt(object.getString("db_min"));
@@ -272,7 +269,6 @@ public final class LockScreenService extends Service {
 			DB_MIN = 25; //Normal
 			DB_MAX = 100; //level
 		}
-		previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -362,14 +358,10 @@ public final class LockScreenService extends Service {
 
 	private void releaseMediaRecorder() {
 		if (mRecorder != null) {
-			try {
-				mRecorder.release();
-				mRecorder = null;
-				isVolumeAdapterRunning = false;
-			} catch (RuntimeException e) {
-				LockAccessibilityService.lockTheScreen();
-			}
+			mRecorder.release();
+			mRecorder = null;
 		}
+		isVolumeAdapterRunning = false;
 	}
 
 	public final static class IncrementNumberOfNotes extends Service {

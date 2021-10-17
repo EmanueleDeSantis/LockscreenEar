@@ -68,8 +68,9 @@ public final class MainActivity extends AppCompatActivity {
 
         sp = new SharedPref(this);
 
-        //Dialog showed only at first boot
-        if (sp.getSharedmPrefFirstRunMain()) {
+        //Dialog showed until user presses ok (necessary condition in order to start the service)
+        //See also CheckPermissions
+        if (sp.getSharedmPrefFirstRunMain() && savedInstanceState == null) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.warnings_title))
                     .setMessage(Html.fromHtml(getString(R.string.warnings_message_html), Html.FROM_HTML_MODE_LEGACY))
@@ -128,7 +129,8 @@ public final class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //The array of notes must also (see above) be set here, otherwise it would not show
-        numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout, getResources().getStringArray(R.array.start_service_array_number_of_notes)));
+        numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout,
+                getResources().getStringArray(R.array.start_service_array_number_of_notes)));
         if (cp.checkPermissions(this))
             switchStart.setChecked(sp.getSharedmPrefService());
         else

@@ -27,7 +27,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.Html;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -47,10 +49,12 @@ public final class CheckPermissions {
                 && ((DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE))
                             .isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class))
                 && las.isAccessibilitySettingsOn(context)
+                && !new SharedPref(context).getSharedmPrefFirstRunMain()
                 && !isCallLive);
     }
 
     public void askPermissions(AppCompatActivity activity, Context context) {
+        SharedPref sp = new SharedPref(context);
         if (!Settings.System.canWrite(context))
             context.startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + context.getPackageName())));
         else if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
@@ -62,6 +66,14 @@ public final class CheckPermissions {
                             new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)));
         else if (!las.isAccessibilitySettingsOn(context))
             context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+        else if (sp.getSharedmPrefFirstRunMain())
+            new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.warnings_title))
+                    .setMessage(Html.fromHtml(context.getString(R.string.warnings_message_html), Html.FROM_HTML_MODE_LEGACY))
+                    .setPositiveButton(context.getString(R.string.ok), (dialog, which) -> sp.setSharedmPrefFirstRunMain(false))
+                    .setOnDismissListener(dialogInterface -> sp.setSharedmPrefService(checkPermissions(context)))
+                    .create()
+                    .show();
     }
 
     public static void setIsCallLive(boolean b) {

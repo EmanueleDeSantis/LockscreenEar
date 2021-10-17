@@ -553,7 +553,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                unlockAndFinish();
+                finish();
                 LockAccessibilityService.lockTheScreen();
             }
         }
@@ -569,7 +569,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         @Override
         public void onCallStateChanged(int state) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                unlockAndFinish();
+                finish();
                 LockAccessibilityService.lockTheScreen();
             }
         }

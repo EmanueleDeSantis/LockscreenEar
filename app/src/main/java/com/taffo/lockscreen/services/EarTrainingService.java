@@ -29,8 +29,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.taffo.lockscreen.EarTrainingActivity;
-import com.taffo.lockscreen.LockScreenActivity;
-import com.taffo.lockscreen.MainActivity;
 import com.taffo.lockscreen.R;
 import com.taffo.lockscreen.utils.SharedPref;
 import com.taffo.lockscreen.utils.XMLParser;

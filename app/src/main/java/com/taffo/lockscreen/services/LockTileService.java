@@ -54,6 +54,12 @@ public final class LockTileService extends TileService {
         updateTileService();
     }
 
+    @Override
+    public void onStopListening() {
+        super.onStopListening();
+        updateTileService();
+    }
+
     //Starts/finishes the service
     @Override
     public void onClick() {

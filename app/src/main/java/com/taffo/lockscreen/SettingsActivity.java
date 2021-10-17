@@ -50,12 +50,14 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.settings_frame_layout, new SettingsFragment())
                     .commit();
         }
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
@@ -112,7 +114,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
                             .setMessage(getString(R.string.deactivate_admin_message))
                             .setPositiveButton(getString(R.string.yes), (dialog, which) -> dpm.removeActiveAdmin(admin))
                             .setNegativeButton(getString(R.string.no), null)
-                            //This seems the only way to update the fragment
+                            //This seems the only way to update the fragment from here
                             //This fragment must be updated in order to check if the removal of the admin has been successful,
                             //because after the initial boot of the device, apparently the admin cannot be managed for the first 2 minutes more or less
                             .setOnDismissListener(dialogInterface -> getParentFragmentManager()
@@ -208,6 +210,7 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
             //Saves VolumeAdapterSetting state
             switchVolumeAdapterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
                 sp.setSharedmPrefVolumeAdapterServiceSetting(Boolean.parseBoolean(newValue.toString()));
+                sp.setSharedmRestorePreviousVolumeServiceSetting((Boolean.parseBoolean(newValue.toString())));
                 switchRestorePreviousVolumeLevelSetting.setChecked(Boolean.parseBoolean(newValue.toString()));
                 return true;
             });
