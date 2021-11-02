@@ -27,6 +27,7 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
@@ -37,6 +38,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
+import com.taffo.lockscreen.services.DiapasonService;
 import com.taffo.lockscreen.utils.CheckPermissions;
 import com.taffo.lockscreen.services.LockScreenService;
 import com.taffo.lockscreen.utils.SharedPref;
@@ -47,7 +49,7 @@ import java.util.Objects;
 public final class MainActivity extends AppCompatActivity {
     private final CheckPermissions cp = new CheckPermissions();
     private SharedPref sp;
-    private SwitchCompat switchStart;
+    private SwitchCompat startSwitch;
     private AutoCompleteTextView numberInput;
     private SharedPreferences.OnSharedPreferenceChangeListener listenerNotes;
     private SharedPreferences.OnSharedPreferenceChangeListener listenerService;
@@ -57,20 +59,23 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        switchStart = findViewById(R.id.switchStart);
+        startSwitch = findViewById(R.id.startSwitch);
         numberInput = findViewById(R.id.numberInput);
-        Button buttonTraining = findViewById(R.id.buttonTraining);
+        Button buttonTraining = findViewById(R.id.trainingButton);
+        Button buttonDiapason = findViewById(R.id.diapasonButton);
 
         //Sets the launcher icon into the action bar
         ActionBar actionBar = getSupportActionBar();
         Objects.requireNonNull(actionBar).setDisplayShowHomeEnabled(true);
-        actionBar.setIcon(R.mipmap.launcher);
 
         sp = new SharedPref(this);
 
         //Dialog showed until user presses ok (necessary condition in order to start the service)
         //See also CheckPermissions
         if (sp.getSharedmPrefFirstRunMain() && savedInstanceState == null) {
+            //This dialog will be displayed when this activity is created only if
+            //"OK" was not pressed
+            //and if there is are no saved instances of this activity
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.warnings_title))
                     .setMessage(Html.fromHtml(getString(R.string.warnings_message_html), Html.FROM_HTML_MODE_LEGACY))
@@ -92,27 +97,30 @@ public final class MainActivity extends AppCompatActivity {
 
         listenerService = (prefs, key) -> {
             if (cp.checkPermissions(this) && prefs.equals(sp.getmPrefService()))
-                switchStart.setChecked(sp.getSharedmPrefService());
+                startSwitch.setChecked(sp.getSharedmPrefService());
         };
         sp.getmPrefService().registerOnSharedPreferenceChangeListener(listenerService);
 
         //Checks permissions
-        switchStart.setOnClickListener(v -> cp.askPermissions(this, this));
+        startSwitch.setOnClickListener(v -> cp.askPermissions(this, this));
 
         //Starts/finishes the service
-        switchStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        startSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (cp.checkPermissions(this)) {
                 sp.setSharedmPrefService(isChecked);
                 if (sp.getSharedmPrefService())
-                    startForegroundService(new Intent(this, LockScreenService.class));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        startForegroundService(new Intent(this, LockScreenService.class));
+                    else
+                        startService(new Intent(this, LockScreenService.class));
                 else
                     stopService(new Intent(this, LockScreenService.class));
             } else
-                switchStart.setChecked(false);
+                startSwitch.setChecked(false);
         });
 
         //Redirect to accessibility setting's page
-        switchStart.setOnLongClickListener(v -> {
+        startSwitch.setOnLongClickListener(v -> {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
             return true;
         });
@@ -120,9 +128,11 @@ public final class MainActivity extends AppCompatActivity {
         //Set initial value (see also onResume)
         numberInput.setText(sp.getSharedmPrefNumberOfNotesToPlay());
         numberInput.setInputType(InputType.TYPE_NULL);
-        numberInput.setOnItemClickListener((parent, view, position, id) -> sp.setSharedmPrefNumberOfNotesToPlay(String.valueOf(id + 1))); //First id is 0
+        numberInput.setOnItemClickListener((parent, view, position, id) ->
+                sp.setSharedmPrefNumberOfNotesToPlay(String.valueOf(id + 1))); //First id is 0, but it must start with 1
 
         buttonTraining.setOnClickListener(v -> startService(new Intent(this, EarTrainingService.class)));
+        buttonDiapason.setOnClickListener(v -> startService(new Intent(this, DiapasonService.class)));
     }
 
     @Override
@@ -132,9 +142,9 @@ public final class MainActivity extends AppCompatActivity {
         numberInput.setAdapter(new ArrayAdapter<>(this, R.layout.dropdown_tex_tinput_layout,
                 getResources().getStringArray(R.array.start_service_array_number_of_notes)));
         if (cp.checkPermissions(this))
-            switchStart.setChecked(sp.getSharedmPrefService());
+            startSwitch.setChecked(sp.getSharedmPrefService());
         else
-            switchStart.setChecked(false);
+            startSwitch.setChecked(false);
     }
 
     @Override

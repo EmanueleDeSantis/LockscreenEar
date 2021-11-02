@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- modified code got from -->
-<!-- https://stackoverflow.com/questions/54624722/how-to-achieve-android-button-animation-with-text-blurred-and-shadow?answertab=active#tab-top -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="false"
         android:state_selected="false">
@@ -8,14 +6,13 @@
             <item>
                 <shape android:shape="oval">
                     <stroke
-                        android:color="@color/teal_200"
+                        android:color="@color/custom_teal_blue"
                         android:width="2dp" />
                 </shape>
             </item>
             <item android:bottom="2dp">
                 <shape android:shape="oval">
-                    <padding android:left="2dp" />
-                    <gradient android:angle="270" android:startColor="#2196F3" android:endColor="#163969" />
+                    <gradient android:angle="270" android:startColor="@color/custom_button_start_blue" android:endColor="@color/custom_button_end_blue" />
                 </shape>
             </item>
         </layer-list>
@@ -26,14 +23,13 @@
             <item>
                 <shape android:shape="oval">
                     <stroke
-                        android:color="#102746"
+                        android:color="@color/custom_background_ear_training_deep_blue"
                         android:width="2dp" />
                 </shape>
             </item>
             <item android:bottom="2dp">
                 <shape android:shape="oval">
-                    <padding android:left="2dp" />
-                    <gradient android:angle="270" android:startColor="#2196F3" android:endColor="#163969" />
+                    <gradient android:angle="270" android:startColor="@color/custom_button_start_blue" android:endColor="@color/custom_button_end_blue" />
                 </shape>
             </item>
         </layer-list>
@@ -44,14 +40,13 @@
             <item>
                 <shape android:shape="oval">
                     <stroke
-                        android:color="@color/custom_yellow"
+                        android:color="@color/custom_missed_round_yellow"
                         android:width="2dp" />
                 </shape>
             </item>
             <item android:bottom="2dp">
                 <shape android:shape="oval">
-                    <padding android:left="2dp" />
-                    <gradient android:angle="270" android:startColor="#2196F3" android:endColor="#163969" />
+                    <gradient android:angle="270" android:startColor="@color/custom_button_start_blue" android:endColor="@color/custom_button_end_blue" />
                 </shape>
             </item>
         </layer-list>

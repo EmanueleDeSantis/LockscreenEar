@@ -188,9 +188,11 @@ public final class LockScreenService extends Service {
 		if (sp.getSharedmPrefFirstRunAccessibilitySettings())
 			sp.setSharedmPrefFirstRunAccessibilitySettings(false);
 
-		NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
-		chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(chan);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel chan = new NotificationChannel(getString(R.string.app_name), getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+            chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(chan);
+        }
 
 		Intent notificationIntent = new Intent(this, MainActivity.class)
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

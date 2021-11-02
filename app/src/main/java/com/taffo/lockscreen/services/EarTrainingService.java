@@ -65,6 +65,12 @@ public final class EarTrainingService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(mReceiver);
+		super.onDestroy();
+	}
+
 	private void startEarTrainingActivity() {
 		XMLParser parser = new XMLParser();
 		parser.setNotes(sp.getSharedmPrefNumberOfNotesToPlay());

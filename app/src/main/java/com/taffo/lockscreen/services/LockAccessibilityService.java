@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.service.quicksettings.TileService;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyCallback;
 import android.telephony.TelephonyManager;
@@ -80,7 +81,10 @@ public final class LockAccessibilityService extends AccessibilityService {
         //Auto-starts the service on boot if the restart setting is on
         if (cp.checkPermissions(this)) {
             sp.setSharedmPrefService(true);
-            startForegroundService(new Intent(this, LockScreenService.class));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                startForegroundService(new Intent(this, LockScreenService.class));
+            else
+                startService(new Intent(this, LockScreenService.class));
             if (sp.getSharedmPrefBootSwitchSetting()) {
                 DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
                 if (dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class))) {
@@ -122,9 +126,12 @@ public final class LockAccessibilityService extends AccessibilityService {
     }
 
     //Locks the screen (used in LockTileService)
-    public static void lockTheScreen() {
+    public static void lockTheScreen(Context context) {
         if (instance != null)
-            instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+            else
+                DeviceAdminActivity.adminLockTheScreen(context);
     }
 
     //Stops the main service if a call arrived and is ringing or waiting, or at least one call exists that is dialing, active, or on hold
@@ -139,6 +146,9 @@ public final class LockAccessibilityService extends AccessibilityService {
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 CheckPermissions.setIsCallLive(true);
+                //The tile must be updated here because if the main service was not running when the called arrived,
+                //LockScreenService will not be started and will not update the tile
+                TileService.requestListeningState(mContext, new ComponentName(mContext, LockTileService.class));
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
                     sp.setSharedmPrefService(false);
@@ -147,9 +157,15 @@ public final class LockAccessibilityService extends AccessibilityService {
                     isServiceRunning = false;
             } else if (state == TelephonyManager.CALL_STATE_IDLE) {
                 CheckPermissions.setIsCallLive(false);
+                //The tile must be updated here because if the main service was not running when the called arrived,
+                //LockScreenService will not be started and will not update the tile
+                TileService.requestListeningState(mContext, new ComponentName(mContext, LockTileService.class));
                 if (cp.checkPermissions(mContext) && isServiceRunning) {
                     sp.setSharedmPrefService(true);
-                    startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        startForegroundService(new Intent(mContext, LockScreenService.class));
+                    else
+                        startService(new Intent(mContext, LockScreenService.class));
                 }
             }
         }
@@ -170,6 +186,9 @@ public final class LockAccessibilityService extends AccessibilityService {
         public void onCallStateChanged(int state) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 CheckPermissions.setIsCallLive(true);
+                //The tile must be updated here because if the main service was not running when the called arrived,
+                //LockScreenService will not be started and will not update the tile
+                TileService.requestListeningState(mContext, new ComponentName(mContext, LockTileService.class));
                 if (sp.getSharedmPrefService()) {
                     isServiceRunning = true;
                     sp.setSharedmPrefService(false);
@@ -178,6 +197,9 @@ public final class LockAccessibilityService extends AccessibilityService {
                     isServiceRunning = false;
             } else if (state == TelephonyManager.CALL_STATE_IDLE) {
                 CheckPermissions.setIsCallLive(false);
+                //The tile must be updated here because if the main service was not running when the called arrived,
+                //LockScreenService will not be started and will not update the tile
+                TileService.requestListeningState(mContext, new ComponentName(mContext, LockTileService.class));
                 if (cp.checkPermissions(mContext) && isServiceRunning) {
                     sp.setSharedmPrefService(true);
                     startForegroundService(new Intent(getApplicationContext(), LockScreenService.class));

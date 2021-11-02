@@ -90,6 +90,7 @@
         </service>
         <service android:name=".services.LockScreenService$IncrementNumberOfNotes" />
         <service android:name=".services.EarTrainingService" />
+        <service android:name=".services.DiapasonService" />
         <service
             android:name=".services.LockTileService"
             android:enabled="true"

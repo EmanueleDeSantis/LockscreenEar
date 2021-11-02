@@ -9,6 +9,7 @@
     <string name="_3" translatable="false">3</string>
     <string name="number_of_notes_warning">The number must be between 1 and 8</string>
     <string name="training">Training</string>
+    <string name="diapason" translatable="false">Diapason</string>
     <string name="ok" translatable="false">OK</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
@@ -52,7 +53,7 @@
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
     <string name="warnings_title">Warnings</string>
-    <string name="warnings_message">If enabled, the main service undertakes, after the screen wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.\n\n<b>If during this activity any action is taken to bypass it, the screen will be locked again.</b>\n\nThis service can also be managed via quick setting, which, <b>if specified in settings, also provides to lock the screen.</b>\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!</string>
+    <string name="warnings_message">If enabled, the main service undertakes, after the device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.\n\n<b>If during this activity any action is taken to bypass it, the screen will be locked again.</b>\n\nThis service can also be managed via quick setting, which, <b>if specified in settings, also provides to lock the screen.</b>\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!</string>
     <string name="warnings_message_html">If enabled, the main service undertakes, after the screen wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.&lt;br />&lt;br />&lt;b>If during this activity any action is taken to bypass it, the screen will be locked again.&lt;/b>&lt;br />&lt;br />This service can also be managed via quick setting, which, &lt;b>if specified in settings, also provides to lock the screen.&lt;/b>&lt;br />&lt;br />Please do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!</string>
     <string name="accessibility_service_description">The following accessibility service undertakes only to LOCK THE SCREEN when:\n1) any action is taken to bypass the lockscreen, if active, offered by LockScreen;\n2) the main service gets started via quick setting;\n3) this service gets started (a situation that also occurs when the screen is booted), if explicitly requested via settings.\n\nIn no case your personal data will be collected.</string>
     <string name="device_admin_description">Allow LockScreen to lock the screen</string>

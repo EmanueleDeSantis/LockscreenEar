@@ -26,8 +26,6 @@ import androidx.core.text.HtmlCompat;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -285,9 +283,8 @@ public final class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        if (!isFinishing() && dpm.isAdminActive(new ComponentName(this, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
-            dpm.lockNow();
+        if (CheckPermissions.getIsLockScreenRunning())
+            DeviceAdminActivity.adminLockTheScreen(this);
         finish();
     }
 
@@ -318,7 +315,13 @@ public final class LockScreenActivity extends AppCompatActivity {
     private void play() {
         try {
             for (int i = 0; i < NOTES; i++) {
-                int randomId = new Random().nextInt(TOTAL_NOTES) + 1;
+                //To avoid same note/same octave repetitions, for example
+                //La2 and La3 are ok, so they both will be played
+                //La2 and La2 are NOT ok, so the second instance of La2 will be replaced by another note
+                int randomId;
+                do {
+                    randomId = new Random().nextInt(TOTAL_NOTES) + 1;
+                } while (randomNotesList.contains(randomId));
                 randomNotesList.add(i, randomId);
                 outputtedNotesList.add(i, doc.getElementById(String.valueOf(randomId))
                         .getElementsByTagName("name").item(0).getTextContent());
@@ -407,120 +410,120 @@ public final class LockScreenActivity extends AppCompatActivity {
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Do));
                         if (selectedNotesList.contains(onl)) {
                             buttonDo.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonDo.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "dodie":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Dodie));
                         if (selectedNotesList.contains(onl)) {
                             buttonDodie.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonDodie.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "re":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Re));
                         if (selectedNotesList.contains(onl)) {
                             buttonRe.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonRe.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "redie":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Redie));
                         if (selectedNotesList.contains(onl)) {
                             buttonRedie.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonRedie.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "mi":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Mi));
                         if (selectedNotesList.contains(onl)) {
                             buttonMi.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonMi.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "fa":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Fa));
                         if (selectedNotesList.contains(onl)) {
                             buttonFa.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonFa.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "fadie":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Fadie));
                         if (selectedNotesList.contains(onl)) {
                             buttonFadie.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonFadie.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "sol":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Sol));
                         if (selectedNotesList.contains(onl)) {
                             buttonSol.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonSol.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "soldie":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Soldie));
                         if (selectedNotesList.contains(onl)) {
                             buttonSoldie.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonSoldie.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "la":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.La));
                         if (selectedNotesList.contains(onl)) {
                             buttonLa.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonLa.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "ladie":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Ladie));
                         if (selectedNotesList.contains(onl)) {
                             buttonLadie.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonLadie.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                     case "si":
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Si));
                         if (selectedNotesList.contains(onl)) {
                             buttonSi.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_green));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonSi.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
-                            notesColor.add(ContextCompat.getColor(this, R.color.custom_yellow));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_missed_round_yellow));
                         }
                         break;
                 }
@@ -542,6 +545,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     }
 
     private void unlockAndFinish() {
+        CheckPermissions.setIsLockScreenRunning(false);
         sendBroadcast(new Intent("changeNotificationColor"));
         finish();
     }
@@ -554,7 +558,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 finish();
-                LockAccessibilityService.lockTheScreen();
+                LockAccessibilityService.lockTheScreen(getApplicationContext());
             }
         }
 
@@ -570,7 +574,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         public void onCallStateChanged(int state) {
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 finish();
-                LockAccessibilityService.lockTheScreen();
+                LockAccessibilityService.lockTheScreen(getApplicationContext());
             }
         }
 

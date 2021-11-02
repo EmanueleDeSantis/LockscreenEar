@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <layer-list>
-            <item>
-                <shape android:shape="oval">
-                    <stroke
-                        android:color="#91EA2A"
-                        android:width="2dp" />
-                </shape>
-            </item>
-            <item android:bottom="2dp">
-                <shape android:shape="oval">
-                    <solid android:color="@color/custom_green" />
-                    <padding android:left="2dp" />
-                </shape>
-            </item>
-        </layer-list>
+    <item android:bottom="2dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/custom_right_round_green" />
+        </shape>
     </item>
 </selector>

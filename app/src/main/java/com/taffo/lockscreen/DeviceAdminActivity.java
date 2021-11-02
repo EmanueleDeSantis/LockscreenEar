@@ -2,8 +2,11 @@ package com.taffo.lockscreen;
 
 import android.app.Activity;
 import android.app.admin.DeviceAdminReceiver;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -19,7 +22,10 @@ public final class DeviceAdminActivity extends Activity {
             super.onEnabled(context, intent);
             if (new CheckPermissions().checkPermissions(context)) {
                 new SharedPref(context).setSharedmPrefService(true);
-                context.startForegroundService(new Intent(context, LockScreenService.class));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    context.startForegroundService(new Intent(context, LockScreenService.class));
+                else
+                    context.startService(new Intent(context, LockScreenService.class));
             }
         }
 
@@ -30,6 +36,12 @@ public final class DeviceAdminActivity extends Activity {
             context.stopService(new Intent(context, LockScreenService.class));
         }
 
+    }
+
+    public static void adminLockTheScreen(Context context) {
+        DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        if (dpm.isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
+            dpm.lockNow();
     }
 
 }

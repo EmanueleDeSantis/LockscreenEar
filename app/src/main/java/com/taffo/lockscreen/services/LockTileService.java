@@ -20,6 +20,7 @@ package com.taffo.lockscreen.services;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
@@ -33,18 +34,30 @@ import com.taffo.lockscreen.utils.SharedPref;
 public final class LockTileService extends TileService {
     private Tile tile;
     private SharedPref sp;
-    private final CheckPermissions cp = new CheckPermissions();
+    private CheckPermissions cp;
 
     @Override
     public IBinder onBind(@Nullable Intent intent) {
-        //Updates the tile
-        TileService.requestListeningState(this, new ComponentName(this, LockTileService.class));
+        requestListeningState(this, new ComponentName(this, LockTileService.class));
         return super.onBind(intent);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        sp = new SharedPref(this);
+        cp = new CheckPermissions();
     }
 
     @Override
     public void onTileAdded() {
         super.onTileAdded();
+        updateTileService();
+    }
+
+    @Override
+    public void onTileRemoved() {
+        super.onTileRemoved();
         updateTileService();
     }
 
@@ -66,24 +79,23 @@ public final class LockTileService extends TileService {
         super.onClick();
         tile = getQsTile();
         if (tile.getState() == Tile.STATE_ACTIVE) {
-            tile.setState(Tile.STATE_INACTIVE);
             sp.setSharedmPrefService(false);
             stopService(new Intent(this, LockScreenService.class));
         } else if (tile.getState() == Tile.STATE_INACTIVE) {
-            tile.setState(Tile.STATE_ACTIVE);
             sp.setSharedmPrefService(true);
-            startForegroundService(new Intent(this, LockScreenService.class));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                startForegroundService(new Intent(this, LockScreenService.class));
+            else
+                startService(new Intent(this, LockScreenService.class));
             //Locks the screen when the service is started via quick setting tile
             if (sp.getSharedmPrefQuickSettingSwitchEnabled())
-                LockAccessibilityService.lockTheScreen();
+                LockAccessibilityService.lockTheScreen(getApplicationContext());
         }
-        tile.updateTile();
         updateTileService();
     }
 
     //Sets the correct state of the tile
     private void updateTileService() {
-        sp = new SharedPref(this);
         tile = getQsTile();
         if (CheckPermissions.getIsScreenLocked(this)) {
             tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());

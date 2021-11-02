@@ -82,6 +82,9 @@ public final class CheckPermissions {
     public static void setIsLockScreenRunning(boolean b) {
         isLockScreenRunning = b;
     }
+    public static boolean getIsLockScreenRunning() {
+        return isLockScreenRunning;
+    }
     public static boolean getIsScreenLocked(Context context) {
         return isLockScreenRunning || ((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked();
     }
