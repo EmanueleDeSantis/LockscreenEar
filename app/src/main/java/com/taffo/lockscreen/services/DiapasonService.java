@@ -68,11 +68,11 @@ public final class DiapasonService extends Service {
     @Override
     public void onDestroy() {
         unregisterReceiver(mReceiver);
+        mediaPlayer.release();
         super.onDestroy();
     }
 
     MediaPlayer mediaPlayer;
-
     private void startDiapason() {
         XMLParser parser = new XMLParser();
         parser.parseXmlNotes(this);

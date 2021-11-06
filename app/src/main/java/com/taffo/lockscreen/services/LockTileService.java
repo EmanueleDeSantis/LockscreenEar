@@ -94,24 +94,23 @@ public final class LockTileService extends TileService {
         updateTileService();
     }
 
-    //Sets the correct state of the tile
     private void updateTileService() {
         tile = getQsTile();
-        if (CheckPermissions.getIsScreenLocked(this)) {
-            tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());
+        if (!cp.checkPermissions(this)) {
+            tile.setLabel(getString(R.string.app_name) + getString(R.string.unavailable));
             tile.setState(Tile.STATE_UNAVAILABLE);
         } else {
-            if (!cp.checkPermissions(this)) {
-                tile.setLabel(getString(R.string.app_name) + getString(R.string.unavailable));
-                tile.setState(Tile.STATE_UNAVAILABLE);
-            } else {
-                if (sp.getSharedmPrefService()) {
+            if (sp.getSharedmPrefService()) {
+                if (CheckPermissions.getIsScreenLocked(this)) {
+                    tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());
+                    tile.setState(Tile.STATE_UNAVAILABLE);
+                } else {
                     tile.setLabel(getString(R.string.app_name) + getString(R.string.on) + sp.getSharedmPrefNumberOfNotesToPlay());
                     tile.setState(Tile.STATE_ACTIVE);
-                } else {
-                    tile.setLabel(getString(R.string.app_name) + getString(R.string.off) + sp.getSharedmPrefNumberOfNotesToPlay());
-                    tile.setState(Tile.STATE_INACTIVE);
                 }
+            } else {
+                tile.setLabel(getString(R.string.app_name) + getString(R.string.off) + sp.getSharedmPrefNumberOfNotesToPlay());
+                tile.setState(Tile.STATE_INACTIVE);
             }
         }
         tile.updateTile();

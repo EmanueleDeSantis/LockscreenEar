@@ -53,6 +53,7 @@ import java.util.Random;
 public final class LockScreenActivity extends AppCompatActivity {
     private final XMLParser parser = new XMLParser();
     private final int NOTES = parser.getNotes();
+    private int UNIQUE_NOTES = NOTES;
     private final int TOTAL_NOTES = parser.getTotalNotes();
     private final Document doc = parser.getDocum();
 
@@ -75,6 +76,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     private Button buttonLadie;
     private Button buttonSi;
 
+    private final List<String> outputtedNotesList = new ArrayList<>(NOTES);
     private final List<String> selectedNotesList = new ArrayList<>(NOTES);
 
     @Override
@@ -85,6 +87,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         CheckPermissions.setIsLockScreenRunning(true);
 
         play();
+        UNIQUE_NOTES = (int) outputtedNotesList.stream().distinct().count();
 
         //Saves the default screen off timeout to restore it when the screen is unlocked
         try {
@@ -123,7 +126,7 @@ public final class LockScreenActivity extends AppCompatActivity {
         buttonSi = findViewById(R.id.buttonSi);
 
         buttonDo.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("do")) {
                     selectedNotesList.remove("do");
                     buttonDo.setSelected(false);
@@ -135,7 +138,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonDodie.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("dodie")) {
                     selectedNotesList.remove("dodie");
                     buttonDodie.setSelected(false);
@@ -147,7 +150,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonRe.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("re")) {
                     selectedNotesList.remove("re");
                     buttonRe.setSelected(false);
@@ -159,7 +162,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonRedie.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("redie")) {
                     selectedNotesList.remove("redie");
                     buttonRedie.setSelected(false);
@@ -171,7 +174,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonMi.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("mi")) {
                     selectedNotesList.remove("mi");
                     buttonMi.setSelected(false);
@@ -183,7 +186,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonFa.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("fa")) {
                     selectedNotesList.remove("fa");
                     buttonFa.setSelected(false);
@@ -195,7 +198,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonFadie.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("fadie")) {
                     selectedNotesList.remove("fadie");
                     buttonFadie.setSelected(false);
@@ -207,7 +210,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonSol.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("sol")) {
                     selectedNotesList.remove("sol");
                     buttonSol.setSelected(false);
@@ -219,7 +222,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonSoldie.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("soldie")) {
                     selectedNotesList.remove("soldie");
                     buttonSoldie.setSelected(false);
@@ -231,7 +234,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonLa.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("la")) {
                     selectedNotesList.remove("la");
                     buttonLa.setSelected(false);
@@ -243,7 +246,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonLadie.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("ladie")) {
                     selectedNotesList.remove("ladie");
                     buttonLadie.setSelected(false);
@@ -255,7 +258,7 @@ public final class LockScreenActivity extends AppCompatActivity {
             }
         });
         buttonSi.setOnClickListener(v -> {
-            if (selectedNotesList.size() < NOTES) {
+            if (selectedNotesList.size() < UNIQUE_NOTES) {
                 if (selectedNotesList.contains("si")) {
                     selectedNotesList.remove("si");
                     buttonSi.setSelected(false);
@@ -291,8 +294,8 @@ public final class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < NOTES; i++)
-            mediaPlayer[i].release();
+        for (MediaPlayer mPlayer : mediaPlayer)
+            mPlayer.release();
         //Sets the screen off timeout to the default value
         if (Settings.System.canWrite(this))
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, systemScreenOffTimeoutDefaultValue);
@@ -308,7 +311,6 @@ public final class LockScreenActivity extends AppCompatActivity {
     }
 
     private final List<Integer> randomNotesList = new ArrayList<>(NOTES);
-    private final List<String> outputtedNotesList = new ArrayList<>(NOTES);
     private final MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
 
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
@@ -330,8 +332,8 @@ public final class LockScreenActivity extends AppCompatActivity {
                                 .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
             }
 
-            for (int i = 0; i < NOTES; i++)
-                mediaPlayer[i].start();
+            for (MediaPlayer mPlayer : mediaPlayer)
+                mPlayer.start();
 
             Collections.sort(randomNotesList);
         } catch (NullPointerException e) {
@@ -345,7 +347,7 @@ public final class LockScreenActivity extends AppCompatActivity {
     private void unlock() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
             unlockAndFinish();
-        else if (selectedNotesList.size() >= NOTES) {
+        else if (selectedNotesList.size() >= UNIQUE_NOTES) {
             //Colors in red the buttons of the wrong notes
             for (String snl : selectedNotesList) {
                 switch (snl) {
@@ -430,6 +432,7 @@ public final class LockScreenActivity extends AppCompatActivity {
                         outputtedNotesList.set(outputtedNotesList.indexOf(onl), getString(R.string.Re));
                         if (selectedNotesList.contains(onl)) {
                             buttonRe.setBackground(ContextCompat.getDrawable(this, R.drawable.right_round));
+                            notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                             notesColor.add(ContextCompat.getColor(this, R.color.custom_right_round_green));
                         } else {
                             buttonRe.setBackground(ContextCompat.getDrawable(this, R.drawable.missed_round));
@@ -536,6 +539,7 @@ public final class LockScreenActivity extends AppCompatActivity {
                             .append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i)).append(" ")
                             .append("</font>");
                 else
+                    //String does not have the final whitespace
                     coloredStringTextViewNotes.append("<font color='")
                             .append(notesColor.get(i)).append("'>").append(outputtedNotesList.get(i))
                             .append("</font>");

@@ -136,6 +136,12 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(new Intent(this, DiapasonService.class));
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         //The array of notes must also (see above) be set here, otherwise it would not show
@@ -150,6 +156,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this, DiapasonService.class));
         sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerNotes);
         sp.getmPrefNotes().unregisterOnSharedPreferenceChangeListener(listenerService);
     }
