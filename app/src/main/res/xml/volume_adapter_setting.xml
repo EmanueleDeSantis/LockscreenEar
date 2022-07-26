@@ -9,7 +9,7 @@
 
     <PreferenceCategory>
         <SwitchPreference
-            app:key="@string/volume_adapter_switch_setting_shared_pref"
+            app:key="@string/volume_adapter_setting_shared_pref"
             app:title="@string/automatic_volume_level"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
@@ -24,16 +24,16 @@
             app:defaultValue="@string/array_item_volume_adjustment_level_normal_string_value"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
-            app:dependency="@string/volume_adapter_switch_setting_shared_pref" />
+            app:dependency="@string/volume_adapter_setting_shared_pref" />
 
         <SwitchPreference
-        app:key="@string/restore_previous_volume_level_switch_setting_shared_pref"
+        app:key="@string/restore_previous_volume_level_setting_shared_pref"
         app:title="@string/restore_previous_volume_level"
         app:summaryOn="@string/enabled"
         app:summaryOff="@string/disabled"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
-        app:dependency="@string/volume_adapter_switch_setting_shared_pref" />
+        app:dependency="@string/volume_adapter_setting_shared_pref" />
     </PreferenceCategory>
 
 </PreferenceScreen>

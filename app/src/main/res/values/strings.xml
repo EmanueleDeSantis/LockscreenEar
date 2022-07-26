@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LockScreen</string>
+    <string name="app_name">LockscreenEar</string>
     <string name="insert_notes">Enter notes</string>
-    <string name="click_to_grant_permissions_and_start_the_service">Lockscreen for perfect pitch</string>
-    <string name="volume_level">Media volume level</string>
-    <string name="notes_increase">NUMBER OF NOTES +1</string>
+    <string name="click_to_grant_permissions_and_start_the_service">Lock screen for perfect pitch</string>
+    <string name="media_volume_level">Media volume level</string>
+    <string name="notes_increment">NUMBER OF NOTES +1</string>
+    <string name="level_increment">VOLUME LEVEL +3</string>
     <string name="grant_and_start">Start/Stop the service</string>
     <string name="_3" translatable="false">3</string>
     <string name="number_of_notes_warning">The number must be between 1 and 8</string>
     <string name="training">Training</string>
     <string name="diapason" translatable="false">Diapason</string>
-    <string name="ok" translatable="false">OK</string>
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
-    <string name="number_of_notes_to_play">Number of notes to play</string>>
+    <string name="number_of_notes_to_play">Number of notes to play</string>
+    <string name="congrats">Congratulations!</string>
+    <string name="play_again">Play again</string>
     <string name="on">\u0020on:\u0020</string>
     <string name="off">\u0020off:\u0020</string>
     <string name="unavailable">\u0020unavailable</string>
-    <string name="cant_start_service">Type \"guess the notes\" activities cannot be started</string>
+    <string name="next">Next</string>
+    <string name="something_went_wrong">Something went wrong…</string>
 
     <string name="settings">Settings</string>
     <string name="basics">Basics</string>
@@ -25,20 +26,16 @@
     <string name="about_title">About</string>
     <string name="source_code_key" translatable="false">Source code</string>
     <string name="source_code_title">Source code</string>
-    <string name="uninstall">Uninstall</string>
-    <string name="deactivate_admin_key" translatable="false">Deactivate amin key</string>
-    <string name="deactivate_admin_title">Deactivate device admin</string>
-    <string name="deactivate_admin_message">Do you want to deactivate this device admin?</string>
-    <string name="uninstall_lockScreen_key" translatable="false">Uninstall LockScreen</string>
-    <string name="uninstall_LockScreen_title">Uninstall LockScreen</string>
     <string name="build_version">Build version</string>
     <string name="boot_setting_key" translatable="false">Boot setting</string>
     <string name="boot_setting_title">Boot</string>
     <string name="lock_screen_on_boot">Lock the screen on boot</string>
-    <string name="boot_setting_message">If this setting is enabled, every time the accessibility service gets started (a situation that also occurs when the screen is booted), the number of notes to be played will be set to the value in the box below; <b>also the screen will be locked automatically.</b>\n\nIf this setting is disabled, every time the accessibility service is started, it will only start the main service.</string>
+    <string name="volume_level_on_boot">Volume level on boot</string>
+    <string name="volume_level">Volume level</string>
+    <string name="boot_setting_message">If this setting is enabled, every time the accessibility service gets started (a situation that also occurs when the screen is booted), the number of notes to be played will be set to the value in the box below; <b>also the screen will be locked automatically.</b>\n\nIf this setting is disabled, every time the accessibility service is started, it will only start the main service</string>
     <string name="volume_adapter_setting_key" translatable="false">Volume adapter setting</string>
     <string name="volume_adapter_setting_title">Volume</string>
-    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the screen is locked, <b>it will be assigned the optimal value to the media volume based on your environment.</b>\n\You can also restore the volume level prior to this service modification.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected.</string>
+    <string name="volume_adapter_setting_message">If this setting is enabled, if the main service is active and the screen is locked, <b>it will be assigned the optimal value to the media volume based on your environment.</b>\n\nYou can also restore the volume level prior to this service modification, after its completion.\n\nIt increases battery consumption.\n\nIn no case your personal data will be collected</string>
     <string name="automatic_volume_level">Auto adjust volume level</string>
     <string name="volume_adjustment_level">Volume adjustment level</string>
     <string name="array_item_volume_adjustment_level_quiet">Quiet</string>
@@ -48,27 +45,66 @@
     <string name="restore_previous_volume_level">Restore the previous volume level</string>
     <string name="quick_setting_key" translatable="false">Quick setting</string>
     <string name="quick_setting_title">Quick setting</string>
-    <string name="quick_setting_message">If this setting is enabled, when LockScreen\'s quick setting is clicked and activated, in addition to starting the main service, <b>the screen gets also locked.</b></string>
+    <string name="quick_setting_message">If this setting is enabled, when LockscreenEar\'s quick setting is clicked and activated, in addition to starting the main service, <b>the screen gets also locked</b></string>
     <string name="lock_screen_when_quick_setting_enabled">Lock the screen when enabled</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="call_setting_key" translatable="false">Call setting</string>
+    <string name="call_setting_title">Call</string>
+    <string name="call_setting_message">If this setting is enabled, if the main service is active and a call is incoming, outgoing or in progress, <b>the lock screen offered by LockscreenEar won\'t get started</b></string>
+    <string name="dont_start_lock_screen_during_call_setting_enabled">No lock screen during calls</string>
+    <string name="update_title">Update</string>
+    <string name="update_features_title">Update features</string>
+    <string name="canceled_update_last_update_versioncode_value" translatable="false">{canceled_update:false, last_update_versioncode:1}</string>
+    <string name="dont_ask_again">Don\'t ask again until the next update</string>
+    <string name="update_message">New version available! Do you want to download the update?</string>
+    <string name="ver" translatable="false">Ver:\u0020</string>
+    <string name="update_features" />
+    <string name="already_updated_message">You already have the latest version of LockscreenEar installed</string>
+    <string name="download_button">DOWNLOAD</string>
+    <string name="unsuccessful_deletion">LockscreenEar\'s update file could not be deleted</string>
     <string name="warnings_title">Warnings</string>
-    <string name="warnings_message">If enabled, the main service undertakes, after the device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.\n\n<b>If during this activity any action is taken to bypass it, the screen will be locked again.</b>\n\nThis service can also be managed via quick setting, which, <b>if specified in settings, also provides to lock the screen.</b>\n\nPlease do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!</string>
-    <string name="warnings_message_html">If enabled, the main service undertakes, after the screen wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.&lt;br />&lt;br />&lt;b>If during this activity any action is taken to bypass it, the screen will be locked again.&lt;/b>&lt;br />&lt;br />This service can also be managed via quick setting, which, &lt;b>if specified in settings, also provides to lock the screen.&lt;/b>&lt;br />&lt;br />Please do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!</string>
-    <string name="accessibility_service_description">The following accessibility service undertakes only to LOCK THE SCREEN when:\n1) any action is taken to bypass the lockscreen, if active, offered by LockScreen;\n2) the main service gets started via quick setting;\n3) this service gets started (a situation that also occurs when the screen is booted), if explicitly requested via settings.\n\nIn no case your personal data will be collected.</string>
-    <string name="device_admin_description">Allow LockScreen to lock the screen</string>
+    <string name="warnings_message">If enabled, the main service undertakes, after the device wakes up (e.g after the keyguard is gone), to start the lock screen offered by LockscreenEar.\n\n<b>If during this activity any action is taken to bypass it, the screen will be locked again.</b>\n\nThis service can also be managed via quick setting, which, <b>if specified in settings, also provides to lock the screen.</b>\n\nPlease, do not start it if you do not have perfect pitch, you may not be able to unlock your screen!</string>
+    <string name="warnings_message_html">If enabled, the main service undertakes, after the screen wakes up (e.g after the keyguard is gone), to start the lock screen offered by LockscreenEar.&lt;br />&lt;br />&lt;b>If during this activity any action is taken to bypass it, the screen will be locked again.&lt;/b>&lt;br />&lt;br />This service can also be managed via quick setting, which, &lt;b>if specified in settings, also provides to lock the screen.&lt;/b>&lt;br />&lt;br />Please, do not start it if you do not have perfect pitch, you may not be able to unlock your screen!</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="uninstall_category_setting_key" translatable="false">Uninstall category setting</string>
+    <string name="uninstall_setting_key" translatable="false">Uninstall setting</string>
+    <string name="uninstall_setting_title">Uninstall</string>
+    <string name="uninstall_setting_message">Since a device administrator must be activated in order to start the main service, uninstalling LockscreenEar could be complicated; therefore the procedure can be carried out below in two steps:\n\n<b>1) Deactivation, if active, of the device administrator;\n\n2) Actual uninstallation</b></string>
+    <string name="deactivate_admin_key" translatable="false">Deactivate amin key</string>
+    <string name="deactivate_admin_title">Deactivate device admin</string>
+    <string name="deactivate_admin_message">Do you want to deactivate this device administrator?</string>
+    <string name="uninstall_lockScreen_key" translatable="false">Uninstall LockscreenEar</string>
+    <string name="uninstall_LockscreenEar_title">Uninstall LockscreenEar</string>
+    <string name="test_title">Test</string>
+    <string name="test_message_html">In order to prevent unpleasant inconveniences, &lt;b>you will have to pass the following test,&lt;/b> in which, at each round, you will be offered notes to guess. &lt;b>Once passed, it will always be possible to activate the service.&lt;/b>&lt;br />&lt;br />You can take the test as many times as you want</string>
+    <string name="accessibility_service_description">The following accessibility service undertakes only to LOCK THE SCREEN when:\n1) any action is taken to bypass the lock screen, if active, offered by LockscreenEar;\n2) the main service gets started via quick setting;\n3) this service gets started (a situation that also occurs when the screen is booted), if explicitly requested via settings.\n\nIn no case your personal data will be collected</string>
+    <string name="device_admin_description">Allow LockscreenEar to lock the screen</string>
+    <string name="almost_easter_egg_challenge_message">It looks like something is about to happen…</string>
+    <string name="easter_egg_challenge_started_title">Easter Egg Challenge</string>
+    <string name="easter_egg_challenge_started_message_html">&lt;b>Congratulations! The Easter Egg Challenge is started!&lt;/b>&lt;br />&lt;br />Who knows what will happen now…</string>
+    <string name="easter_egg_challenge_completed_title">Easter Egg Challenge completed</string>
+    <string name="easter_egg_challenge_completed_message_html">&lt;b>Congratulations! You completed the Easter Egg Challenge!&lt;/b>&lt;br />&lt;br />Now you can now choose a maximum of &lt;b>8&lt;/b> notes to guess, but still not on boot, it might be too dangerous…&lt;br />&lt;br />Be careful and enjoy LockscreenEar!</string>
 
     <string name="number_of_notes_to_play_shared_pref" translatable="false">Number of notes to play</string>
-    <string name="boot_switch_setting_shared_pref" translatable="false">Boot switch number of notes to play</string>
-    <string name="boot_list_setting_number_of_notes_to_play_shared_pref" translatable="false">Boot list number of notes to play</string>
-    <string name="start_service_shared_pref" translatable="false">Start service</string>
+    <string name="boot_setting_number_of_notes_to_play_shared_pref" translatable="false">Boot switch setting number of notes to play</string>
+    <string name="last_update_version_code_shared_pref" translatable="false">Last update version code</string>
+    <string name="boot_list_setting_number_of_notes_to_play_shared_pref" translatable="false">Boot list setting number of notes to play</string>
+    <string name="boot_setting_volume_shared_pref" translatable="false">Boot switch setting volume</string>
+    <string name="boot_setting_volume_level_shared_pref" translatable="false">Boot seekbar setting volume level</string>
+    <string name="service_shared_pref" translatable="false">Service</string>
     <string name="first_run_main_shared_pref" translatable="false">First run main</string>
-    <string name="first_run_accessibility_setting_shared_pref" translatable="false">First run accessibility setting</string>
-    <string name="volume_adapter_switch_setting_shared_pref" translatable="false">Volume adapter switch setting</string>
+    <string name="accessibility_settings_started_on_boot" translatable="false">Accessibility settings started on boot</string>
+    <string name="first_run_test_shared_pref" translatable="false">First run test</string>
+    <string name="cancel_update_and_dont_ask_until_next_update_shared_pref" translatable="false">Cancel update and don\'t ask until next update</string>
+    <string name="volume_adapter_setting_shared_pref" translatable="false">Volume adapter switch setting</string>
     <string name="volume_adjustment_level_adapter_list_setting_shared_pref" translatable="false">Volume adjustment level adapter list setting</string>
-    <string name="restore_previous_volume_level_switch_setting_shared_pref" translatable="false">Restore previous volume switch setting</string>
-    <string name="quick_setting_switch_enabled_shared_pref" translatable="false">Quick setting switch enabled</string>
-    <string name="default_launcher_shared_pref" translatable="false">Default launcher shared pref</string>
+    <string name="restore_previous_volume_level_setting_shared_pref" translatable="false">Restore previous volume switch setting</string>
+    <string name="quick_setting_enabled_shared_pref" translatable="false">Quick setting switch enabled</string>
+    <string name="call_setting_enabled_shared_pref" translatable="false">Call setting switch enabled</string>
+    <string name="easter_egg_challenge_started_shared_pref" translatable="false">Easter egg challenge started</string>
+    <string name="easter_egg_challenge_completed_shared_pref" translatable="false">Easter egg challenge completed</string>
+    <string name="easter_egg_challenge_guesses_shared_pref" translatable="false">Easter egg challenge guesses</string>
 
     <string name="Do">C</string>
     <string name="Dodie">C#</string>

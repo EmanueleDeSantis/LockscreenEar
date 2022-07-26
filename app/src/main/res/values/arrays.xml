@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="start_service_array_number_of_notes">
+    <string-array name="array_start_service_array_number_of_notes">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -11,15 +11,7 @@
         <item>8</item>
     </string-array>
 
-    <string-array name="lock_screen_on_boot_array_number_of_notes">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-
-    <string-array name="lock_screen_on_boot_array_number_of_notes_value">
+    <string-array name="array_lock_screen_on_boot_array_number_of_notes">
         <item>1</item>
         <item>2</item>
         <item>3</item>

@@ -7,9 +7,9 @@
             app:layout="@layout/boot_setting" />
     </PreferenceCategory>
 
-    <PreferenceCategory>
+    <PreferenceCategory app:iconSpaceReserved="false">
         <SwitchPreference
-            app:key="@string/boot_switch_setting_shared_pref"
+            app:key="@string/boot_setting_number_of_notes_to_play_shared_pref"
             app:title="@string/lock_screen_on_boot"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
@@ -19,12 +19,31 @@
         <ListPreference
             app:key="@string/boot_list_setting_number_of_notes_to_play_shared_pref"
             app:title="@string/number_of_notes_to_play"
-            app:entries="@array/lock_screen_on_boot_array_number_of_notes"
-            app:entryValues="@array/lock_screen_on_boot_array_number_of_notes_value"
+            app:entries="@array/array_lock_screen_on_boot_array_number_of_notes"
+            app:entryValues="@array/array_lock_screen_on_boot_array_number_of_notes"
             app:defaultValue="@string/_3"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
-            app:dependency="@string/boot_switch_setting_shared_pref" />
+            app:dependency="@string/boot_setting_number_of_notes_to_play_shared_pref" />
+
+        <SwitchPreference
+            app:key="@string/boot_setting_volume_shared_pref"
+            app:title="@string/volume_level_on_boot"
+            app:summaryOn="@string/enabled"
+            app:summaryOff="@string/disabled"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:dependency="@string/boot_setting_number_of_notes_to_play_shared_pref" />
+
+        <SeekBarPreference
+            app:key="@string/boot_setting_volume_level_shared_pref"
+            app:title="@string/volume_level"
+            app:min="0"
+            app:defaultValue="@string/_3"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:showSeekBarValue="true"
+            app:dependency="@string/boot_setting_volume_shared_pref" />
     </PreferenceCategory>
 
 </PreferenceScreen>

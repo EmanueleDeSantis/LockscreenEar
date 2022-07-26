@@ -9,7 +9,7 @@
 
     <PreferenceCategory>
         <SwitchPreference
-            app:key="@string/quick_setting_switch_enabled_shared_pref"
+            app:key="@string/quick_setting_enabled_shared_pref"
             app:title="@string/lock_screen_when_quick_setting_enabled"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"

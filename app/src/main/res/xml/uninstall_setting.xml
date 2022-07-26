@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
+        <Preference
+            app:selectable="false"
+            app:layout="@layout/setting_uninstall" />
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+        <Preference
+            app:key="@string/deactivate_admin_key"
+            app:title="@string/deactivate_admin_title"
+            app:icon="@drawable/deactivate_admin_icon" />
+
+        <Preference
+            app:key="@string/uninstall_lockScreen_key"
+            app:title="@string/uninstall_LockscreenEar_title"
+            app:icon="@drawable/uninstall_lockscreen_icon" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

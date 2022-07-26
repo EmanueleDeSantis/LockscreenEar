@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <include layout="@layout/update_features" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleY="1.25"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:max="100"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
+    <TextView
+        android:id="@+id/progressBarText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <CheckBox
+        android:id="@+id/progressBarCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="25dp"
+        android:minHeight="48dp"
+        android:text="@string/dont_ask_again"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
+
+</LinearLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
+        <Preference
+            app:selectable="false"
+            app:layout="@layout/call_setting" />
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+        <SwitchPreference
+            app:key="@string/call_setting_enabled_shared_pref"
+            app:title="@string/dont_start_lock_screen_during_call_setting_enabled"
+            app:summaryOn="@string/enabled"
+            app:summaryOff="@string/disabled"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

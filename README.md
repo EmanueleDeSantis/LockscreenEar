@@ -1,11 +1,27 @@
-# LockScreen
-Android lockscreen for people with perfect pitch. Available from Android 7 (API 24).
-Altough I built this app for Android 12 (API 31), I only tested it for Android 7 and Android 10 (API 29).
+# LockscreenEar
+Android lockscreen for people with perfect pitch. Available from Android 7 (API 24) (Not yet tested on android 12).
 
-If enabled, the main service undertakes, after the device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockScreen.
+![screenshot](img/Screenshot_MainActivity.png) ![screenshot](img/Screenshot_LockscreenEarService_locked.png) ![screenshot](img/Screenshot_LockscreenEarService_unlocked.png)
+
+Although this app is suppposed to be a lockscreen, it is also an excellent tool to improve your musical ear,
+in fact, in the training mode, once you set the number of notes to be guessed at the same time, you can listen the output as mutch as you want and you will also get the solution from the lowest note to the highest:
+
+![screenshot](img/Screenshot_EarTrainingFragment.png)
+
+-) red color means you guessed wrong;
+-) yellow color means you missed that note;
+-) green color means you guessed right.
+
+Also, you can click the "DIAPASON" button to listen to the A at 440Hz.
+
+## Settings
+In the setting activity you can customize as much as you want the dynamics of the lockscreen service:
+
+![screenshot](img/Screenshot_SettingsActivity.png) ![screenshot](img/Screenshot_VolumeAdapterSettingFragment.png)
+
+## Warnings: 
+If enabled, the main service undertakes, after the device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockscreenEar.
 
 **If during this activity any action is taken to bypass it, the screen will be locked again.**
 
-This service can also be managed via quick setting, which, **if specified in settings, also provides to lock the screen.**
-
-Please do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations!
+Please do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations, although there is a test to be passed in order to be able to start it.
