@@ -10,7 +10,9 @@ Android lockscreen for people with perfect pitch. Available from Android 7 (API 
 Although this app is suppposed to be a lockscreen, it is also an excellent tool to improve your musical ear,
 in fact, in the training mode, once you set the number of notes to be guessed at the same time, you can listen the output as mutch as you want and you will also get the solution from the lowest note to the highest:
 
-<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_EarTrainingFragment.png" alt="Screenshot_EarTrainingFragment" width="250" height="500"/>
+<div align="center">
+	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_EarTrainingFragment.png" alt="Screenshot_EarTrainingFragment" width="250" height="500"/>
+</div>
 
 -) red color means you guessed wrong;
 -) yellow color means you missed that note;
@@ -25,7 +27,8 @@ In the setting activity you can customize as much as you want the dynamics of th
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_SettingsActivity.png" alt="Screenshot_SettingsActivity" width="250" height="500"/> 
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_VolumeAdapterSettingFragment.png" alt="Screenshot_VolumeAdapterSettingFragment" width="250" height="500"/>
 </div>
-## Warnings: 
+
+## Warnings
 If enabled, the main service undertakes, after the device wakes up (e.g after the keyguard is gone), to start the lockscreen offered by LockscreenEar.
 
 **If during this activity any action is taken to bypass it, the screen will be locked again.**

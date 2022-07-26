@@ -61,6 +61,7 @@ public class Updater {
     private Boolean canceledUpdate;
     private int lastUpdateVersionCode;
     private final String gitRepoReleaseURL = "https://github.com/EmanueleDeSantis/LockscreenEar/releases/download/3.14/";
+    private final String updateFileName = "update.properties";
     private final String appName = "LockscreenEar.apk";
     private String updateFeaturesText;
     private String versionNameText;
@@ -87,7 +88,7 @@ public class Updater {
             }
 
             try {
-                URL urlVersion = new URL(gitRepoReleaseURL + "update.properties");
+                URL urlVersion = new URL(gitRepoReleaseURL + updateFileName);
                 InputStreamReader is = new InputStreamReader(urlVersion.openStream());
                 BufferedReader reader = new BufferedReader(is);
                 StringBuilder sb = new StringBuilder();
