@@ -14,9 +14,9 @@ in fact, in the training mode, once you set the number of notes to be guessed at
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_EarTrainingFragment.png" alt="Screenshot_EarTrainingFragment" width="250" height="500"/>
 </div>
 
--) red color means you guessed wrong;<br />
--) yellow color means you missed that note;<br />
--) green color means you guessed right.
+<p>-) <span style="color: #EA2A2A">red</span> color means you guessed wrong;</p>
+-) <span style="color: #EAEA2A">yellow</span> color means you missed that note;</p>
+-) <span style="color: #91EA2A">green</span> color means you guessed right.</p>
 
 Also, you can click the "DIAPASON" button to listen to the A at 440Hz.
 
