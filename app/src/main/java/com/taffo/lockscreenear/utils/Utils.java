@@ -116,14 +116,18 @@ public final class Utils {
                 return false;
             else {
                 NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
-                return (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                        || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                        || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+                if (capabilities == null)
+                    return false;
+                else {
+                    return (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                            || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                            || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+                }
             }
 
         } else {
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
         }
     }
 

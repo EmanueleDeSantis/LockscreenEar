@@ -26,6 +26,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,6 +58,7 @@ import java.util.Objects;
 
 public final class SettingsActivity extends AppCompatActivity
         implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +100,8 @@ public final class SettingsActivity extends AppCompatActivity
         private Preference updateVersion;
         private long lastClickMs = 0;
         private int clickCounter = 0;
+        private ConnectivityManager connectivityManager;
+        private ConnectivityManager.NetworkCallback networkCallback;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -160,8 +165,30 @@ public final class SettingsActivity extends AppCompatActivity
         public void onResume() {
             super.onResume();
             requireActivity().setTitle(R.string.settings);
-            if (sp.getSharedmPrefEasterEggChallengeStarted())
-                updateVersion.setSelectable(false);
+            updateVersion.setSelectable(Utils.checkConnectivity(mContext) || !sp.getSharedmPrefEasterEggChallengeStarted());
+            connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            networkCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    super.onAvailable(network);
+                    requireActivity().runOnUiThread(() ->
+                            updateVersion.setSelectable(true));
+                }
+
+                @Override
+                public void onLost(Network network) {
+                    super.onLost(network);
+                    requireActivity().runOnUiThread(() ->
+                            updateVersion.setSelectable(!sp.getSharedmPrefEasterEggChallengeStarted()));
+                }
+            };
+            connectivityManager.registerDefaultNetworkCallback(networkCallback);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            connectivityManager.unregisterNetworkCallback(networkCallback);
         }
     }
 

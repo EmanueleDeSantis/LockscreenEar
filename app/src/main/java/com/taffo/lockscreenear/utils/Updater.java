@@ -60,8 +60,8 @@ public class Updater {
     private static boolean cancel = false;
     private Boolean canceledUpdate;
     private int lastUpdateVersionCode;
-    private final String gitRepoReleaseURL = "https://github.com/EmanueleDeSantis/LockscreenEar/releases/download/3.14/";
-    private final String updateFileName = "update.properties";
+    private final String updatePropertiesURL = "https://raw.githubusercontent.com/EmanueleDeSantis/LockscreenEar/main/update.properties";
+    private final String gitRepoReleaseURL = "https://github.com/EmanueleDeSantis/LockscreenEar/releases/download/";
     private final String appName = "LockscreenEar.apk";
     private String updateFeaturesText;
     private String versionNameText;
@@ -88,8 +88,7 @@ public class Updater {
             }
 
             try {
-                URL urlVersion = new URL(gitRepoReleaseURL + updateFileName);
-                InputStreamReader is = new InputStreamReader(urlVersion.openStream());
+                InputStreamReader is = new InputStreamReader(new URL(updatePropertiesURL).openStream());
                 BufferedReader reader = new BufferedReader(is);
                 StringBuilder sb = new StringBuilder();
                 String line;
@@ -113,7 +112,7 @@ public class Updater {
                 versionNameText = versionNameText.replace("=", ": ");
                 try {
                     versionCode = Integer.parseInt(versionNameText.substring(versionNameText.indexOf("(") + 1, versionNameText.indexOf(")")));
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | IndexOutOfBoundsException e ) {
                     versionCode = 1;
                 }
                 if (versionCode > lastUpdateVersionCode)
@@ -172,8 +171,8 @@ public class Updater {
 
                                 Executors.newSingleThreadExecutor().execute(() -> {
                                     try {
-                                        URL url = new URL(gitRepoReleaseURL + appName);
-                                        URLConnection connection = url.openConnection();
+                                        URLConnection connection = new URL(gitRepoReleaseURL + "3.14." + versionCode + "/" + appName)
+                                                .openConnection();
                                         int fileLength = connection.getContentLength();
                                         InputStream inputStream = connection.getInputStream();
                                         OutputStream outputStream = new FileOutputStream(destination);
