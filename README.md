@@ -34,3 +34,13 @@ If enabled, the main service undertakes, after the device wakes up (e.g after th
 **If during this activity any action is taken to bypass it, the screen will be locked again.**
 
 Please do not start it if you do not have perfect pitch, you may not be able to unlock your screen in emergency situations, although there is a test to be passed in order to be able to start it.
+
+## Download
+
+Download the app from the [Releases section](https://github.com/EmanueleDeSantis/LockscreenEar/releases/latest)
+
+or get it via the IzzyOnDroid F-Droid compatible repo :
+
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
+     alt="Get it on IzzyOnDroid"
+     height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.taffo.lockscreenear)
