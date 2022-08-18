@@ -245,7 +245,6 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void initializeAdapter() {
-        //numberInput.setDropDownBackgroundDrawable((new ColorDrawable(0)));
         if (sp.getSharedmPrefEasterEggChallengeNotCompleted())
             numberInput.setAdapter(new customAdapter(this, R.layout.dropdown_text_input_layout,
                     getResources().getStringArray(R.array.array_lock_screen_on_boot_array_number_of_notes))); //5

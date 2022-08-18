@@ -55,15 +55,17 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 public class Updater {
     private static boolean cancel = false;
+    private final String gitRepoReleaseURL = "https://api.github.com/repos/EmanueleDeSantis/LockscreenEar/releases/latest";
+    private final String updatePropertiesURL = "https://raw.githubusercontent.com/EmanueleDeSantis/LockscreenEar/main/update.properties";
     private Boolean canceledUpdate;
     private int lastUpdateVersionCode;
-    private final String updatePropertiesURL = "https://raw.githubusercontent.com/EmanueleDeSantis/LockscreenEar/main/update.properties";
-    private final String gitRepoReleaseURL = "https://github.com/EmanueleDeSantis/LockscreenEar/releases/download/";
-    private final String appName = "LockscreenEar.apk";
+    private String gitRepoReleaseURLExtended;
+    private String appName;
     private String updateFeaturesText;
     private String versionNameText;
     private int versionCode;
@@ -89,37 +91,43 @@ public class Updater {
             }
 
             try {
-                InputStreamReader is = new InputStreamReader(new URL(updatePropertiesURL).openStream());
+                InputStreamReader is = new InputStreamReader(new URL(gitRepoReleaseURL).openStream());
                 BufferedReader reader = new BufferedReader(is);
+                JSONObject object = new JSONObject(Objects.requireNonNull(reader.readLine()));
+                is.close();
+
+                gitRepoReleaseURLExtended = object.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
+                versionNameText = gitRepoReleaseURLExtended.split("/")[7];
+                appName = gitRepoReleaseURLExtended.split("/")[8];
+
+                is = new InputStreamReader(new URL(updatePropertiesURL).openStream());
+                reader = new BufferedReader(is);
                 StringBuilder sb = new StringBuilder();
                 String line;
-                if ((line = reader.readLine()) != null) {
-                    versionNameText = line; //First saves the VERSION_NAME
-                    while ((line = reader.readLine()) != null) { //Then scans the entire file and
-                        if (line.contains(Locale.getDefault().getLanguage())) { //if there is the list of features in the language the user is using...
-                            while ((line = reader.readLine()) != null) {
-                                if (line.equals("//")) { //End of the list of the features
-                                    sb.replace(sb.length() - 1, sb.length(), ""); //Removes last \n
-                                    break;
-                                }
-                                sb.append(line); //... it appends it
-                                sb.append("\n"); //and starts a new line
+                String userLanguage = Locale.getDefault().getLanguage();
+                if (!(userLanguage.equals("en") || userLanguage.equals("it")))
+                    userLanguage = "en";
+
+                while ((line = reader.readLine()) != null) { //Scans "update.properties" and
+                    if (line.equals(userLanguage + ":")) { //when the list of features in the correct language if found...
+                        while ((line = reader.readLine()) != null) {
+                            if (line.equals("//")) { //End of the list of the features
+                                sb.replace(sb.length() - 1, sb.length(), ""); //Removes last \n
+                                break;
                             }
+                            sb.append(line); //... it appends it
+                            sb.append("\n"); //and starts a new line
                         }
                     }
                 }
                 is.close();
+
                 updateFeaturesText = sb.toString();
-                versionNameText = versionNameText.replace("=", ": ");
-                try {
-                    versionCode = Integer.parseInt(versionNameText.substring(versionNameText.indexOf(".", versionNameText.indexOf(".") + 1) + 1));
-                } catch (NumberFormatException | IndexOutOfBoundsException e ) {
-                    versionCode = 1;
-                }
+                versionCode = Integer.parseInt(versionNameText.split("\\.")[2]);
                 if (versionCode > lastUpdateVersionCode)
                     sp.setSharedmPrefCancelUpdateAndDontAskUntilNextUpdate("{canceled_update:" + false
                             + ", last_update_versioncode:" + versionCode + "}");
-            } catch (IOException ignored) {}
+            } catch (IOException | JSONException ignored) {}
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (Utils.checkConnectivity(context)) {
@@ -129,7 +137,8 @@ public class Updater {
                             alertView = View.inflate(context, R.layout.update_install, null);
                             TextView versionNameTextView = alertView.findViewById(R.id.versionNameTextView);
                             versionNameTextView.setText(Html.fromHtml(context.getString(R.string.update_message)
-                                    + "<br /><br /><b>" + versionNameText + "</b>", Html.FROM_HTML_MODE_LEGACY));
+                                    + "<br /><br /><b>" + context.getString(R.string.ver) + versionNameText + "</b>",
+                                    Html.FROM_HTML_MODE_LEGACY));
                             TextView updateFeaturesTextView = alertView.findViewById(R.id.updateFeaturesTextView);
                             if (!updateFeaturesText.isEmpty()) {
                                 updateFeaturesTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
@@ -172,7 +181,7 @@ public class Updater {
 
                                 Executors.newSingleThreadExecutor().execute(() -> {
                                     try {
-                                        URLConnection connection = new URL(gitRepoReleaseURL + "3.14." + versionCode + "/" + appName)
+                                        URLConnection connection = new URL(gitRepoReleaseURLExtended)
                                                 .openConnection();
                                         int fileLength = connection.getContentLength();
                                         InputStream inputStream = connection.getInputStream();

@@ -24,7 +24,7 @@ android {
     }
     versionProperties.load(new FileInputStream(versioncodeFile))
 
-    def code = versionProperties['VER'].substring(versionProperties['VER'].indexOf(".", versionProperties['VER'].indexOf(".") + 1) + 1) as Integer
+    def code = versionProperties['VER'].split("\\.")[2] as Integer
 
     for (String item : gradle.startParameter.getTaskNames()) {
         if (item.contains("assembleRelease")) {

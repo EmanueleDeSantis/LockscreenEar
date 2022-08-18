@@ -66,7 +66,7 @@
     <string name="dont_ask_again">Don\'t ask again until the next update</string>
     <string name="update_message">New version available! Do you want to download the update?</string>
     <string name="ver" translatable="false">Ver:\u0020</string>
-    <string name="update_features">-) Fixed some bugs\n-) Added dark theme\n-) Added volume adjuster controls when the screen is locked\n-) Added the diapason button in the training mode\n-) Improvements in the UI\n-) Changed version name (3.14.2 instead of 3.14 (2)), so version 3.14 (1) of LockscreenEar will not be able to update itself further</string>
+    <string name="update_features">-) Fixed some bugs\n-) Added dark theme\n-) Added volume adjuster controls when the screen is locked\n-) Added the diapason button in the training mode\n-) Improvements in the UI\n-) Changed version name (3.14.2 instead of 3.14 (2))</string>
     <string name="already_updated_message">You already have the latest version of LockscreenEar installed</string>
     <string name="download">DOWNLOAD</string>
     <string name="wait">WAIT…</string>

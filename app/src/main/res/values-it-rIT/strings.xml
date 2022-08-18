@@ -57,7 +57,7 @@
     <string name="update_features_title">Dettagli aggiornamento</string>
     <string name="dont_ask_again">Non chiedere più fino al prossimo aggiornamento</string>
     <string name="update_message">Nuova versione disponibile! Vuoi scaricare l\'aggiornamento?</string>
-    <string name="update_features">-) Risolti alcuni bug\n-) Aggiunto il tema scuro\n-) Aggiunti i controlli di regolazione automatica del volume quando lo schermo è bloccato\n-) Aggiunto il pulsante diapason nella modalità allenamento\n-) Migliramenti nell\'interfaccia grafica\n-) Cambiato il nome della versione (3.14.2 invece di 3.14 (2)), quindi la versione 3.14 (1) di LockscreenEar non sarà in grado di aggiornarsi ulteriormente</string>
+    <string name="update_features">-) Risolti alcuni bug\n-) Aggiunto il tema scuro\n-) Aggiunti i controlli di regolazione automatica del volume quando lo schermo è bloccato\n-) Aggiunto il pulsante diapason nella modalità allenamento\n-) Migliramenti nell\'interfaccia grafica\n-) Cambiato il nome della versione (3.14.2 invece di 3.14 (2))</string>
     <string name="already_updated_message">Hai già installato l\'ultima versione di LockscreenEar</string>
     <string name="download">DOWNLOAD</string>
     <string name="wait">ATTENDI…</string>
