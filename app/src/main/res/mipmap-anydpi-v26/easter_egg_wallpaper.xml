@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/custom_background_ear_training_deep_blue"/>
-    <foreground android:drawable="@drawable/easter_egg_wallpaper_icon"/>
-</adaptive-icon>

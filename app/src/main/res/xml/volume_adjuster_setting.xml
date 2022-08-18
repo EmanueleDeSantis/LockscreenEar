@@ -4,12 +4,12 @@
     <PreferenceCategory app:title="@string/warnings_title" app:iconSpaceReserved="false">
         <Preference
             app:selectable="false"
-            app:layout="@layout/volume_adapter_setting" />
+            app:layout="@layout/volume_adjuster_setting" />
     </PreferenceCategory>
 
     <PreferenceCategory>
         <SwitchPreference
-            app:key="@string/volume_adapter_setting_shared_pref"
+            app:key="@string/volume_adjuster_setting_shared_pref"
             app:title="@string/automatic_volume_level"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
@@ -17,14 +17,14 @@
             app:iconSpaceReserved="false" />
 
         <ListPreference
-            app:key="@string/volume_adjustment_level_adapter_list_setting_shared_pref"
-            app:title="@string/volume_adjustment_level"
-            app:entries="@array/array_volume_adjustment_level"
-            app:entryValues="@array/array_volume_adjustment_level_value"
-            app:defaultValue="@string/array_item_volume_adjustment_level_normal_string_value"
+            app:key="@string/volume_adjuster_mode_list_setting_shared_pref"
+            app:title="@string/volume_adjustment_mode"
+            app:entries="@array/array_volume_adjuster_mode"
+            app:entryValues="@array/array_volume_adjuster_mode_values"
+            app:defaultValue="@string/array_item_volume_adjuster_mode_normal_string_value"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
-            app:dependency="@string/volume_adapter_setting_shared_pref" />
+            app:dependency="@string/volume_adjuster_setting_shared_pref" />
 
         <SwitchPreference
         app:key="@string/restore_previous_volume_level_setting_shared_pref"
@@ -33,7 +33,7 @@
         app:summaryOff="@string/disabled"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
-        app:dependency="@string/volume_adapter_setting_shared_pref" />
+        app:dependency="@string/volume_adjuster_setting_shared_pref" />
     </PreferenceCategory>
 
 </PreferenceScreen>

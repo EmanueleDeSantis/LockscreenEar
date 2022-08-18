@@ -3,12 +3,17 @@ Android lockscreen for people with perfect pitch. Available from Android 7 (API 
 
 <div align="center">
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_MainActivity.png" alt="Screenshot_MainActivity" width="250" height="500"/> 
+	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_MainActivity_dark.png" alt="Screenshot_MainActivity_dark" width="250" height="500"/>
+</div>
+
+<div align="center">
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_LockscreenEarService_locked.png" alt="Screenshot_LockscreenEarService_locked" width="250" height="500"/>
+	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_LockscreenEarService_volume_controls_locked.png" alt="Screenshot_LockscreenEarService_volume_controls_locked" width="250" height="500"/>
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_LockscreenEarService_unlocked.png" alt="Screenshot_LockscreenEarService_unlocked" width="250" height="500"/>
 </div>
 
-Although this app is suppposed to be a lockscreen, it is also an excellent tool to improve your musical ear,
-in fact, in the training mode, once you set the number of notes to be guessed at the same time, you can listen the output as mutch as you want and you will also get the solution from the lowest note to the highest:
+If you intend to use this app as a lockscreen, I do recommend NOT to use gestures, otherwise it's easier to bypass the activity, although still not so simple (see in [Warnings](#warnings)). Otherwise, this app is also an excellent tool to improve your musical ear,
+in fact, in the training mode, once you set the number of notes to be guessed at the same time, you can listen the output as much as you want and you will also get the solution from the lowest note to the highest:
 
 <div align="center">
 	<img src="https://github.com/EmanueleDeSantis/LockscreenEar/blob/main/img/Screenshot_EarTrainingFragment.png" alt="Screenshot_EarTrainingFragment" width="250" height="500"/>

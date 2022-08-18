@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/_3"
-    android:textColor="@color/black"
+    android:textColor="@color/custom_auto_complete_text_view_text_highlighted"
+    android:background="@color/custom_floating_background_background"
     android:textSize="18sp"
     android:padding="3.5dp"
     android:gravity="center_horizontal" />

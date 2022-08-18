@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_main"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/custom_launcher_main_background"
     tools:context=".activities.MainActivity">
 
     <TextView
@@ -13,8 +15,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/click_to_grant_permissions_and_start_the_service"
-        android:textColor="@color/custom_wrong_round_red"
+        android:textColor="@color/custom_text_view_main_activity"
         android:textSize="25sp"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="italic"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:text="@string/grant_and_start"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -53,27 +57,27 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/number_of_notes_to_play"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            style="@style/MainActivityDayNight" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:boxBackgroundMode="filled">
+            style="@style/TextInputLayoutStyle"
+            android:theme="@style/TextInputLayoutTheme">
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/numberInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="@string/_3"
+                android:textColor="@color/custom_auto_complete_text_view_text_highlighted"
                 android:textSize="18sp"
                 android:gravity="end"
                 android:inputType="none"
                 tools:ignore="LabelFor" />
-
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
@@ -91,6 +95,7 @@
             android:id="@+id/trainingLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -102,7 +107,10 @@
                 android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:text="@string/training" />
+                android:text="@string/training"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/main_activity_button"
+                style="@style/ButtonNoTint" />
         </LinearLayout>
 
         <LinearLayout
@@ -120,7 +128,10 @@
                 android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:text="@string/diapason" />
+                android:text="@string/diapason"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/main_activity_button"
+                style="@style/ButtonNoTint" />
         </LinearLayout>
     </LinearLayout>
 

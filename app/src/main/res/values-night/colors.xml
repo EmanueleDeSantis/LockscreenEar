@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="custom_color_primary">#323232</color>
+    <color name="custom_color_accent">#3CC878</color>
+    <color name="custom_color_accent_button_pressed">#96C896</color>
+    <color name="custom_notification_color">#C83C3C</color>
+    <color name="custom_text_view_main_activity">@color/custom_missed_round_yellow</color>
+    <color name="custom_launcher_main_background">#1E1E1E</color>
+    <color name="custom_floating_background_background">@color/custom_color_primary</color>
+    <color name="custom_auto_complete_text_view_text_highlighted">@color/white</color>
+</resources>

@@ -19,12 +19,12 @@ android {
     def versioncodeFile = file(rootProject.file('update.properties'))
     Properties versionProperties = new Properties()
     if (!versioncodeFile.exists()) {
-        versionProperties['VER'] = "3.14 (0)"
+        versionProperties['VER'] = "3.14.0"
         versionProperties.store(versioncodeFile.newWriter(), null)
     }
     versionProperties.load(new FileInputStream(versioncodeFile))
 
-    def code = versionProperties['VER'].substring(versionProperties['VER'].indexOf("(") + 1, versionProperties['VER'].indexOf(")")) as Integer
+    def code = versionProperties['VER'].substring(versionProperties['VER'].indexOf(".", versionProperties['VER'].indexOf(".") + 1) + 1) as Integer
 
     for (String item : gradle.startParameter.getTaskNames()) {
         if (item.contains("assembleRelease")) {
@@ -36,7 +36,7 @@ android {
     if (code == 0) //if update.properties did not exist and the Build Variant is debug
         code = 1
 
-    versionProperties['VER'] = "3.14 (${code})" as String
+    versionProperties['VER'] = "3.14.${code}" as String
     versionProperties.store(versioncodeFile.newWriter(), null)
 
     defaultConfig {
@@ -44,7 +44,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 32
         versionCode code
-        versionName "3.14 (${code})"
+        versionName versionProperties['VER']
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
@@ -70,7 +70,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.preference:preference:1.2.0'

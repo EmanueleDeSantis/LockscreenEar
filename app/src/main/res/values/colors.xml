@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="custom_color_primary">@color/custom_launcher_icon_background_green</color>
+    <color name="custom_color_accent">@color/custom_launcher_icon_background_green</color>
+    <color name="custom_color_accent_button_pressed">#78C878</color>
+    <color name="custom_notification_color">@color/custom_wrong_round_red</color>
+    <color name="custom_text_view_main_activity">@color/custom_wrong_round_red</color>
+    <color name="custom_launcher_main_background">@color/white</color>
+    <color name="custom_floating_background_background">@color/white</color>
     <color name="custom_wrong_round_red">#EA2A2A</color>
-    <color name="custom_launcher_background_green">#3CC83C</color>
+    <color name="custom_launcher_icon_background_green">#3CC83C</color>
+    <color name="custom_auto_complete_text_view_text_highlighted">@color/black</color>
     <color name="custom_right_round_green">#91EA2A</color>
     <color name="custom_teal_blue">#03DAC5</color>
     <color name="custom_button_start_blue">#2196F3</color>
     <color name="custom_button_end_blue">#163969</color>
     <color name="custom_missed_round_yellow">#EAEA2A</color>
-    <color name="easter_egg_gold">#E5B80B</color>
+    <color name="custom_easter_egg_gold">#E5B80B</color>
     <color name="custom_background_ear_training_deep_blue">#121212</color>
 </resources>

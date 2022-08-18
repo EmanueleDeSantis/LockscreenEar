@@ -51,6 +51,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executors;
 
 public final class LockscreenEarActivity extends AppCompatActivity {
     private final XMLParser parser = new XMLParser();
@@ -85,7 +86,7 @@ public final class LockscreenEarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.lockscreen_activity);
+        setContentView(R.layout.lockscreenear_activity);
 
         Utils.setIsLockscreenEarRunning(true);
 
@@ -270,8 +271,8 @@ public final class LockscreenEarActivity extends AppCompatActivity {
 
         //Not tested yet
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            audio.addOnModeChangedListener(runnable -> {}, i -> {
-                if (Utils.getCallAndCallSetting(getApplicationContext()))
+            audio.addOnModeChangedListener(Executors.newSingleThreadExecutor(), i -> {
+                if (Utils.getCallAndCallSetting(this))
                     unlockAndFinish();
             });
         } else {
@@ -609,29 +610,29 @@ public final class LockscreenEarActivity extends AppCompatActivity {
         textViewNotes.setTextColor(getColor(R.color.custom_right_round_green));
 
         buttonDo.setSelected(false);
-        buttonDo.setBackgroundResource(R.drawable.round);
+        buttonDo.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonDodie.setSelected(false);
-        buttonDodie.setBackgroundResource(R.drawable.round);
+        buttonDodie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonRe.setSelected(false);
-        buttonRe.setBackgroundResource(R.drawable.round);
+        buttonRe.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonRedie.setSelected(false);
-        buttonRedie.setBackgroundResource(R.drawable.round);
+        buttonRedie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonMi.setSelected(false);
-        buttonMi.setBackgroundResource(R.drawable.round);
+        buttonMi.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonFa.setSelected(false);
-        buttonFa.setBackgroundResource(R.drawable.round);
+        buttonFa.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonFadie.setSelected(false);
-        buttonFadie.setBackgroundResource(R.drawable.round);
+        buttonFadie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonSol.setSelected(false);
-        buttonSol.setBackgroundResource(R.drawable.round);
+        buttonSol.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonSoldie.setSelected(false);
-        buttonSoldie.setBackgroundResource(R.drawable.round);
+        buttonSoldie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonLa.setSelected(false);
-        buttonLa.setBackgroundResource(R.drawable.round);
+        buttonLa.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonLadie.setSelected(false);
-        buttonLadie.setBackgroundResource(R.drawable.round);
+        buttonLadie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonSi.setSelected(false);
-        buttonSi.setBackgroundResource(R.drawable.round);
+        buttonSi.setBackgroundResource(R.drawable.ear_training_round_button);
     }
 
 }

@@ -32,7 +32,6 @@ import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.view.accessibility.AccessibilityEvent;
 
-import androidx.annotation.NonNull;
 import androidx.core.os.UserManagerCompat;
 
 import com.taffo.lockscreenear.R;
@@ -120,14 +119,8 @@ public final class LockAccessibilityService extends AccessibilityService {
             instance = this;
 
         if (sp != null) {
-            if (!sp.getSharedmPrefAccessibilitySettingsStartedOnBoot()) {
-                //ut.stopTheService(this);
-                startActivity(new Intent(this, MainActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-
             //Auto-starts the service
-            if (ut.checkPermissions(this) && !sp.getSharedmPrefAccessibilitySettingsStartedOnBoot() && sp.getSharedmPrefService())
+            if (ut.checkPermissions(this) && !sp.getSharedmPrefAccessibilitySettingsStartedOnBoot())
                 ut.startTheService(this);
 
             if (sp.getSharedmPrefAccessibilitySettingsStartedOnBoot())
@@ -158,7 +151,7 @@ public final class LockAccessibilityService extends AccessibilityService {
 
     }
 
-    public boolean isAccessibilitySettingsOn(@NonNull Context context) {
+    public boolean isAccessibilitySettingsOn(Context context) {
         String prefString = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
         return prefString != null && prefString.contains(context.getPackageName() + "/" + getClass().getName());
     }

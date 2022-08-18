@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/custom_background_ear_training_deep_blue"
+    tools:context=".activities.MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/backgroundLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:clickable="true"
+        android:theme="@style/Theme.MaterialComponents"
+        android:background="@color/custom_background_ear_training_deep_blue"
+        android:backgroundTint="@null"
+        android:foregroundTint="@null">
+
+        <LinearLayout
+            android:id="@+id/rowContainerInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/rowContainerNotes">
+
+            <TextView
+                android:id="@+id/textViewNotes"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:text="@string/insert_notes"
+                android:textColor="@color/custom_right_round_green"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rowContainerNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/rowContainerInfo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/rowContainerPlayAgain">
+
+            <LinearLayout
+                android:id="@+id/firstRowLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/buttonDo"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Do"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonDodie"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Dodie"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonRe"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Re"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/secondRowLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/buttonRedie"
+                    style="@style/ButtonNoTint"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Redie"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/buttonMi"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Mi"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonFa"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Fa"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/thirdRowLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/buttonFadie"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Fadie"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonSol"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Sol"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonSoldie"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Soldie"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fourthRowLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <Button
+                    android:id="@+id/buttonLa"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/La"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonLadie"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:layout_marginEnd="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Ladie"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+
+                <Button
+                    android:id="@+id/buttonSi"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginStart="5sp"
+                    android:background="@drawable/ear_training_round_button"
+                    android:text="@string/Si"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    style="@style/ButtonNoTint" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rowContainerPlayAgain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/rowContainerNotes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageButton
+                android:id="@+id/buttonDiapason"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                app:srcCompat="@drawable/diapason_icon"
+                android:contentDescription="@string/diapason"
+                android:background="@drawable/ear_training_round_button"
+                android:textColor="@color/white"
+                style="@style/ButtonNoTint" />
+
+            <Button
+                android:id="@+id/buttonPlayAgain"
+                android:layout_width="160dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rectangle"
+                android:gravity="center"
+                android:text="@string/play_again"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                tools:ignore="TextContrastCheck"
+                style="@style/ButtonNoTint" />
+
+            <ImageButton
+                android:id="@+id/buttonNext"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                app:srcCompat="@drawable/next_icon"
+                android:contentDescription="@string/next"
+                android:background="@drawable/ear_training_round_button"
+                android:textColor="@color/white"
+                style="@style/ButtonNoTint" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

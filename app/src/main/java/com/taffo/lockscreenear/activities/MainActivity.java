@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 
 import android.content.ComponentName;
@@ -33,7 +34,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
-import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.util.TypedValue;
@@ -70,12 +70,19 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
 
         ut = new Utils();
         sp = new SharedPref(this);
 
         if (savedInstanceState == null) {
+            //Avoids multiple instances of this (launcher) activity when the app is installed, so that if you click the home button
+            //after having launched SettingsActivity, when you click on the app launcher, SettingsActivity is the activity you will see
+            //(In combination with "android:launchMode="singleTop"")
+            if (!isTaskRoot()) {
+                finish();
+                return;
+            }
+
             //Dialog showed until user presses ok (necessary condition in order to start the service)
             //See also Utils
             if (sp.getSharedmPrefFirstRunMain()) {
@@ -101,7 +108,8 @@ public final class MainActivity extends AppCompatActivity {
             }
 
             if (sp.getSharedmPrefLastUpdateVersionCode() < BuildConfig.VERSION_CODE) {
-                //If there has been an update, display a dialog with its features
+                //If there has been an update, restore the previous theme and display a dialog with its features
+                AppCompatDelegate.setDefaultNightMode(sp.getSharedmPrefThemeSetting());
                 sp.setSharedmPrefLastUpdateVersionCode(BuildConfig.VERSION_CODE);
                 View alertView = View.inflate(this, R.layout.update_features, null);
                 TextView versionNameTextView = alertView.findViewById(R.id.versionNameTextView);
@@ -122,8 +130,10 @@ public final class MainActivity extends AppCompatActivity {
                         .show();
             }
             //Checks for updates
-            new Updater().update(this, false, null);
+            new Updater().update(this, this, false, null);
         }
+
+        setContentView(R.layout.main_activity);
 
         startSwitch = findViewById(R.id.startSwitch);
         numberInput = findViewById(R.id.numberInput);
@@ -173,9 +183,8 @@ public final class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        //Sets initial value (see also onResume)
+        //Sets initial values (see also onResume)
         numberInput.setText(sp.getSharedmPrefNumberOfNotesToPlay());
-        numberInput.setInputType(InputType.TYPE_NULL);
         numberInput.setOnItemClickListener((parent, view, position, id) ->
                 sp.setSharedmPrefNumberOfNotesToPlay(String.valueOf(position + 1))); //First position is 0, but it must start with 1
 
@@ -194,7 +203,6 @@ public final class MainActivity extends AppCompatActivity {
         });
 
         buttonDiapason.setOnClickListener(v -> startService(new Intent(this, DiapasonService.class)));
-
     }
 
     @Override
@@ -223,7 +231,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.settings, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -237,12 +245,13 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void initializeAdapter() {
-        if (sp.getSharedmPrefEasterEggChallengeCompleted())
-            numberInput.setAdapter(new customAdapter(this, R.layout.dropdown_text_input_layout,
-                    getResources().getStringArray(R.array.array_start_service_array_number_of_notes))); //8
-        else
+        //numberInput.setDropDownBackgroundDrawable((new ColorDrawable(0)));
+        if (sp.getSharedmPrefEasterEggChallengeNotCompleted())
             numberInput.setAdapter(new customAdapter(this, R.layout.dropdown_text_input_layout,
                     getResources().getStringArray(R.array.array_lock_screen_on_boot_array_number_of_notes))); //5
+        else
+            numberInput.setAdapter(new customAdapter(this, R.layout.dropdown_text_input_layout,
+                    getResources().getStringArray(R.array.array_start_service_array_number_of_notes))); //8
     }
 
     public void setButtonTrainingClickable() {
@@ -277,11 +286,11 @@ public final class MainActivity extends AppCompatActivity {
                 item.append(itemPlusEasterEgg);
             }
             if (item.getText().toString().contains(sp.getSharedmPrefNumberOfNotesToPlay())) {
-                item.setTextColor((getColor(R.color.white)));
-                item.setBackgroundColor(getColor(R.color.custom_launcher_background_green));
+                item.setTextColor((getColor(R.color.custom_launcher_main_background)));
+                item.setBackgroundColor(getColor(R.color.custom_color_accent));
             } else if (item.getText().toString().contains("1")) { //To avoid the double coloring of the right textView and the one with text "1"
-                item.setTextColor((getColor(R.color.black)));
-                item.setBackgroundColor(getColor(R.color.white));
+                item.setTextColor((getColor(R.color.custom_auto_complete_text_view_text_highlighted)));
+                item.setBackgroundColor(getColor(R.color.custom_floating_background_background));
             }
             return view;
         }

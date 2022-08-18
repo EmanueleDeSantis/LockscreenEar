@@ -47,28 +47,31 @@ public final class Utils {
 
     public boolean checkPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            return (Settings.System.canWrite(context)
-                    && las.isAccessibilitySettingsOn(context)
-                    && !new SharedPref(context).getSharedmPrefFirstRunTest());
+            return (!new SharedPref(context).getSharedmPrefFirstRunMain()
+                    && !new SharedPref(context).getSharedmPrefFirstRunTest()
+                    && Settings.System.canWrite(context)
+                    && las.isAccessibilitySettingsOn(context));
         else
-            return (Settings.System.canWrite(context)
+            return (!new SharedPref(context).getSharedmPrefFirstRunMain()
+                    && !new SharedPref(context).getSharedmPrefFirstRunTest()
+                    && Settings.System.canWrite(context)
+                    && las.isAccessibilitySettingsOn(context)
                     && ((DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE))
                             .isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class))
-                    && las.isAccessibilitySettingsOn(context)
-                    && !new SharedPref(context).getSharedmPrefFirstRunTest());
+                    && las.isAccessibilitySettingsOn(context));
     }
 
     public void askPermissions(Context context) {
-        if (!Settings.System.canWrite(context))
-            context.startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + context.getPackageName())));
-        else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
-                && !((DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE))
-                        .isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
-            context.startActivity(new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
-                    .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
-                            new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)));
-        else if (!las.isAccessibilitySettingsOn(context))
-            context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+        SharedPref sp = new SharedPref(context);
+        if (sp.getSharedmPrefFirstRunMain())
+            new AlertDialog.Builder(context)
+                    .setIcon(R.mipmap.launcher)
+                    .setTitle(context.getString(R.string.warnings_title))
+                    .setMessage(Html.fromHtml(context.getString(R.string.warnings_message_html), Html.FROM_HTML_MODE_LEGACY))
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> sp.setSharedmPrefFirstRunMain(false))
+                    .setCancelable(false)
+                    .create()
+                    .show();
         else if (new SharedPref(context).getSharedmPrefFirstRunTest())
             new AlertDialog.Builder(context)
                     .setIcon(R.mipmap.launcher)
@@ -82,6 +85,16 @@ public final class Utils {
                     .setNegativeButton(android.R.string.cancel, null)
                     .create()
                     .show();
+        else if (!Settings.System.canWrite(context))
+            context.startActivity(new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + context.getPackageName())));
+        else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
+                && !((DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE))
+                        .isAdminActive(new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)))
+            context.startActivity(new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+                    .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+                            new ComponentName(context, DeviceAdminActivity.DeviceAdminActivityReceiver.class)));
+        else if (!las.isAccessibilitySettingsOn(context))
+            context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
     }
 
     public void startTheService(Context context) {
@@ -100,9 +113,14 @@ public final class Utils {
     public static void setIsLockscreenEarRunning(boolean b) {
         isLockscreenEarRunning = b;
     }
+    public static boolean getIsLockscreenEarRunning() {
+        return isLockscreenEarRunning;
+    }
+
     public static boolean getIsScreenLocked(Context context) {
         return isLockscreenEarRunning || ((KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE)).isKeyguardLocked();
     }
+
     public static boolean getCallAndCallSetting(Context context) {
         return new SharedPref(context).getSharedmPrefCallSettingEnabled()
                 && ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE)).getMode() != AudioManager.MODE_NORMAL;
@@ -118,11 +136,10 @@ public final class Utils {
                 NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
                 if (capabilities == null)
                     return false;
-                else {
+                else
                     return (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
                             || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
                             || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-                }
             }
 
         } else {

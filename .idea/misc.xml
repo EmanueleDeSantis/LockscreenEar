@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Emanuele/.gradle/caches/transforms-3/4d669feee3bbcaf630ded0ac4934be61/transformed/appcompat-1.4.2/res/drawable/abc_btn_default_mtrl_shape.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/.gradle/caches/transforms-3/4d669feee3bbcaf630ded0ac4934be61/transformed/appcompat-1.4.2/res/drawable/abc_spinner_textfield_background_material.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/.gradle/caches/transforms-3/4d669feee3bbcaf630ded0ac4934be61/transformed/appcompat-1.4.2/res/drawable/abc_text_cursor_material.xml" value="0.224" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/drawable/boot_icon.xml" value="0.224" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/drawable/c.xml" value="0.224" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/drawable/call_icon.xml" value="0.224" />
@@ -57,8 +60,48 @@
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/uninstall_setting.xml" value="0.30344202898550726" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/volume_adapter_setting.xml" value="0.19972826086956522" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockScreen/app/src/main/res/xml/warnings.xml" value="0.17249240121580547" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/boot_icon.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/call_icon.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/diapason_icon.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/dropdown_background.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/ear_training_round_button.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/easter_egg_icon.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/easter_egg_wallpaper.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/easter_egg_wallpaper_icon.xml" value="0.25" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/main_activity_button.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/next_icon.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/round.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/drawable/theme_icon.xml" value="0.224" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout-v28/main_activity.xml" value="0.30344202898550726" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout-v29/boot_setting.xml" value="0.30344202898550726" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/boot_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/call_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/colored_border.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/dropdown_text_input_layout.xml" value="0.29102564102564105" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/ear_training_activity.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/ear_training_fragment.xml" value="0.25" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/l.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/lockscreen_activity.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/lockscreenear_activity.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/main_activity.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/quick_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/setting_uninstall.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/settings_activity.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/update_features.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/update_install.xml" value="0.25" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/volume_adapter_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/volume_adjuster_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/layout/warnings.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/menu/settings.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/boot_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/call_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/quick_setting.xml" value="0.29102564102564105" />
         <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/root_preferences.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/uninstall_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/volume_adapter_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/volume_adjuster_setting.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AndroidStudioProjects/LockscreenEar/app/src/main/res/xml/warnings.xml" value="0.29102564102564105" />
+        <entry key="..\:/Users/Emanuele/AppData/Local/Android/Sdk/platforms/android-32/data/res/drawable/spinner_dropdown_background.xml" value="0.224" />
       </map>
     </option>
   </component>

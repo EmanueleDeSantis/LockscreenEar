@@ -18,6 +18,7 @@
 
 package com.taffo.lockscreenear.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -73,7 +74,7 @@ public class Updater {
     private CheckBox progressBarCheckBox;
     private File file;
 
-    public void update(Context context, boolean bypassCanceledUpdate, Preference preference) {
+    public void update(Activity activity, Context context, boolean bypassCanceledUpdate, Preference preference) {
         SharedPref sp = new SharedPref(context);
 
         deleteUpdate(context);
@@ -82,7 +83,7 @@ public class Updater {
                 JSONObject object = new JSONObject(sp.getSharedmPrefCancelUpdateAndDontAskUntilNextUpdate());
                 canceledUpdate = Boolean.parseBoolean(object.getString("canceled_update"));
                 lastUpdateVersionCode = Integer.parseInt(object.getString("last_update_versioncode"));
-            } catch (JSONException e) {
+            } catch (JSONException ignored) {
                 canceledUpdate = false; //Default
                 lastUpdateVersionCode = 1; //state
             }
@@ -111,7 +112,7 @@ public class Updater {
                 updateFeaturesText = sb.toString();
                 versionNameText = versionNameText.replace("=", ": ");
                 try {
-                    versionCode = Integer.parseInt(versionNameText.substring(versionNameText.indexOf("(") + 1, versionNameText.indexOf(")")));
+                    versionCode = Integer.parseInt(versionNameText.substring(versionNameText.indexOf(".", versionNameText.indexOf(".") + 1) + 1));
                 } catch (NumberFormatException | IndexOutOfBoundsException e ) {
                     versionCode = 1;
                 }
@@ -144,7 +145,7 @@ public class Updater {
                                 progressBarCheckBox.setVisibility(View.GONE);
 
                             //This two buttons are handled below so that the dialog does not get dismissed when they get clicked
-                            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.download_button),
+                            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.download),
                                     (DialogInterface.OnClickListener) null);
                             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(android.R.string.cancel),
                                     (DialogInterface.OnClickListener) null);
@@ -177,6 +178,8 @@ public class Updater {
                                         InputStream inputStream = connection.getInputStream();
                                         OutputStream outputStream = new FileOutputStream(destination);
 
+                                        activity.runOnUiThread(() -> progressBarText.setText(context.getString(R.string.wait)));
+
                                         byte[] data = new byte[1024];
                                         int total = 0;
                                         int count;
@@ -189,10 +192,13 @@ public class Updater {
                                             }
                                             total += count;
                                             if (fileLength > 0) {
-                                                progressBar.setProgress(total * 100 / fileLength, true);
-                                                progressBarText.setText((String.format(
-                                                        Locale.getDefault(), "%.3f / %.3fMbps",
-                                                        (float) total / 1000000, (float) fileLength / 1000000)));
+                                                int finalTotal = total;
+                                                activity.runOnUiThread(() -> {
+                                                    progressBar.setProgress(finalTotal * 100 / fileLength, true);
+                                                    progressBarText.setText((String.format(
+                                                            Locale.getDefault(), "%.3f / %.3fMbps",
+                                                            (float) finalTotal / 1000000, (float) fileLength / 1000000)));
+                                                });
                                             }
                                             outputStream.write(data, 0, count);
                                         }

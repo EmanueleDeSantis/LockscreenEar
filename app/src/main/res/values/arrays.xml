@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="array_lock_screen_on_boot_array_number_of_notes">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
     <string-array name="array_start_service_array_number_of_notes">
         <item>1</item>
         <item>2</item>
@@ -11,23 +19,21 @@
         <item>8</item>
     </string-array>
 
-    <string-array name="array_lock_screen_on_boot_array_number_of_notes">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
+    <string-array name="array_volume_adjuster_mode">
+        <item>@string/array_item_volume_adjuster_mode_quiet</item>
+        <item>@string/array_item_volume_adjuster_mode_normal</item>
+        <item>@string/array_item_volume_adjuster_mode_loud</item>
     </string-array>
 
-    <string-array name="array_volume_adjustment_level">
-        <item>@string/array_item_volume_adjustment_level_quiet</item>
-        <item>@string/array_item_volume_adjustment_level_normal</item>
-        <item>@string/array_item_volume_adjustment_level_loud</item>
+    <string-array name="array_volume_adjuster_mode_values">
+        <item>{mode:quiet, db_min:30, db_max:125}</item>
+        <item>{mode:normal, db_min:25, db_max:100}</item>
+        <item>{mode:loud, db_min:20, db_max:75}</item>
     </string-array>
 
-    <string-array name="array_volume_adjustment_level_value">
-        <item>{db_min:30, db_max:125}</item> <!--quiet-->
-        <item>{db_min:25, db_max:100}</item> <!--normal-->
-        <item>{db_min:20, db_max:75}</item> <!--loud-->
+    <string-array name="array_themes">
+        <item>@string/array_item_system_default_theme</item>
+        <item>@string/array_item_light_theme</item>
+        <item>@string/array_item_dark_theme</item>
     </string-array>
 </resources>

@@ -9,7 +9,7 @@
 
     <PreferenceCategory app:iconSpaceReserved="false">
         <SwitchPreference
-            app:key="@string/boot_setting_number_of_notes_to_play_shared_pref"
+            app:key="@string/boot_setting_shared_pref"
             app:title="@string/lock_screen_on_boot"
             app:summaryOn="@string/enabled"
             app:summaryOff="@string/disabled"
@@ -24,7 +24,7 @@
             app:defaultValue="@string/_3"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
-            app:dependency="@string/boot_setting_number_of_notes_to_play_shared_pref" />
+            app:dependency="@string/boot_setting_shared_pref" />
 
         <SwitchPreference
             app:key="@string/boot_setting_volume_shared_pref"
@@ -33,7 +33,7 @@
             app:summaryOff="@string/disabled"
             app:defaultValue="false"
             app:iconSpaceReserved="false"
-            app:dependency="@string/boot_setting_number_of_notes_to_play_shared_pref" />
+            app:dependency="@string/boot_setting_shared_pref" />
 
         <SeekBarPreference
             app:key="@string/boot_setting_volume_level_shared_pref"

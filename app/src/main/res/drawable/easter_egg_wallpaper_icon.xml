@@ -1,14 +1,14 @@
 <!-- https://www.svgrepo.com/svg/264688/easter-egg -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-  <group android:scaleX="0.16"
-      android:scaleY="0.09"
-      android:translateX="13"
-      android:translateY="30">
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+  <group android:scaleX="1.2"
+      android:scaleY="0.65"
+      android:translateX="-50"
+      android:translateY="85">
     <path
         android:pathData="M451.54,295.32c0,134.82 -87.6,207.54 -195.66,207.54S60.23,430.14 60.23,295.32S147.83,9.15 255.89,9.15S451.54,160.49 451.54,295.32z"
         android:fillColor="#F2F2F2"/>

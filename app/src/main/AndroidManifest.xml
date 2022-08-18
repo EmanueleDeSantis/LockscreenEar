@@ -19,15 +19,14 @@
         android:icon="@mipmap/launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/launcher_round"
-        android:screenOrientation="portrait"
-        android:supportsRtl="true">
+        android:screenOrientation="portrait">
 
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MainActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/MainActivityDayNight"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -37,10 +36,11 @@
         <activity
             android:name=".activities.TestActivity"
             android:exported="true"
+            android:excludeFromRecents="true"
             android:noHistory="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.LockscreenEarActivity"
+            android:theme="@style/LockscreenEarActivity"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,11 +48,11 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/settings"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MainActivity"
+            android:theme="@style/MainActivityDayNight"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
@@ -65,7 +65,7 @@
             android:noHistory="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.LockscreenEarActivity"
+            android:theme="@style/LockscreenEarActivity"
             tools:ignore="LockedOrientationActivity">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.MAIN" />
@@ -80,8 +80,11 @@
         </activity>
 
         <service android:name=".services.LockscreenEarService" />
-        <service android:name=".services.IncrementNumberOfNotes" />
-        <service android:name=".services.IncrementVolumeLevel" />
+        <service android:name=".services.IncreaseNumberOfNotes" />
+        <service android:name=".services.IncreaseVolumeLevel" />
+        <service android:name=".services.IncreaseVolumeAdjusterMode" />
+        <service android:name=".services.StartVolumeAdjuster" />
+        <service android:name=".services.StopVolumeAdjuster" />
         <service android:name=".services.DiapasonService" />
         <service
             android:name=".services.LockTileService"

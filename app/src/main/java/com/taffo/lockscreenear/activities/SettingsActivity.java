@@ -41,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -70,7 +71,7 @@ public final class SettingsActivity extends AppCompatActivity
                     .replace(R.id.settings_frame_layout, new SettingsFragment())
                     .commit();
         }
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(!isTaskRoot());
     }
 
     @Override
@@ -98,6 +99,7 @@ public final class SettingsActivity extends AppCompatActivity
         private Context mContext;
         private SharedPref sp;
         private Preference updateVersion;
+        private ListPreference themeChooser;
         private long lastClickMs = 0;
         private int clickCounter = 0;
         private ConnectivityManager connectivityManager;
@@ -114,13 +116,14 @@ public final class SettingsActivity extends AppCompatActivity
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            updateVersion = findPreference(getString(R.string.about_key));
+            updateVersion = findPreference(getString(R.string.version_name_key));
+            themeChooser = findPreference(getString(R.string.theme_setting_shared_pref));
             Preference uninstallCategory = findPreference(getString(R.string.uninstall_category_setting_key));
 
             Objects.requireNonNull(updateVersion).setSummary(BuildConfig.VERSION_NAME);
             updateVersion.setOnPreferenceClickListener(preference -> {
                 //Check for updates
-                new Updater().update(mContext, true, preference);
+                new Updater().update(requireActivity(), mContext, true, preference);
 
                 //Easter egg logic
                 if (!Utils.checkConnectivity(mContext) && !sp.getSharedmPrefEasterEggChallengeStarted()) {
@@ -157,6 +160,24 @@ public final class SettingsActivity extends AppCompatActivity
                 return true;
             });
 
+            CharSequence[] entryValues = new String[3];
+            entryValues[0] = String.valueOf(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            entryValues[1] = String.valueOf(AppCompatDelegate.MODE_NIGHT_NO);
+            entryValues[2] = String.valueOf(AppCompatDelegate.MODE_NIGHT_YES);
+
+            Objects.requireNonNull(themeChooser).setEntries(getResources().getStringArray(R.array.array_themes));
+            themeChooser.setEntryValues(entryValues);
+
+            if (themeChooser.getValue() == null)
+                themeChooser.setValueIndex(0);
+
+            themeChooser.setOnPreferenceChangeListener((preference, newValue) -> {
+                int value = Integer.parseInt(newValue.toString());
+                AppCompatDelegate.setDefaultNightMode(value);
+                sp.setSharedmPrefThemeSetting(value);
+                return true;
+            });
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                 Objects.requireNonNull(uninstallCategory).setVisible(false);
         }
@@ -165,6 +186,7 @@ public final class SettingsActivity extends AppCompatActivity
         public void onResume() {
             super.onResume();
             requireActivity().setTitle(R.string.settings);
+            AppCompatDelegate.setDefaultNightMode(Integer.parseInt(themeChooser.getValue()));
             updateVersion.setSelectable(Utils.checkConnectivity(mContext) || !sp.getSharedmPrefEasterEggChallengeStarted());
             connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             networkCallback = new ConnectivityManager.NetworkCallback() {
@@ -204,7 +226,7 @@ public final class SettingsActivity extends AppCompatActivity
             mContext = requireContext();
             SharedPref sp = new SharedPref(mContext);
 
-            switchBootSetting = findPreference(getString(R.string.boot_setting_number_of_notes_to_play_shared_pref));
+            switchBootSetting = findPreference(getString(R.string.boot_setting_shared_pref));
             ListPreference listNumberOfNotes = findPreference(getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref));
             switchBootSettingVolume = findPreference(getString(R.string.boot_setting_volume_shared_pref));
             seekBarBootSettingVolume = findPreference(getString(R.string.boot_setting_volume_level_shared_pref));
@@ -253,49 +275,47 @@ public final class SettingsActivity extends AppCompatActivity
 
     public final static class VolumeAdapterSettingFragment extends PreferenceFragmentCompat {
         private Context mContext;
-        private SwitchPreference switchVolumeAdapterSetting;
+        private SwitchPreference switchVolumeAdjusterSetting;
+        private ListPreference listVolumeAdjusterModeSetting;
         private SwitchPreference switchRestorePreviousVolumeLevelSetting;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.volume_adapter_setting, rootKey);
+            setPreferencesFromResource(R.xml.volume_adjuster_setting, rootKey);
             mContext = requireContext();
             Activity activity = requireActivity();
             SharedPref sp = new SharedPref(mContext);
 
-            switchVolumeAdapterSetting = findPreference(getString(R.string.volume_adapter_setting_shared_pref));
-            ListPreference listVolumeAdjustmentLevelSetting = findPreference(getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref));
+            switchVolumeAdjusterSetting = findPreference(getString(R.string.volume_adjuster_setting_shared_pref));
+            listVolumeAdjusterModeSetting = findPreference(getString(R.string.volume_adjuster_mode_list_setting_shared_pref));
             switchRestorePreviousVolumeLevelSetting = findPreference(getString(R.string.restore_previous_volume_level_setting_shared_pref));
 
             //Asks for permissions
-            Objects.requireNonNull(switchVolumeAdapterSetting).setOnPreferenceClickListener(preference -> {
-                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO)
-                        != PackageManager.PERMISSION_GRANTED) {
+            Objects.requireNonNull(switchVolumeAdjusterSetting).setOnPreferenceClickListener(preference -> {
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-                    switchVolumeAdapterSetting.setChecked(false);
+                    switchVolumeAdjusterSetting.setChecked(false);
                     switchRestorePreviousVolumeLevelSetting.setChecked(false);
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                         && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT)
                                 != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 11);
-                    switchVolumeAdapterSetting.setChecked(false);
+                    switchVolumeAdjusterSetting.setChecked(false);
                     switchRestorePreviousVolumeLevelSetting.setChecked(false);
                 }
                 return true;
             });
 
-            //Saves VolumeAdapterSetting state
-            switchVolumeAdapterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
+            //Saves VolumeAdjusterSetting state
+            switchVolumeAdjusterSetting.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean value = Boolean.parseBoolean(newValue.toString());
-                sp.setSharedmPrefVolumeAdapterServiceSetting(value);
-                sp.setSharedmRestorePreviousVolumeServiceSetting(value);
-                switchRestorePreviousVolumeLevelSetting.setChecked(value);
+                sp.setSharedmPrefVolumeAdjusterServiceSetting(value);
                 return true;
             });
 
-            //Saves VolumeAdjustmentLevel state
-            Objects.requireNonNull(listVolumeAdjustmentLevelSetting).setOnPreferenceChangeListener((preference, newValue) -> {
-                sp.setSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting(newValue.toString());
+            //Saves VolumeAdjusterMode state
+            Objects.requireNonNull(listVolumeAdjusterModeSetting).setOnPreferenceChangeListener((preference, newValue) -> {
+                sp.setSharedmPrefVolumeAdjusterModeServiceSetting(newValue.toString());
                 return true;
             });
 
@@ -309,14 +329,18 @@ public final class SettingsActivity extends AppCompatActivity
         @Override
         public void onResume() {
             super.onResume();
-            switchVolumeAdapterSetting.setEnabled(new Utils().checkPermissions(mContext));
+            SharedPref sp = new SharedPref(mContext);
+
+            switchVolumeAdjusterSetting.setEnabled(new Utils().checkPermissions(mContext));
             if (!new Utils().checkPermissions(mContext)) {
-                switchVolumeAdapterSetting.setChecked(false);
+                switchVolumeAdjusterSetting.setChecked(false);
                 switchRestorePreviousVolumeLevelSetting.setChecked(false);
-            }
+            } else
+                switchVolumeAdjusterSetting.setChecked(sp.getSharedmPrefVolumeAdjusterServiceSetting());
+            listVolumeAdjusterModeSetting.setValue(sp.getSharedmPrefVolumeAdjusterModeServiceSetting());
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO)
                     != PackageManager.PERMISSION_GRANTED)
-                switchVolumeAdapterSetting.setChecked(false);
+                switchVolumeAdjusterSetting.setChecked(false);
         }
 
     }

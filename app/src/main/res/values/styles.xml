@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MainActivity" parent="@style/Theme.MaterialComponents.Light.DarkActionBar">
-        <item name="colorPrimaryDark">@color/custom_launcher_background_green</item>
-        <item name="colorPrimary">@color/custom_launcher_background_green</item>
-        <item name="titleTextColor">@color/white</item>
+    <style name="MainActivityDayNight" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/custom_color_primary</item>
+        <item name="colorPrimaryDark">@color/custom_color_primary</item>
+        <item name="colorAccent">@color/custom_color_accent</item>
+        <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Primary</item>
+        <item name="alertDialogTheme">@style/AlertDialogDayNight</item>
     </style>
-    <style name="Theme.LockscreenEarActivity" parent="@style/Theme.MaterialComponents.NoActionBar">
-        <item name="android:statusBarColor">@color/custom_background_ear_training_deep_blue</item>
-    </style>
-    <style name="Widget.LockscreenEarButton" parent="Widget.MaterialComponents.Button">
+    <style name="ButtonNoTint" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@null</item>
+    </style>
+    <style name="AlertDialogDayNight" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:background">@color/custom_floating_background_background</item>
+        <item name="buttonBarButtonStyle">@style/ButtonAlertDialogDayNight</item>
+    </style>
+    <style name="ButtonAlertDialogDayNight" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/custom_color_accent</item>
+    </style>
+    <style name="TextInputLayoutTheme">
+        <item name="colorOnSurface">@color/custom_floating_background_background</item>
+        <item name="colorSurface">@color/custom_floating_background_background</item>
+    </style>
+    <style name="TextInputLayoutStyle" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+        <item name="colorOnSurface">@color/custom_launcher_main_background</item>
+        <item name="colorSurface">@color/custom_launcher_main_background</item>
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxBackgroundColor">@color/custom_launcher_main_background</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeColor">@color/box_stroke_color</item>
+        <item name="startIconTint">@color/custom_color_accent</item>
+        <item name="endIconTint">@color/custom_color_accent</item>
+    </style>
+    <style name="LockscreenEarActivity" parent="@style/Theme.MaterialComponents.NoActionBar">
+        <item name="android:statusBarColor">@color/custom_background_ear_training_deep_blue</item>
     </style>
 </resources>

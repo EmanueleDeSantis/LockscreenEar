@@ -22,14 +22,18 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.taffo.lockscreenear.R;
 import com.taffo.lockscreenear.utils.SharedPref;
 import com.taffo.lockscreenear.utils.XMLParser;
 
+import java.io.IOException;
+
 public final class DiapasonService extends Service {
-    private SharedPref sp;
+    private MediaPlayer mediaPlayerSingleNote;
 
     @Override
     public IBinder onBind(@Nullable Intent intent) {
@@ -38,8 +42,17 @@ public final class DiapasonService extends Service {
 
     @Override
     public void onCreate() {
-        sp = new SharedPref(this);
         super.onCreate();
+        SharedPref sp = new SharedPref(this);
+        XMLParser parser = new XMLParser();
+        if (parser.parseXmlNotes(this))
+            mediaPlayerSingleNote = MediaPlayer.create(this,
+                    getResources().getIdentifier(parser.getDocum().getElementById(String.valueOf(27)) //La4
+                            .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
+        else {
+            sp.setSharedmPrefService(false);
+            stopSelf();
+        }
     }
 
     @Override
@@ -50,28 +63,26 @@ public final class DiapasonService extends Service {
 
     @Override
     public void onDestroy() {
-        if (mediaPlayer != null)
-            mediaPlayer.release();
+        if (mediaPlayerSingleNote != null) {
+            mediaPlayerSingleNote.stop();
+            mediaPlayerSingleNote.release();
+        }
         super.onDestroy();
     }
 
-    private MediaPlayer mediaPlayer;
     private void startDiapason() {
-        XMLParser parser = new XMLParser();
-        if (parser.parseXmlNotes(this)) {
-            mediaPlayer = MediaPlayer.create(getApplicationContext(),
-                    getResources().getIdentifier(parser.getDocum().getElementById("27") //La2
-                            .getElementsByTagName("sound_name").item(0).getTextContent(), "raw", getPackageName()));
-            mediaPlayer.start();
-            //After a fixed number of execution of this function, the MediaPlayer stops working.
-            //This happens because the operating system does not release the media player automatically.
-            //Solved using the instruction below, that releases the media player when the sound ends
-            mediaPlayer.setOnCompletionListener(MediaPlayer::release);
-        } else {
-            sp.setSharedmPrefService(false);
-            stopSelf();
+        if (mediaPlayerSingleNote != null) {
+            mediaPlayerSingleNote.stop();
+
+            try {
+                mediaPlayerSingleNote.prepare();
+            } catch (IOException ignored) {
+                stopSelf();
+                Toast.makeText(this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+            }
+
+            mediaPlayerSingleNote.start();
         }
     }
-
 
 }

@@ -10,8 +10,8 @@
             app:fragment="com.taffo.lockscreenear.activities.SettingsActivity$BootSettingFragment" />
 
         <Preference
-            app:key="@string/volume_adapter_setting_key"
-            app:title="@string/volume_adapter_setting_title"
+            app:key="@string/volume_adjuster_setting_key"
+            app:title="@string/volume_adjuster_setting_title"
             app:icon="@drawable/volume_icon"
             app:fragment="com.taffo.lockscreenear.activities.SettingsActivity$VolumeAdapterSettingFragment" />
 
@@ -26,6 +26,13 @@
             app:title="@string/call_setting_title"
             app:icon="@drawable/call_icon"
             app:fragment="com.taffo.lockscreenear.activities.SettingsActivity$CallSettingFragment" />
+
+        <ListPreference
+            app:key="@string/theme_setting_shared_pref"
+            app:title="@string/theme_setting_title"
+            app:entries="@array/array_themes"
+            app:icon="@drawable/theme_icon"
+        app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/about_title" app:iconSpaceReserved="false">
@@ -39,16 +46,16 @@
             app:title="@string/source_code_title"
             app:iconSpaceReserved="false">
             <intent android:action="android.intent.action.VIEW"
-                android:data="https://www.github.com/EmanueleDeSantis/lockscreenearEar" />
+                android:data="https://www.github.com/EmanueleDeSantis/LockscreenEar" />
         </Preference>
 
         <Preference
-            app:key="@string/about_key"
+            app:key="@string/version_name_key"
             app:title="@string/build_version"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:key="@string/uninstall_category_setting_key" app:title="@string/uninstall" app:iconSpaceReserved="false">
+    <PreferenceCategory app:key="@string/uninstall_category_setting_key" app:title="@string/uninstall_setting_title" app:iconSpaceReserved="false">
         <Preference
             app:key="@string/uninstall_setting_key"
             app:title="@string/uninstall_setting_title"

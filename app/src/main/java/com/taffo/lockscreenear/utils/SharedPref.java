@@ -23,6 +23,8 @@ import com.taffo.lockscreenear.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 public final class SharedPref {
     private final Context mContext;
     private final SharedPreferences mPrefNumberOfNotesToPlay;
@@ -36,13 +38,14 @@ public final class SharedPref {
     private final SharedPreferences mPrefBootSettingNumberOfNotesToPlay;
     private final SharedPreferences mPrefBootSettingVolume;
     private final SharedPreferences mPrefBootSettingVolumeLevel;
-    private final SharedPreferences mPrefVolumeAdapterServiceSetting;
-    private final SharedPreferences mPrefVolumeAdjustmentLevelAdapterServiceSetting;
+    private final SharedPreferences mPrefVolumeAdjusterServiceSetting;
+    private final SharedPreferences mPrefVolumeAdjusterModeServiceSetting;
     private final SharedPreferences mPrefRestorePreviousVolumeServiceSetting;
     private final SharedPreferences mPrefQuickSettingEnabled;
     private final SharedPreferences mPrefCallSettingEnabled;
+    private final SharedPreferences mPrefThemeSetting;
     private final SharedPreferences mPrefEasterEggChallengeStarted;
-    private final SharedPreferences mPrefEasterEggChallengeCompleted;
+    private final SharedPreferences mPrefEasterEggChallengeNotCompleted;
     private final SharedPreferences mPrefEasterEggChallengeGuesses;
 
     public SharedPref(Context context) {
@@ -60,7 +63,7 @@ public final class SharedPref {
         mPrefCancelUpdateAndDontAskUntilNextUpdate = context.getSharedPreferences(
                 mContext.getString(R.string.cancel_update_and_dont_ask_until_next_update_shared_pref), Context.MODE_PRIVATE);
         mPrefBootSetting = context.getSharedPreferences(
-                mContext.getString(R.string.boot_setting_number_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
+                mContext.getString(R.string.boot_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefBootSettingNumberOfNotesToPlay = context.getSharedPreferences(
                 mContext.getString(R.string.boot_list_setting_number_of_notes_to_play_shared_pref), Context.MODE_PRIVATE);
         mPrefLastUpdateVersionCode = context.getSharedPreferences(
@@ -69,20 +72,22 @@ public final class SharedPref {
                 mContext.getString(R.string.boot_setting_volume_shared_pref), Context.MODE_PRIVATE);
         mPrefBootSettingVolumeLevel = context.getSharedPreferences(
                 mContext.getString(R.string.boot_setting_volume_level_shared_pref), Context.MODE_PRIVATE);
-        mPrefVolumeAdapterServiceSetting = context.getSharedPreferences(
-                mContext.getString(R.string.volume_adapter_setting_shared_pref), Context.MODE_PRIVATE);
-        mPrefVolumeAdjustmentLevelAdapterServiceSetting = context.getSharedPreferences(
-                mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref), Context.MODE_PRIVATE);
+        mPrefVolumeAdjusterServiceSetting = context.getSharedPreferences(
+                mContext.getString(R.string.volume_adjuster_setting_shared_pref), Context.MODE_PRIVATE);
+        mPrefVolumeAdjusterModeServiceSetting = context.getSharedPreferences(
+                mContext.getString(R.string.volume_adjuster_mode_list_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefRestorePreviousVolumeServiceSetting = context.getSharedPreferences(
                 mContext.getString(R.string.restore_previous_volume_level_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefQuickSettingEnabled = context.getSharedPreferences(
                 mContext.getString(R.string.quick_setting_enabled_shared_pref), Context.MODE_PRIVATE);
         mPrefCallSettingEnabled = context.getSharedPreferences(
                 mContext.getString(R.string.call_setting_enabled_shared_pref), Context.MODE_PRIVATE);
+        mPrefThemeSetting = context.getSharedPreferences(
+                mContext.getString(R.string.theme_setting_shared_pref), Context.MODE_PRIVATE);
         mPrefEasterEggChallengeStarted = context.getSharedPreferences(
                 mContext.getString(R.string.easter_egg_challenge_started_shared_pref), Context.MODE_PRIVATE);
-        mPrefEasterEggChallengeCompleted = context.getSharedPreferences(
-                mContext.getString(R.string.easter_egg_challenge_completed_shared_pref), Context.MODE_PRIVATE);
+        mPrefEasterEggChallengeNotCompleted = context.getSharedPreferences(
+                mContext.getString(R.string.easter_egg_challenge_not_completed_shared_pref), Context.MODE_PRIVATE);
         mPrefEasterEggChallengeGuesses = context.getSharedPreferences(
                 mContext.getString(R.string.easter_egg_challenge_guesses_shared_pref), Context.MODE_PRIVATE);
     }
@@ -126,7 +131,7 @@ public final class SharedPref {
     }
     public boolean getSharedmPrefBootSetting() {
         return mPrefBootSetting
-                .getBoolean(mContext.getString(R.string.boot_setting_number_of_notes_to_play_shared_pref), false);
+                .getBoolean(mContext.getString(R.string.boot_setting_shared_pref), false);
     }
     public String getSharedmPrefBootListSettingNumberOfNotesToPlay() {
         return mPrefBootSettingNumberOfNotesToPlay
@@ -140,14 +145,14 @@ public final class SharedPref {
         return mPrefBootSettingVolumeLevel
                 .getString(mContext.getString(R.string.boot_setting_volume_level_shared_pref), mContext.getString(R.string._3));
     }
-    public boolean getSharedmPrefVolumeAdapterServiceSetting() {
-        return mPrefVolumeAdapterServiceSetting
-                .getBoolean(mContext.getString(R.string.volume_adapter_setting_shared_pref), false);
+    public boolean getSharedmPrefVolumeAdjusterServiceSetting() {
+        return mPrefVolumeAdjusterServiceSetting
+                .getBoolean(mContext.getString(R.string.volume_adjuster_setting_shared_pref), false);
     }
-    public String getSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting() {
-        return mPrefVolumeAdjustmentLevelAdapterServiceSetting
-                .getString(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref),
-                        mContext.getString(R.string.array_item_volume_adjustment_level_normal_string_value));
+    public String getSharedmPrefVolumeAdjusterModeServiceSetting() {
+        return mPrefVolumeAdjusterModeServiceSetting
+                .getString(mContext.getString(R.string.volume_adjuster_mode_list_setting_shared_pref),
+                        mContext.getString(R.string.array_item_volume_adjuster_mode_normal_string_value));
     }
     public boolean getSharedmRestorePreviousVolumeServiceSetting() {
         return mPrefRestorePreviousVolumeServiceSetting
@@ -161,13 +166,17 @@ public final class SharedPref {
         return mPrefCallSettingEnabled
                 .getBoolean(mContext.getString(R.string.call_setting_enabled_shared_pref), true);
     }
+    public int getSharedmPrefThemeSetting() {
+        return mPrefThemeSetting
+                .getInt(mContext.getString(R.string.theme_setting_shared_pref), AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    }
     public boolean getSharedmPrefEasterEggChallengeStarted() {
         return mPrefEasterEggChallengeStarted
                 .getBoolean(mContext.getString(R.string.easter_egg_challenge_started_shared_pref), false);
     }
-    public boolean getSharedmPrefEasterEggChallengeCompleted() {
-        return mPrefEasterEggChallengeCompleted
-                .getBoolean(mContext.getString(R.string.easter_egg_challenge_completed_shared_pref), false);
+    public boolean getSharedmPrefEasterEggChallengeNotCompleted() {
+        return mPrefEasterEggChallengeNotCompleted
+                .getBoolean(mContext.getString(R.string.easter_egg_challenge_not_completed_shared_pref), true);
     }
     public int getSharedmPrefEasterEggChallengeGuesses() {
         return mPrefEasterEggChallengeGuesses
@@ -219,7 +228,7 @@ public final class SharedPref {
     public void setSharedmPrefBootSetting(Boolean b) {
         mPrefBootSetting
                 .edit()
-                .putBoolean(mContext.getString(R.string.boot_setting_number_of_notes_to_play_shared_pref), b)
+                .putBoolean(mContext.getString(R.string.boot_setting_shared_pref), b)
                 .apply();
     }
     public void setSharedmPrefBootListSettingNumberOfNotesToPlay(String s) {
@@ -240,16 +249,16 @@ public final class SharedPref {
                 .putString(mContext.getString(R.string.boot_setting_volume_level_shared_pref), s)
                 .apply();
     }
-    public void setSharedmPrefVolumeAdapterServiceSetting(Boolean b) {
-        mPrefVolumeAdapterServiceSetting
+    public void setSharedmPrefVolumeAdjusterServiceSetting(Boolean b) {
+        mPrefVolumeAdjusterServiceSetting
                 .edit()
-                .putBoolean(mContext.getString(R.string.volume_adapter_setting_shared_pref), b)
+                .putBoolean(mContext.getString(R.string.volume_adjuster_setting_shared_pref), b)
                 .apply();
     }
-    public void setSharedmPrefVolumeAdjustmentLevelAdapterServiceSetting(String s) {
-        mPrefVolumeAdjustmentLevelAdapterServiceSetting
+    public void setSharedmPrefVolumeAdjusterModeServiceSetting(String s) {
+        mPrefVolumeAdjusterModeServiceSetting
                 .edit()
-                .putString(mContext.getString(R.string.volume_adjustment_level_adapter_list_setting_shared_pref), s)
+                .putString(mContext.getString(R.string.volume_adjuster_mode_list_setting_shared_pref), s)
                 .apply();
     }
     public void setSharedmRestorePreviousVolumeServiceSetting(Boolean b) {
@@ -270,16 +279,22 @@ public final class SharedPref {
                 .putBoolean(mContext.getString(R.string.call_setting_enabled_shared_pref), b)
                 .apply();
     }
+    public void setSharedmPrefThemeSetting(int i) {
+        mPrefThemeSetting
+                .edit()
+                .putInt(mContext.getString(R.string.theme_setting_shared_pref), i)
+                .apply();
+    }
     public void setSharedmPrefEasterEggChallengeStarted(Boolean b) {
         mPrefEasterEggChallengeStarted
                 .edit()
                 .putBoolean(mContext.getString(R.string.easter_egg_challenge_started_shared_pref), b)
                 .apply();
     }
-    public void setSharedmPrefEasterEggChallengeCompleted(Boolean b) {
-        mPrefEasterEggChallengeCompleted
+    public void setSharedmPrefEasterEggChallengeNotCompleted(Boolean b) {
+        mPrefEasterEggChallengeNotCompleted
                 .edit()
-                .putBoolean(mContext.getString(R.string.easter_egg_challenge_completed_shared_pref), b)
+                .putBoolean(mContext.getString(R.string.easter_egg_challenge_not_completed_shared_pref), b)
                 .apply();
     }
     public void setSharedmPrefEasterEggChallengeGuesses(int i) {

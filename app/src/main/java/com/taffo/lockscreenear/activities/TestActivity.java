@@ -65,14 +65,19 @@ public final class TestActivity extends AppCompatActivity {
 
     private int round = 0;
 
+    private Thread[] threads = new Thread[NOTES];
+    private CyclicBarrier cyclicBarrier = new CyclicBarrier(NOTES + 1);
+    private List<Integer> randomNotesList = new ArrayList<>(NOTES);
     private MediaPlayer[] mediaPlayer = new MediaPlayer[NOTES];
     private List<String> outputtedNotesList = new ArrayList<>(NOTES);
     private List<String> selectedNotesList = new ArrayList<>(NOTES);
+    private List<Integer> notesColor = new ArrayList<>(NOTES);
+    private final StringBuilder coloredStringTextViewNotes = new StringBuilder();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.lockscreen_activity);
+        setContentView(R.layout.lockscreenear_activity);
 
         textViewNotes = findViewById(R.id.textViewNotes);
         buttonDo = findViewById(R.id.buttonDo);
@@ -248,9 +253,6 @@ public final class TestActivity extends AppCompatActivity {
             mPlayer.release();
     }
 
-    private Thread[] threads = new Thread[NOTES];
-    private CyclicBarrier cyclicBarrier = new CyclicBarrier(NOTES + 1);
-    private List<Integer> randomNotesList = new ArrayList<>(NOTES);
     //Plays random notes got from the xml document "notes.xml" in "src/main/assets" folder. Notes are stored in "res/raw" folder
     private void prepareToPlay() {
         for (int i = 0; i < NOTES; i++) {
@@ -305,8 +307,6 @@ public final class TestActivity extends AppCompatActivity {
         }
     }
 
-    private List<Integer> notesColor = new ArrayList<>(NOTES);
-    private final StringBuilder coloredStringTextViewNotes = new StringBuilder();
     //Finishes this activity and grants the user to be able to start LockscreenEarService if he guessed all and only the outputted notes
     private void check() {
         if (selectedNotesList.containsAll(outputtedNotesList) && outputtedNotesList.containsAll(selectedNotesList))
@@ -527,29 +527,29 @@ public final class TestActivity extends AppCompatActivity {
         textViewNotes.setText(getString(R.string.congrats));
 
         buttonDo.setSelected(false);
-        buttonDo.setBackgroundResource(R.drawable.round);
+        buttonDo.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonDodie.setSelected(false);
-        buttonDodie.setBackgroundResource(R.drawable.round);
+        buttonDodie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonRe.setSelected(false);
-        buttonRe.setBackgroundResource(R.drawable.round);
+        buttonRe.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonRedie.setSelected(false);
-        buttonRedie.setBackgroundResource(R.drawable.round);
+        buttonRedie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonMi.setSelected(false);
-        buttonMi.setBackgroundResource(R.drawable.round);
+        buttonMi.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonFa.setSelected(false);
-        buttonFa.setBackgroundResource(R.drawable.round);
+        buttonFa.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonFadie.setSelected(false);
-        buttonFadie.setBackgroundResource(R.drawable.round);
+        buttonFadie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonSol.setSelected(false);
-        buttonSol.setBackgroundResource(R.drawable.round);
+        buttonSol.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonSoldie.setSelected(false);
-        buttonSoldie.setBackgroundResource(R.drawable.round);
+        buttonSoldie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonLa.setSelected(false);
-        buttonLa.setBackgroundResource(R.drawable.round);
+        buttonLa.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonLadie.setSelected(false);
-        buttonLadie.setBackgroundResource(R.drawable.round);
+        buttonLadie.setBackgroundResource(R.drawable.ear_training_round_button);
         buttonSi.setSelected(false);
-        buttonSi.setBackgroundResource(R.drawable.round);
+        buttonSi.setBackgroundResource(R.drawable.ear_training_round_button);
 
         round++;
         int LAST_ROUND = 5;
